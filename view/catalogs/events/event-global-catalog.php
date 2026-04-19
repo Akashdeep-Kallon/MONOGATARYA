@@ -3,7 +3,7 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/DAM-Transversal/core/config.php';
 require_once $_SERVER['DOCUMENT_ROOT'] . '/DAM-Transversal/core/auth.php';
 require_once $_SERVER['DOCUMENT_ROOT'] . '/DAM-Transversal/controller/CatalogController.php';
 
-$result = (new Catalog())->returnCatalogEvent();
+$result = (new Catalog())->returnCatalog('Events', NULL);
 $query = $result['query'];
 $page = $result['page'];
 $totalPages = $result['totalPages'];
@@ -32,7 +32,7 @@ $totalPages = $result['totalPages'];
                 <h3><?php echo $title; ?></h3>
                 <p><?php echo $subtitle; ?></p>
 
-                <?php if ($active) { ?>
+                <?php if ($active || isPromoter()) { ?>
                     <a class="btn-link" href="event-detail.php?id=<?php echo $id; ?>">
                         Más información
                     </a>

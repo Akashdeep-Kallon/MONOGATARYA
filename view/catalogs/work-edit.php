@@ -7,7 +7,7 @@ requireRole('promoter');
 $type = $_GET['type'];
 $id = $_GET['id'];
 
-$result = (new Catalog())->returnWorkDetail($type, $id);
+$result = (new Catalog())->returnWorkDetail($id, $type);
 
 $title = $result['title'];
 $subtitle = $result['subtitle'];
@@ -18,6 +18,7 @@ $premiere = $result['premiere'];
 $studio = $result['studio'];
 $gender = $result['gender'];
 $chapters = $result['chapters'];
+$active = $result['active'];
 
 ?>
 
@@ -44,6 +45,7 @@ $chapters = $result['chapters'];
 
                 <form class="form-vertical" action="<?php echo CONTROLLER_URL; ?>/CatalogController.php" method="post"
                     enctype="multipart/form-data">
+                    <input type="hidden" name="id" value="<?php echo htmlspecialchars($id); ?>">
 
                     <div class="field-group">
                         <label for="tipo-obra">Tipo</label>
@@ -103,18 +105,33 @@ $chapters = $result['chapters'];
                         ?></textarea>
                     </div>
 
+                    <div class="field-group">
+                        <label>Marcar la obra como activa</label>
+                        <input id="remember" name="active" type="checkbox" <?php echo ($active == 1 ? 'checked' : ''); ?>>
+                    </div>
+
                     <div class="inline-actions">
                         <button type="submit" class="btn btn-add" name="edit_work">Guardar cambios</button>
-                        <button type="submit" class="btn btn-delete" name="delete">Eliminar Obra</button>
+                        <button type="submit" class="btn btn-delete" name="delete_work">Eliminar Obra</button>
                         <button type="reset" class="btn btn-delete" name="">Reiniciar</button>
                     </div>
                 </form>
-
+                <?php if (!empty($_SESSION['login_error'])) { ?>
+                    <div class="error-box">
+                        <span class="icon">ⓘ</span>
+                        <span>
+                            <?php
+                            foreach ($_SESSION['login_error'] as $error) {
+                                echo htmlspecialchars($error) . "<br>";
+                            }
+                            ?>
+                        </span>
+                    </div>
+                    <?php unset($_SESSION['login_error']); ?>
+                <?php } ?>
             </section>
         </div>
     </main>
-
-    <input type="checkbox" id="menu-toggle">
 
     <?php include $_SERVER['DOCUMENT_ROOT'] . '/DAM-Transversal/view/includes/menu.php'; ?>
     <?php include $_SERVER['DOCUMENT_ROOT'] . '/DAM-Transversal/view/includes/footer.php'; ?>

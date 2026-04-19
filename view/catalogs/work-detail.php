@@ -41,7 +41,7 @@ $linkMedia = ($redirectType === 'manga') ? MANGA_URL : ANIME_URL;
         <div class="layout-container">
             <article class="card-panel event-editorial" aria-labelledby="work-title">
 
-                <!-- Columna principal ── -->
+                <!-- Columna principal -->
                 <section>
                     <h2 id="work-title" class="section-title">
                         <?php echo htmlspecialchars($title); ?>
@@ -50,28 +50,20 @@ $linkMedia = ($redirectType === 'manga') ? MANGA_URL : ANIME_URL;
                         <p class="work-subtitle"><?php echo htmlspecialchars($subtitle); ?></p>
                     <?php } ?>
 
-                    <?php if (!empty($image)) { ?>
-                        <figure class="event-hero-image">
-                            <img src="<?php echo htmlspecialchars($image); ?>"
-                                alt="Portada de <?php echo htmlspecialchars($title); ?>">
-                        </figure>
-                    <?php } ?>
-
                     <?php if (!empty($trailer)) { ?>
-                        <h3>Tráiler oficial</h3>
-                        <p id="trailer-desc" class="field-help">
-                            Tráiler oficial de <?php echo htmlspecialchars($title); ?>
-                        </p>
-                        <video controls preload="metadata" aria-describedby="trailer-desc">
-                            <source src="<?php echo $linkMedia . $trailer; ?>" type="video/mp4">
-                            Tu navegador no soporta vídeo HTML5.
-                        </video>
+                        <details open>
+                            <summary>Tráiler oficial</summary>
+                            <p id="trailer-desc" class="field-help">
+                                Tráiler oficial de <?php echo htmlspecialchars($title); ?>
+                            </p>
+                            <video controls preload="metadata" aria-describedby="trailer-desc">
+                                <source src="<?php echo $linkMedia . $trailer; ?>" type="video/mp4">
+                                Tu navegador no soporta vídeo HTML5.
+                            </video>
+                        </details>
                     <?php } ?>
 
-                    <h3>Descripción</h3>
-                    <p><?php echo htmlspecialchars($description); ?></p>
-
-                    <!-- Lista de capítulos ── -->
+                    <!-- Lista de capítulos -->
                     <?php if (!empty($chapters)) { ?>
                         <h3 class="chapter-heading">
                             <?php echo count($chapters); ?> capítulos en total
@@ -80,13 +72,14 @@ $linkMedia = ($redirectType === 'manga') ? MANGA_URL : ANIME_URL;
                             <?php foreach ($chapters as $ch) {
                                 $chId = $ch['ID_Chapter'];
                                 $chNum = $ch['Chapter_Number'];
-                                $chTitle = !empty($ch['Title']) ? $ch['Title'] : 'Capítulo ' . $chNum;
+                                $chUrl = $redirectType . '/' . $redirectType . '-read.php'
+                                    . '?type=' . $type
+                                    . '&id=' . $id
+                                    . '&idChapter=' . $chId
+                                    . '&numberChapter=' . $chNum;
                                 ?>
                                 <li>
-                                    <a class="chapter-item" href="<?php echo $redirectType; ?>/<?php echo $redirectType; ?>-read.php
-                                         ?type=<?php echo urlencode($type); ?>
-                                         &id=<?php echo urlencode($id); ?>
-                                         &idChapter=<?php echo urlencode($chId); ?>">
+                                    <a class="chapter-item" href="<?php echo $chUrl; ?>">
                                         <span class="chapter-dot" aria-hidden="true"></span>
                                         <span class="chapter-info">
                                             <span class="chapter-title">
@@ -98,12 +91,6 @@ $linkMedia = ($redirectType === 'manga') ? MANGA_URL : ANIME_URL;
                                                 </span>
                                             <?php } ?>
                                         </span>
-                                        <?php if (!empty($ch['Duration'])) { ?>
-                                            <span class="chapter-meta">
-                                                <span aria-hidden="true">🕐</span>
-                                                <?php echo $ch['Duration']; ?> min
-                                            </span>
-                                        <?php } ?>
                                     </a>
                                 </li>
                             <?php } ?>
@@ -111,10 +98,15 @@ $linkMedia = ($redirectType === 'manga') ? MANGA_URL : ANIME_URL;
                     <?php } ?>
                 </section>
 
+                <!-- Aside -->
                 <aside class="event-aside" aria-labelledby="datos-work">
                     <?php if (!empty($image)) { ?>
                         <img class="aside-cover" src="<?php echo htmlspecialchars($image); ?>"
                             alt="Portada de <?php echo htmlspecialchars($title); ?>">
+                    <?php } ?>
+
+                    <?php if (!empty($description)) { ?>
+                        <p class="work-description"><?php echo htmlspecialchars($description); ?></p>
                     <?php } ?>
 
                     <h3 id="datos-work">Datos</h3>
@@ -140,23 +132,28 @@ $linkMedia = ($redirectType === 'manga') ? MANGA_URL : ANIME_URL;
                         <?php if (!empty($chapters)) { ?>
                             <dt>Capítulos</dt>
                             <dd><?php echo count($chapters); ?></dd>
-                        <?php } ?>
+                        <?php } else {
+                            echo "Sin capitulos";
+                        } ?>
                     </dl>
 
                     <div class="stack-actions">
-                        <?php if (!empty($chapters)) { ?>
-                            <a href="<?php echo $redirectType; ?>/<?php echo $redirectType; ?>-read.php
-                                     ?type=<?php echo urlencode($type); ?>
-                                     &id=<?php echo urlencode($id); ?>
-                                     &idChapter=<?php echo urlencode($chapters[0]['ID_Chapter']); ?>"
-                                class="btn btn-add">
+                        <?php if (!empty($chapters)) {
+                            $firstUrl = $redirectType . '/' . $redirectType . '-read.php'
+                                . '?type=' . $type
+                                . '&id=' . $id
+                                . '&idChapter=' . $chapters[0]['ID_Chapter'];
+                            ?>
+                            <a href="<?php echo $firstUrl; ?>" class="btn btn-add">
                                 Empezar a ver
                             </a>
                         <?php } ?>
 
                         <?php if (isPromoter()) { ?>
-                            <a href="work-edit.php?type=<?php echo urlencode($type); ?>&id=<?php echo urlencode($id); ?>"
-                                class="btn btn-add">
+                            <a href="add-chapter.php?type=<?php echo $type; ?>&id=<?php echo $id; ?>" class="btn btn-add">
+                                Subir capitulo
+                            </a>
+                            <a href="work-edit.php?type=<?php echo $type; ?>&id=<?php echo $id; ?>" class="btn btn-add">
                                 Editar obra
                             </a>
                         <?php } ?>

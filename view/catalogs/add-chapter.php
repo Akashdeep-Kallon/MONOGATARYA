@@ -10,10 +10,10 @@ requireRole('promoter');
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="<?php echo ASSETS_URL; ?>/styles/main.css" />
+    <link rel="stylesheet" href="../assets/styles/main.css" />
     <link rel="stylesheet" href="<?php echo ASSETS_URL; ?>/styles/catalog.css" />
     <link rel="icon" type="image/png" href="<?php echo ASSETS_URL; ?>/img/logo.webp" />
-    <title>Monogatarya - Publicar Evento</title>
+    <title>Monogatarya - Publicar Capítulo</title>
 </head>
 
 <body>
@@ -23,58 +23,42 @@ requireRole('promoter');
     <main class="page-main">
         <div class="layout-container">
             <section class="card-panel" aria-labelledby="crear-evento-title">
-
-                <h2 id="crear-evento-title" class="section-title">Formulario de gestión de evento</h2>
+                <h2 id="crear-evento-title" class="section-title">Añadir un capitulo</h2>
 
                 <form class="form-vertical" action="<?php echo CONTROLLER_URL; ?>/CatalogController.php" method="post"
                     enctype="multipart/form-data">
+                    <input type="hidden" name="id_work" value="<?php echo intval($_GET['id'] ?? 0); ?>">
 
                     <div class="field-group">
-                        <label for="nombre-evento">Título</label>
-                        <input id="nombre-evento" type="text" name="title" required minlength="5" maxlength="50">
+                        <label for="tipo-obra">Tipo</label>
+                        <input id="title" type="text" name="type"
+                            value="<?php echo htmlspecialchars($_GET['type'] ?? ''); ?>" readonly>
+                    </div>
+                    <div class="field-group">
+                        <label for="title">Título del capítulo</label>
+                        <input id="title" type="text" name="title" required minlength="5" maxlength="50" required>
                     </div>
 
                     <div class="field-group">
-                        <label for="subtitle">Subtítulo</label>
-                        <input id="subtitle" type="text" name="subtitle" required minlength="5" maxlength="75">
+                        <label for="video">Añadir capítulo</label>
+                        <input id="video" type="file" name="video" accept=".zip,application/zip" required>
                     </div>
 
                     <div class="field-group">
-                        <label for="fecha-evento">Fecha</label>
-                        <input id="fecha-evento" type="date" name="date_event" required>
+                        <label for="number">Número de capítulo</label>
+                        <input id="number" type="number" name="number" min="1" required>
                     </div>
 
                     <div class="field-group">
-                        <label for="lugar-evento">Lugar</label>
-                        <input id="lugar-evento" type="text" name="location" required minlength="1" maxlength="150">
-                    </div>
-
-                    <div class="field-group">
-                        <label for="aforo">Aforo</label>
-                        <input id="aforo" type="number" name="capacity" min="50" required>
-                    </div>
-
-                    <div class="field-group">
-                        <label for="image-file" class="file-label">Subir imagen de portada</label>
-                        <input id="image-file" type="file" accept="image/*" name="image_file">
-                    </div>
-
-                    <div class="field-group">
-                        <label for="image-url">URL de la imagen de portada</label>
-                        <input id="image-url" type="text" name="image_url">
-                    </div>
-
-                    <div class="field-group">
-                        <label for="descripcion-evento">Descripción</label>
-                        <textarea id="descripcion-evento" name="description" required minlength="10"
-                            maxlength="500"></textarea>
+                        <label for="description">Descripción</label>
+                        <textarea id="description" name="description" required minlength="10"
+                            maxlength="100"></textarea>
                     </div>
 
                     <div class="inline-actions">
-                        <button type="submit" class="btn btn-add" name="create_event">Publicar evento</button>
-                        <button type="reset" class="btn btn-delete">Cancelar</button>
+                        <button type="submit" class="btn btn-add" name="add_chapter">Publicar capítulo</button>
+                        <button type="reset" class="btn btn-delete" name="cancelar">Cancelar</button>
                     </div>
-
                 </form>
                 <?php if (!empty($_SESSION['login_error'])) { ?>
                     <div class="error-box">

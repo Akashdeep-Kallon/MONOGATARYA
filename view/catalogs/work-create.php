@@ -51,7 +51,7 @@ requireRole('promoter');
                     </div>
                     <div class="field-group">
                         <label for="video">Subir tráiler</label>
-                        <input id="video" type="file" name="video" accept="video/*">
+                        <input id="video" type="file" name="trailer" accept="video/*">
                     </div>
                     <div class="field-group">
                         <label for="premiere_date">Fecha de estreno</label>
@@ -76,13 +76,22 @@ requireRole('promoter');
                         <button type="reset" class="btn btn-delete" name="cancelar">Cancelar</button>
                     </div>
                 </form>
-
+                <?php if (!empty($_SESSION['login_error'])) { ?>
+                    <div class="error-box">
+                        <span class="icon">ⓘ</span>
+                        <span>
+                            <?php
+                            foreach ($_SESSION['login_error'] as $error) {
+                                echo htmlspecialchars($error) . "<br>";
+                            }
+                            ?>
+                        </span>
+                    </div>
+                    <?php unset($_SESSION['login_error']); ?>
+                <?php } ?>
             </section>
         </div>
     </main>
-
-
-    <input type="checkbox" id="menu-toggle">
 
     <?php include $_SERVER['DOCUMENT_ROOT'] . '/DAM-Transversal/view/includes/menu.php'; ?>
     <?php include $_SERVER['DOCUMENT_ROOT'] . '/DAM-Transversal/view/includes/footer.php'; ?>

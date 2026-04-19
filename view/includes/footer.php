@@ -11,16 +11,12 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/DAM-Transversal/core/auth.php';
             <li><a href="<?php echo VIEW_URL; ?>/catalogs/anime/anime-catalog.php">Catálogo de animes</a></li>
             <li><a href="<?php echo VIEW_URL; ?>/catalogs/manga/manga-catalog.php">Catálogo de mangas</a></li>
             <li><a href="<?php echo VIEW_URL; ?>/catalogs/events/event-detail.php">Eventos</a></li>
-
-            <?php if (isLogged()) { ?>
-                <li>
-                    <form action="<?php echo CONTROLLER_URL; ?>/UserController.php" method="POST">
-                        <input type="hidden" name="logout">
-                        <button type="submit">Home</button>
-                    </form>
-                </li>
-            <?php } ?>
-
+            <li class="logout">
+                <form action="<?php echo CONTROLLER_URL; ?>/UserController.php" method="POST">
+                    <input type="hidden" name="logout">
+                    <button type="submit">Home</button>
+                </form>
+            </li>
         </ul>
     </nav>
 

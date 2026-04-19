@@ -240,6 +240,9 @@ sequenceDiagram
 
 ---
 
+## 🌐 Demo en vivo
+https://monogatarya.run.place/
+
 ## Instalación y uso
 
 1. Importar la base de datos: ejecutar `model/Monogatarya_BD.sql` en MySQL.
@@ -255,6 +258,7 @@ sequenceDiagram
 
 | Aspecto | Detalle |
 |---|---|
+| Lenguaje | PHP 8+ |
 | Lenguaje | PHP 8+ |
 | Base de datos | MySQL con MySQLi Object-Oriented |
 | Sesiones | `$_SESSION` gestionadas en `UserController` y `User` |

@@ -61,7 +61,7 @@ class UserController
             session_unset();
             $user = new User($email, $status, $name, $surname, $password);
             $user->setSessionUser();
-            header('Location: ' . VIEW_URL . '/profile.php');
+            header('Location: ' . VIEW_URL . '/index.php');
             exit();
         }
         // Si no se registró
@@ -80,7 +80,7 @@ class UserController
         if ($user = $this->getUser($email, $password)) {
             session_unset();
             $user->setSessionUser();
-            header('Location: ' . VIEW_URL . '/index.php');
+            header('Location: ' . VIEW_URL . '/profile.php');
             exit();
         } else {
             $this->message("El correo electrónico o la contraseña es incorrecta.", $location);

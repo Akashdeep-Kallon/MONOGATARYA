@@ -144,8 +144,20 @@ $active = $result['active'];
                         <button type="submit" class="btn btn-delete" name="delete_event">Eliminar Evento</button>
                         <button type="reset" class="btn btn-delete">Reiniciar</button>
                     </div>
-
                 </form>
+                <?php if (!empty($_SESSION['login_error'])) { ?>
+                    <div class="error-box">
+                        <span class="icon">ⓘ</span>
+                        <span>
+                            <?php
+                            foreach ($_SESSION['login_error'] as $error) {
+                                echo htmlspecialchars($error) . "<br>";
+                            }
+                            ?>
+                        </span>
+                    </div>
+                    <?php unset($_SESSION['login_error']); ?>
+                <?php } ?>
             </section>
         </div>
     </main>

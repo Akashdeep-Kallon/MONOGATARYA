@@ -40,7 +40,7 @@ requireRole('promoter');
                         <label for="subtitle">Subtítulo de la obra</label>
                         <input id="subtitle" type="text" name="subtitle" required minlength="5" maxlength="50">
                     </div>
-                    
+
                     <div class="field-group">
                         <label for="video">Añadir capítulo</label>
                         <input id="video" type="file" name="video" accept=".zip,application/zip" required>
@@ -62,7 +62,19 @@ requireRole('promoter');
                         <button type="reset" class="btn btn-delete" name="cancelar">Cancelar</button>
                     </div>
                 </form>
-
+                <?php if (!empty($_SESSION['login_error'])) { ?>
+                    <div class="error-box">
+                        <span class="icon">ⓘ</span>
+                        <span>
+                            <?php
+                            foreach ($_SESSION['login_error'] as $error) {
+                                echo htmlspecialchars($error) . "<br>";
+                            }
+                            ?>
+                        </span>
+                    </div>
+                    <?php unset($_SESSION['login_error']); ?>
+                <?php } ?>
             </section>
         </div>
     </main>

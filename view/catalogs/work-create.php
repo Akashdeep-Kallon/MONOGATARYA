@@ -76,7 +76,19 @@ requireRole('promoter');
                         <button type="reset" class="btn btn-delete" name="cancelar">Cancelar</button>
                     </div>
                 </form>
-
+                <?php if (!empty($_SESSION['login_error'])) { ?>
+                    <div class="error-box">
+                        <span class="icon">ⓘ</span>
+                        <span>
+                            <?php
+                            foreach ($_SESSION['login_error'] as $error) {
+                                echo htmlspecialchars($error) . "<br>";
+                            }
+                            ?>
+                        </span>
+                    </div>
+                    <?php unset($_SESSION['login_error']); ?>
+                <?php } ?>
             </section>
         </div>
     </main>

@@ -27,7 +27,7 @@ requireRole('promoter');
                 <h2 id="crear-evento-title" class="section-title">Formulario de gestión de evento</h2>
 
                 <form class="form-vertical" action="<?php echo CONTROLLER_URL; ?>/CatalogController.php" method="post">
-                    
+
                     <div class="field-group">
                         <label for="nombre-evento">Título</label>
                         <input id="nombre-evento" type="text" name="title" required minlength="5" maxlength="50">
@@ -75,6 +75,19 @@ requireRole('promoter');
                     </div>
 
                 </form>
+                <?php if (!empty($_SESSION['login_error'])) { ?>
+                    <div class="error-box">
+                        <span class="icon">ⓘ</span>
+                        <span>
+                            <?php
+                            foreach ($_SESSION['login_error'] as $error) {
+                                echo htmlspecialchars($error) . "<br>";
+                            }
+                            ?>
+                        </span>
+                    </div>
+                    <?php unset($_SESSION['login_error']); ?>
+                <?php } ?>
             </section>
         </div>
     </main>

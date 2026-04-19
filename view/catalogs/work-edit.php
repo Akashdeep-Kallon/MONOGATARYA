@@ -106,7 +106,7 @@ $active = $result['Active'];
 
                     <div class="field-group">
                         <label>Marcar la obra como activa</label>
-                    <input id="remember" name="active" type="checkbox" <?php echo ($active == 1 ? 'checked' : ''); ?>>
+                        <input id="remember" name="active" type="checkbox" <?php echo ($active == 1 ? 'checked' : ''); ?>>
                     </div>
 
                     <div class="inline-actions">
@@ -115,7 +115,19 @@ $active = $result['Active'];
                         <button type="reset" class="btn btn-delete" name="">Reiniciar</button>
                     </div>
                 </form>
-
+                <?php if (!empty($_SESSION['login_error'])) { ?>
+                    <div class="error-box">
+                        <span class="icon">ⓘ</span>
+                        <span>
+                            <?php
+                            foreach ($_SESSION['login_error'] as $error) {
+                                echo htmlspecialchars($error) . "<br>";
+                            }
+                            ?>
+                        </span>
+                    </div>
+                    <?php unset($_SESSION['login_error']); ?>
+                <?php } ?>
             </section>
         </div>
     </main>

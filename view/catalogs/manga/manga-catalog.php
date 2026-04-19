@@ -19,7 +19,7 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/DAM-Transversal/core/auth.php';
     <?php
     require_once $_SERVER['DOCUMENT_ROOT'] . '/DAM-Transversal/controller/CatalogController.php';
 
-    $result = (new Catalog())->returnCatalog('Manga');
+    $result = (new Catalog())->returnCatalog('Works', 'Manga');
     $query = $result['query'];
     $page = $result['page'];
     $totalPages = $result['totalPages'];
@@ -52,7 +52,7 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/DAM-Transversal/core/auth.php';
                             <img class="card-image" src="<?php echo $img; ?>" alt="Portada de <?php echo $title; ?>">
                             <h3><?php echo $title; ?></h3>
                             <p><?php echo $subtitle; ?></p>
-                            <?php if ($active) { ?>
+                            <?php if ($active || isPromoter()) { ?>
                                 <a class="btn-link" href="../work-detail.php?type=Manga&id=<?php echo $id; ?>">
                                     Leer Manga
                                 </a>

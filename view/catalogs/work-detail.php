@@ -73,9 +73,10 @@ $linkMedia = ($redirectType === 'manga') ? MANGA_URL : ANIME_URL;
                                 $chId = $ch['ID_Chapter'];
                                 $chNum = $ch['Chapter_Number'];
                                 $chUrl = $redirectType . '/' . $redirectType . '-read.php'
-                                    . '?type=' . urlencode($type)
-                                    . '&id=' . urlencode($id)
-                                    . '&idChapter=' . urlencode($chId);
+                                    . '?type=' . $type
+                                    . '&id=' . $id
+                                    . '&idChapter=' . $chId
+                                    . '&numberChapter=' . $chNum;
                                 ?>
                                 <li>
                                     <a class="chapter-item" href="<?php echo $chUrl; ?>">
@@ -90,11 +91,6 @@ $linkMedia = ($redirectType === 'manga') ? MANGA_URL : ANIME_URL;
                                                 </span>
                                             <?php } ?>
                                         </span>
-                                        <?php if (!empty($ch['Duration'])) { ?>
-                                            <span class="chapter-meta">
-                                                🕐 <?php echo $ch['Duration']; ?> min
-                                            </span>
-                                        <?php } ?>
                                     </a>
                                 </li>
                             <?php } ?>
@@ -104,7 +100,6 @@ $linkMedia = ($redirectType === 'manga') ? MANGA_URL : ANIME_URL;
 
                 <!-- Aside -->
                 <aside class="event-aside" aria-labelledby="datos-work">
-
                     <?php if (!empty($image)) { ?>
                         <img class="aside-cover" src="<?php echo htmlspecialchars($image); ?>"
                             alt="Portada de <?php echo htmlspecialchars($title); ?>">
@@ -145,9 +140,9 @@ $linkMedia = ($redirectType === 'manga') ? MANGA_URL : ANIME_URL;
                     <div class="stack-actions">
                         <?php if (!empty($chapters)) {
                             $firstUrl = $redirectType . '/' . $redirectType . '-read.php'
-                                . '?type=' . urlencode($type)
-                                . '&id=' . urlencode($id)
-                                . '&idChapter=' . urlencode($chapters[0]['ID_Chapter']);
+                                . '?type=' . $type
+                                . '&id=' . $id
+                                . '&idChapter=' . $chapters[0]['ID_Chapter'];
                             ?>
                             <a href="<?php echo $firstUrl; ?>" class="btn btn-add">
                                 Empezar a ver
@@ -155,20 +150,19 @@ $linkMedia = ($redirectType === 'manga') ? MANGA_URL : ANIME_URL;
                         <?php } ?>
 
                         <?php if (isPromoter()) { ?>
-                            <a href="" class="btn btn-add">
+                            <a href="add-chapter.php" class="btn btn-add">
                                 Subir capitulo
                             </a>
-                            <a href="work-edit.php?type=<?php echo urlencode($type); ?>&id=<?php echo urlencode($id); ?>"
+                            <a href="work-edit.php?type=<?php echo $type; ?>&id=<?php echo $id; ?>"
                                 class="btn btn-add">
                                 Editar obra
                             </a>
-                            <a href="" class="btn btn-delete">
+                            <a href="" class="btn btn-delete" name="delete_work">
                                 Elimminar obra
                             </a>
 
                         <?php } ?>
                     </div>
-
                 </aside>
 
             </article>

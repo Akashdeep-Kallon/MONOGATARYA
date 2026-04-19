@@ -51,7 +51,7 @@ requireRole('promoter');
                     </div>
                     <div class="field-group">
                         <label for="video">Subir tráiler</label>
-                        <input id="video" type="file" name="video" accept="video/*">
+                        <input id="video" type="file" name="trailer" accept="video/*">
                     </div>
                     <div class="field-group">
                         <label for="premiere_date">Fecha de estreno</label>
@@ -80,9 +80,6 @@ requireRole('promoter');
             </section>
         </div>
     </main>
-
-
-    <input type="checkbox" id="menu-toggle">
 
     <?php include $_SERVER['DOCUMENT_ROOT'] . '/DAM-Transversal/view/includes/menu.php'; ?>
     <?php include $_SERVER['DOCUMENT_ROOT'] . '/DAM-Transversal/view/includes/footer.php'; ?>

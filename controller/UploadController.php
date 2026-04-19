@@ -9,21 +9,24 @@ class UploadController
     private $animeLocation = '/var/www/uploads/Anime/';
     private $eventLocation = '/var/www/uploads/Event/';
     private $mangaLocation = '/var/www/uploads/Manga/';
-    private $userLocation = '/var/www/uploads/User/';
+    private $userLocation  = '/var/www/uploads/User/';
 
     public function __construct()
     {
         $this->connection = (new Database())->getConnection();
     }
 
+    //usuaurio
+
     public function uploadAvatar($user, $avatar)
     {
         $errors = [];
 
-        $type = strtolower(pathinfo($avatar['name'], PATHINFO_EXTENSION));
-        $userId = $user->getUserID();
-        $destination = $this->userLocation . $userId . '/';
+        $type             = strtolower(pathinfo($avatar['name'], PATHINFO_EXTENSION));
+        $userId           = $user->getUserID();
+        $destination      = $this->userLocation . $userId . '/';
         $file_destination = $destination . 'avatar.' . $type;
+
         // 1. Error de subida → PRIMERO
         if ($avatar['error'] !== UPLOAD_ERR_OK) {
             $errors[] = "Error al recibir el archivo.";
@@ -53,7 +56,8 @@ class UploadController
         // Mover archivo y guardar ruta en BD
         if (move_uploaded_file($avatar['tmp_name'], $file_destination)) {
             $rutaBD = $userId . '/avatar.' . $type;
-            $user->updateAvatar($rutaBD, $this->connection);
+            // CORRECCIÓN: updateAvatar solo recibe la ruta, usa su propia conexión internamente
+            $user->updateAvatar($rutaBD);
             return "Imagen subida correctamente.";
         } else {
             return ["Hubo un error al mover el archivo."];
@@ -64,13 +68,368 @@ class UploadController
     {
         $userDir = $this->userLocation . $userId . '/';
         if (is_dir($userDir)) {
-            // Primero elimina los archivos dentro
             $archivos = glob($userDir . '*');
             foreach ($archivos as $archivo) {
                 unlink($archivo);
             }
-            // Luego elimina la carpeta vacía
             rmdir($userDir);
         }
+    }
+
+    //(Anime / Manga)
+
+    public function uploadWork($id, $type, $media)
+    {
+        $errors   = [];
+        $messages = [];
+
+        // Detectar MIME real
+        $mime = mime_content_type($media['tmp_name']);
+
+        $isImage = str_starts_with($mime, 'image/');
+        $isVideo = str_starts_with($mime, 'video/');
+
+        // Definir destino según tipo de obra
+        $destination = ($type === 'Anime')
+            ? $this->animeLocation . $id . '/'
+            : $this->mangaLocation . $id . '/';
+
+        // Validaciones generales
+        if ($media['error'] !== UPLOAD_ERR_OK) {
+            $errors[] = "Error al recibir el archivo.";
+        }
+
+        // Validaciones específicas
+        if ($isImage) {
+
+            if ($media['size'] > 5000000) {
+                $errors[] = "La imagen es demasiado grande. Máximo 5MB.";
+            }
+
+            $ext = strtolower(pathinfo($media['name'], PATHINFO_EXTENSION));
+            if (!in_array($ext, ['jpg', 'jpeg', 'png', 'webp'])) {
+                $errors[] = "La imagen debe ser JPG, JPEG, PNG o WEBP.";
+            }
+
+            $finalName = "banner.$ext";
+            $column    = "Image";
+
+        } elseif ($isVideo) {
+
+            if ($media['size'] > 50000000) {
+                $errors[] = "El vídeo es demasiado grande. Máximo 50MB.";
+            }
+
+            $ext = strtolower(pathinfo($media['name'], PATHINFO_EXTENSION));
+            if (!in_array($ext, ['mp4', 'webm', 'mov'])) {
+                $errors[] = "El tráiler debe ser MP4, WEBM o MOV.";
+            }
+
+            $finalName = "trailer.$ext";
+            $column    = "Trailer";
+
+        } else {
+            $errors[] = "El archivo no es una imagen ni un vídeo válido.";
+        }
+
+        if (!empty($errors)) {
+            return $errors;
+        }
+
+        // Crear carpeta si no existe
+        if (!is_dir($destination)) {
+            mkdir($destination, 0755, true);
+        }
+
+        $finalPath = $destination . $finalName;
+
+        if (!move_uploaded_file($media['tmp_name'], $finalPath)) {
+            return ["Error al mover el archivo al directorio destino."];
+        }
+
+        // Guardar ruta en BD
+        $rutaBD = $type . $id . '/' . $finalName;
+        $this->connection->query("UPDATE Works SET $column = '$rutaBD' WHERE ID_Work = '$id';");
+
+        $messages[] = $isImage
+            ? "Banner subido correctamente."
+            : "Tráiler subido correctamente.";
+
+        return $messages;
+    }
+
+    public function deleteWorkUploads($id, $type)
+    {
+        $dir = ($type === 'Anime')
+            ? $this->animeLocation . $id . '/'
+            : $this->mangaLocation . $id . '/';
+
+        if (is_dir($dir)) {
+            $this->deleteDir($dir);
+        }
+    }
+
+    //capitulos
+
+    public function uploadChapter($idWork, $idChapter, $type, $media)
+    {
+        $errors   = [];
+        $messages = [];
+
+        // Detectar MIME real
+        $mime  = mime_content_type($media['tmp_name']);
+        $isZip = ($mime === 'application/zip' || $mime === 'application/x-zip-compressed');
+
+        // Definir destino según tipo de obra
+        $basePath     = ($type === 'Anime')
+            ? $this->animeLocation . $idWork . '/'
+            : $this->mangaLocation . $idWork . '/';
+        $chaptersPath = $basePath . "chapters/";
+
+        // Validaciones
+        if ($media['error'] !== UPLOAD_ERR_OK) {
+            return ["Error al recibir el archivo ZIP."];
+        }
+        if (!$isZip) {
+            return ["El archivo debe ser un ZIP válido."];
+        }
+        if ($media['size'] > 500000000) {
+            return ["El archivo ZIP es demasiado grande. Máximo 500MB."];
+        }
+
+        $ext = strtolower(pathinfo($media['name'], PATHINFO_EXTENSION));
+        if ($ext !== 'zip') {
+            return ["El archivo debe tener extensión .zip."];
+        }
+
+        // Crear carpeta chapters/ si no existe
+        if (!is_dir($chaptersPath)) {
+            mkdir($chaptersPath, 0755, true);
+        }
+
+        // Carpeta final del capítulo
+        $extractFolder = $chaptersPath . $idChapter . "/";
+        if (!is_dir($extractFolder)) {
+            mkdir($extractFolder, 0755, true);
+        }
+
+        // Mover zip
+        $zipPath = $extractFolder . "chapter.zip";
+        if (!move_uploaded_file($media['tmp_name'], $zipPath)) {
+            return ["Error al mover el archivo ZIP al directorio destino."];
+        }
+
+        // Descomprimir ZIP
+        $zip = new ZipArchive;
+        if ($zip->open($zipPath) === TRUE) {
+            $zip->extractTo($extractFolder);
+            $zip->close();
+            $messages[] = "Capítulo descomprimido correctamente.";
+        } else {
+            return ["No se pudo descomprimir el archivo ZIP."];
+        }
+
+        // Borrar zip
+        unlink($zipPath);
+
+        // Generar index.txt con la lista de imágenes
+        $files = array_filter(scandir($extractFolder), function ($file) {
+            return preg_match('/\.(jpg|jpeg|png|webp)$/i', $file);
+        });
+
+        if (empty($files)) {
+            return ["El ZIP no contiene imágenes válidas para el capítulo."];
+        }
+
+        natsort($files);
+
+        $txtPath = $extractFolder . "index.txt";
+        file_put_contents($txtPath, implode(PHP_EOL, $files));
+        $messages[] = "Archivo index.txt generado correctamente.";
+
+        // Actualizar ruta del capítulo en BD
+        $rutaBD = $type . $idWork . '/chapters/' . $idChapter . '/';
+        $this->connection->query("UPDATE Chapters SET File = '$rutaBD' WHERE ID_Chapter = '$idChapter'");
+
+        $messages[] = "Capítulo subido correctamente.";
+        return $messages;
+    }
+
+    public function deleteChapterUploads($idWork, $idChapter, $type)
+    {
+        $dir = ($type === 'Anime')
+            ? $this->animeLocation . $idWork . '/chapters/' . $idChapter . '/'
+            : $this->mangaLocation . $idWork . '/chapters/' . $idChapter . '/';
+
+        if (is_dir($dir)) {
+            $this->deleteDir($dir);
+        }
+    }
+    
+    //evetos
+
+    public function uploadEventImage($idEvent, $media)
+    {
+        $errors = [];
+
+        // Validar que es imagen real
+        if ($media['error'] !== UPLOAD_ERR_OK) {
+            return ["Error al recibir la imagen del evento."];
+        }
+
+        $check = getimagesize($media['tmp_name']);
+        if ($check === false) {
+            return ["El archivo no es una imagen válida."];
+        }
+
+        if ($media['size'] > 5000000) {
+            $errors[] = "La imagen es demasiado grande. Máximo 5MB.";
+        }
+
+        $ext = strtolower(pathinfo($media['name'], PATHINFO_EXTENSION));
+        if (!in_array($ext, ['jpg', 'jpeg', 'png', 'webp'])) {
+            $errors[] = "La imagen debe ser JPG, JPEG, PNG o WEBP.";
+        }
+
+        if (!empty($errors)) {
+            return $errors;
+        }
+
+        $destination = $this->eventLocation . $idEvent . '/';
+
+        if (!is_dir($destination)) {
+            mkdir($destination, 0755, true);
+        }
+
+        $finalName = "banner.$ext";
+        $finalPath = $destination . $finalName;
+
+        if (!move_uploaded_file($media['tmp_name'], $finalPath)) {
+            return ["Error al mover la imagen al directorio destino."];
+        }
+
+        // Guardar ruta en BD
+        $rutaBD = 'Event' . $idEvent . '/' . $finalName;
+        $this->connection->query("UPDATE Events SET Image = '$rutaBD' WHERE ID_Event = '$idEvent'");
+
+        return ["Imagen del evento subida correctamente."];
+    }
+
+    public function uploadEventVideo($idEvent, $idMedia, $media)
+    {
+        $errors = [];
+
+        if ($media['error'] !== UPLOAD_ERR_OK) {
+            return ["Error al recibir el vídeo del evento."];
+        }
+
+        $mime    = mime_content_type($media['tmp_name']);
+        $isVideo = str_starts_with($mime, 'video/');
+
+        if (!$isVideo) {
+            return ["El archivo no es un vídeo válido."];
+        }
+
+        if ($media['size'] > 500000000) {
+            $errors[] = "El vídeo es demasiado grande. Máximo 500MB.";
+        }
+
+        $ext = strtolower(pathinfo($media['name'], PATHINFO_EXTENSION));
+        if (!in_array($ext, ['mp4', 'webm', 'mov'])) {
+            $errors[] = "El vídeo debe ser MP4, WEBM o MOV.";
+        }
+
+        if (!empty($errors)) {
+            return $errors;
+        }
+
+        $destination = $this->eventLocation . $idEvent . '/';
+
+        if (!is_dir($destination)) {
+            mkdir($destination, 0755, true);
+        }
+
+        $finalName = "video.$ext";
+        $finalPath = $destination . $finalName;
+
+        if (!move_uploaded_file($media['tmp_name'], $finalPath)) {
+            return ["Error al mover el vídeo al directorio destino."];
+        }
+
+        // Guardar ruta en BD (tabla Event_Media)
+        $rutaBD = 'Event' . $idEvent . '/' . $finalName;
+        $this->connection->query("UPDATE Event_Media SET Video = '$rutaBD' WHERE ID_Media = '$idMedia'");
+
+        return ["Vídeo del evento subido correctamente."];
+    }
+
+    public function uploadEventAudio($idEvent, $idMedia, $media)
+    {
+        $errors = [];
+
+        if ($media['error'] !== UPLOAD_ERR_OK) {
+            return ["Error al recibir el audio del evento."];
+        }
+
+        $mime    = mime_content_type($media['tmp_name']);
+        $isAudio = str_starts_with($mime, 'audio/');
+
+        if (!$isAudio) {
+            return ["El archivo no es un audio válido."];
+        }
+
+        if ($media['size'] > 100000000) {
+            $errors[] = "El audio es demasiado grande. Máximo 100MB.";
+        }
+
+        $ext = strtolower(pathinfo($media['name'], PATHINFO_EXTENSION));
+        if (!in_array($ext, ['mp3', 'wav', 'ogg', 'm4a'])) {
+            $errors[] = "El audio debe ser MP3, WAV, OGG o M4A.";
+        }
+
+        if (!empty($errors)) {
+            return $errors;
+        }
+
+        $destination = $this->eventLocation . $idEvent . '/';
+
+        if (!is_dir($destination)) {
+            mkdir($destination, 0755, true);
+        }
+
+        $finalName = "audio.$ext";
+        $finalPath = $destination . $finalName;
+
+        if (!move_uploaded_file($media['tmp_name'], $finalPath)) {
+            return ["Error al mover el audio al directorio destino."];
+        }
+
+        // Guardar ruta en BD (tabla Event_Media)
+        $rutaBD = 'Event' . $idEvent . '/' . $finalName;
+        $this->connection->query("UPDATE Event_Media SET Audio = '$rutaBD' WHERE ID_Media = '$idMedia'");
+
+        return ["Audio del evento subido correctamente."];
+    }
+
+    public function deleteEventUploads($idEvent)
+    {
+        $dir = $this->eventLocation . $idEvent . '/';
+        if (is_dir($dir)) {
+            $this->deleteDir($dir);
+        }
+    }
+
+    // Borra una carpeta y todo su contenido de forma recursiva
+    private function deleteDir($dir)
+    { //Escanea la carpeta y lo mete en un array y despues elimina del array las carpeta . y ..
+        $files = array_diff(scandir($dir), ['.', '..']);
+        foreach ($files as $file) {
+            $ruta = $dir . $file;
+            //borrar contenido carpeta o solo es archivo borrarlo
+            is_dir($ruta) ? $this->deleteDir($ruta) : unlink($ruta);
+        }
+
+        //borrar carpeta si esta vacia
+        rmdir($dir);
     }
 }

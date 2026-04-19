@@ -18,6 +18,7 @@ $premiere = $result['premiere'];
 $studio = $result['studio'];
 $gender = $result['gender'];
 $chapters = $result['chapters'];
+$active = $result['Active'];
 
 ?>
 
@@ -104,15 +105,13 @@ $chapters = $result['chapters'];
                     </div>
 
                     <div class="field-group">
-                        <label class="remember" for="remember-me">
-                            <input id="remember-me" type="checkbox">
-                            Recuérdame
-                        </label>ea>
+                        <label>Marcar la obra como activa</label>
+                    <input id="remember" name="active" type="checkbox" <?php echo ($active == 1 ? 'checked' : ''); ?>>
                     </div>
 
                     <div class="inline-actions">
                         <button type="submit" class="btn btn-add" name="edit_work">Guardar cambios</button>
-                        <button type="submit" class="btn btn-delete" name="delete">Eliminar Obra</button>
+                        <button type="submit" class="btn btn-delete" name="delete_work">Eliminar Obra</button>
                         <button type="reset" class="btn btn-delete" name="">Reiniciar</button>
                     </div>
                 </form>
@@ -120,8 +119,6 @@ $chapters = $result['chapters'];
             </section>
         </div>
     </main>
-
-    <input type="checkbox" id="menu-toggle">
 
     <?php include $_SERVER['DOCUMENT_ROOT'] . '/DAM-Transversal/view/includes/menu.php'; ?>
     <?php include $_SERVER['DOCUMENT_ROOT'] . '/DAM-Transversal/view/includes/footer.php'; ?>

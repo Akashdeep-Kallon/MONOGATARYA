@@ -30,6 +30,11 @@
  - Normalised FK column casing: 'Email' in Events renamed to 'email' to match Users PK.
  - Made Transcription_Video and Transcription_Audio nullable in Event_Media to allow
    inserts before transcriptions are available.
+   
+18/04/2026
+
+19/04/2026
+
  */
  
 USE Monogatarya;
@@ -68,22 +73,19 @@ CREATE TABLE IF NOT EXISTS Chapters (
     ID_Chapter INT AUTO_INCREMENT,
     Title VARCHAR(50),
     Description VARCHAR(100),
-    Chapter_Number INT,
-    Duration INT NULL,
-    Link VARCHAR(500),
+    Chapter_Number INT UNIQUE NOT NULL,
+    File VARCHAR(500),
     ID_Work INT,
 
     CONSTRAINT PK_Chapters PRIMARY KEY (ID_Chapter),
     FOREIGN KEY (ID_Work) REFERENCES Works(ID_Work) ON DELETE CASCADE
 );
  
--- Single, definitive Events table (stub removed)
 CREATE TABLE IF NOT EXISTS Events (
     ID_Event INT AUTO_INCREMENT,
     Title VARCHAR(100) NOT NULL,
     Subtitle VARCHAR(150),
     Description TEXT,
-    Image VARCHAR(500),
     Date_event DATE NOT NULL,
     Location VARCHAR(150),
     Capacity INT,
@@ -95,12 +97,11 @@ CREATE TABLE IF NOT EXISTS Events (
 CREATE TABLE IF NOT EXISTS Event_Media (
     ID_Media INT AUTO_INCREMENT,
     ID_Event INT NOT NULL,
+    Image VARCHAR(500),
     Video VARCHAR(500),
     Audio VARCHAR(500),
-    Image VARCHAR(500),
     Transcription_Video TEXT,
-    Transcription_Audio TEXT,
-    Description VARCHAR(200),
+    Transcription_Audio TEXT
     
     CONSTRAINT PK_Event_Media PRIMARY KEY (ID_Media),
     FOREIGN KEY (ID_Event) REFERENCES Events(ID_Event) ON DELETE CASCADE
@@ -149,12 +150,11 @@ CREATE PROCEDURE sp_add_Work(
     IN p_Type ENUM('Manga', 'Anime'),
     IN p_Title VARCHAR(25),
     IN p_Subtitle VARCHAR(100),
-    IN p_Image VARCHAR(500),
     IN p_Studio VARCHAR(25),
     IN p_Date_premiere DATE,
     IN p_Gender VARCHAR(50),
-    IN p_Description VARCHAR(500),
-    IN p_email VARCHAR(50)
+    IN p_Description VARCHAR(500), 
+    OUT p_ID_Work INT
 ) 
 BEGIN -- Control de errores
 DECLARE EXIT HANDLER FOR SQLEXCEPTION BEGIN ROLLBACK;
@@ -168,25 +168,23 @@ INSERT INTO
         Type,
         Title,
         Subtitle,
-        Image,
         Studio,
         Date_premiere,
         Gender,
-        Description,
-        email
+        Description
     )
 VALUES
     (
         p_Type,
         p_Title,
         p_Subtitle,
-        p_Image,
         p_Studio,
         p_Date_premiere,
         p_Gender,
-        p_Description,
-        p_email
+        p_Description
     );
+
+SELECT LAST_INSERT_ID() INTO p_ID_Work;
  
 COMMIT;
 END //
@@ -199,8 +197,7 @@ CREATE PROCEDURE sp_add_Event(
     IN p_Image VARCHAR(500),
     IN p_Date_event DATE,
     IN p_Location VARCHAR(150),
-    IN p_Capacity INT,
-    IN p_email VARCHAR(50)
+    IN p_Capacity INT
 )
 BEGIN
     -- Control de errores
@@ -219,8 +216,7 @@ BEGIN
         Image,
         Date_event,
         Location,
-        Capacity,
-        email
+        Capacity
     )
     VALUES (
         p_Title,
@@ -229,143 +225,10 @@ BEGIN
         p_Image,
         p_Date_event,
         p_Location,
-        p_Capacity,
-        p_email
+        p_Capacity
     );
 
     COMMIT;
 END //
 
-DELIMITER //
-CREATE PROCEDURE drop_all() BEGIN 
-DROP TABLE Chapters;
-DROP TABLE Event_Media;
-DROP TABLE Events;
-DROP TABLE Works;
-DROP TABLE Users;
-END //
-
 DELIMITER ;
- 
-INSERT INTO
-    Works (
-        Type,
-        Title,
-        Subtitle,
-        Chapters,
-        Image,
-        Date_premiere,
-        Studio,
-        Gender,
-        Description,
-        email
-    )
-VALUES
-    (
-        'Anime',
-        'One Piece',
-        NULL,
-        NULL,
-        'https://i.imgur.com/ZmYD4Uo.jpeg',
-        NULL,
-        NULL,
-        NULL,
-        'El anime más popular del momento',
-        NULL
-    ),
-    (
-        'Anime',
-        'Cyberpunk: Edgerunners',
-        NULL,
-        NULL,
-        'https://static.wikia.nocookie.net/cyberpunk/images/c/c1/Cyberpunk_Edgerunners_Trigger_2.jpg/revision/latest/scale-to-width-down/1200?cb=20230324074932&path-prefix=es%27,
-        NULL,
-        NULL,
-        NULL,
-        'Historias de un futuro donde la tecnología cambia la vida de todos',
-        NULL
-    ),
-    (
-        'Anime',
-        'Naruto',
-        NULL,
-        NULL,
-        'https://m.media-amazon.com/images/M/MV5BZTNjOWI0ZTAtOGY1OS00ZGU0LWEyOWYtMjhkYjdlYmVjMDk2XkEyXkFqcGc@._V1_.jpg%27,
-        NULL,
-        NULL,
-        NULL,
-        'La historia de un ninja que nunca se rinde y lucha por sus sueños',
-        NULL
-    ),
-    (
-        'Anime',
-        'Frieren: Beyond Journey''s End',
-        NULL,
-        NULL,
-        'https://es.web.img3.acsta.net/c_310_420/pictures/23/07/31/10/02/0006409.jpg',
-        NULL,
-        NULL,
-        NULL,
-        'Anime mejor valorado',
-        NULL
-    ),
-    (
-        'Anime',
-        'Kimetsu no Yaiba',
-        NULL,
-        NULL,
-        'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRlx52AOnIL8Vq7yJLUK9ZwNOLUXL9Gi9-grg&s',
-        NULL,
-        NULL,
-        NULL,
-        'Un joven lucha contra demonios para salvar a su hermana y proteger a los demás',
-        NULL
-    ),
-    (
-        'Anime',
-        'Jujutsu Kaisen',
-        NULL,
-        NULL,
-        'https://i0.wp.com/codigoespagueti.com/wp-content/uploads/2023/03/poster-jujutsu-kaisen-2.jpg?resize=1280%2C1810&ssl=1%27,
-        NULL,
-        NULL,
-        NULL,
-        'Un estudiante de secundaria que se involucra en luchas contra espíritus malvados',
-        NULL
-    ),
-    (
-        'Anime',
-        'Re:Zero',
-        NULL,
-        NULL,
-        'https://m.media-amazon.com/images/M/MV5BOTIyNGIzY2EtYjMyZS00Y2M0LWE4MTktNmQ3Y2IwZTBhNWE2XkEyXkFqcGc@._V1_.jpg%27,
-        NULL,
-        NULL,
-        NULL,
-        'Un joven que es transportado a un mundo mágico y debe luchar por su supervivencia',
-        NULL
-    ),
-    (
-        'Anime',
-        'Steins;Gate',
-        NULL,
-        NULL,
-        'https://m.media-amazon.com/images/M/MV5BZjI1YjZiMDUtZTI3MC00YTA5LWIzMmMtZmQ0NTZiYWM4NTYwXkEyXkFqcGc@._V1_QL75_UX190_CR0,2,190,281_.jpg%27,
-        NULL,
-        NULL,
-        NULL,
-        'Un joven que descubre un experimento que le permite viajar en el tiempo',
-        NULL
-    ),
-    (
-        'Anime',
-        'Ficha 9',
-        NULL,
-        NULL,
-        '../../assets/img/background-image.webp',
-        NULL,
-        NULL,
-        NULL,
-        'Descripción de la ficha',
-        NULL
-    );

@@ -18,7 +18,7 @@ $premiere = $result['premiere'];
 $studio = $result['studio'];
 $gender = $result['gender'];
 $chapters = $result['chapters'];
-$active = $result['Active'];
+$active = $result['active'];
 
 ?>
 
@@ -45,6 +45,7 @@ $active = $result['Active'];
 
                 <form class="form-vertical" action="<?php echo CONTROLLER_URL; ?>/CatalogController.php" method="post"
                     enctype="multipart/form-data">
+                    <input type="hidden" name="id" value="<?php echo htmlspecialchars($id); ?>">
 
                     <div class="field-group">
                         <label for="tipo-obra">Tipo</label>

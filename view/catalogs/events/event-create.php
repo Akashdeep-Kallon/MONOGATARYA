@@ -26,7 +26,8 @@ requireRole('promoter');
 
                 <h2 id="crear-evento-title" class="section-title">Formulario de gestión de evento</h2>
 
-                <form class="form-vertical" action="<?php echo CONTROLLER_URL; ?>/CatalogController.php" method="post">
+                <form class="form-vertical" action="<?php echo CONTROLLER_URL; ?>/CatalogController.php" method="post"
+                    enctype="multipart/form-data">
 
                     <div class="field-group">
                         <label for="nombre-evento">Título</label>

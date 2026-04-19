@@ -27,18 +27,15 @@ requireRole('promoter');
 
                 <form class="form-vertical" action="<?php echo CONTROLLER_URL; ?>/CatalogController.php" method="post"
                     enctype="multipart/form-data">
+                    <input type="hidden" name="id_work" value="<?php echo intval($_GET['id'] ?? 0); ?>">
 
                     <div class="field-group">
                         <label for="tipo-obra">Tipo</label>
                         <input id="title" type="text" name="type" value="<?php echo $_GET['type']; ?>" readonly>
                     </div>
                     <div class="field-group">
-                        <label for="title">Título de la obra</label>
+                        <label for="title">Título del capítulo</label>
                         <input id="title" type="text" name="title" required minlength="5" maxlength="50" required>
-                    </div>
-                    <div class="field-group">
-                        <label for="subtitle">Subtítulo de la obra</label>
-                        <input id="subtitle" type="text" name="subtitle" required minlength="5" maxlength="50">
                     </div>
 
                     <div class="field-group">

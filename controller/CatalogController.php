@@ -297,6 +297,7 @@ class Catalog
                 'premiere' => $workRow['Date_premiere'],
                 'studio' => $workRow['Studio'],
                 'gender' => $workRow['Gender'],
+                'active' => $workRow['Active'],
                 'chapters' => $chapters
             ];
         }
@@ -363,9 +364,6 @@ class Catalog
         }
         if (empty($_POST['title']) || strlen($_POST['title']) < 5) {
             $errors[] = "El título es obligatorio y debe tener al menos 5 caracteres.";
-        }
-        if (strlen($_POST['subtitle']) < 5) {
-            $errors[] = "El subtítulo debe tener al menos 5 caracteres.";
         }
         if (empty($_POST['number']) || intval($_POST['number']) < 1) {
             $errors[] = "El número de capítulo debe ser mayor que 0.";

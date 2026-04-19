@@ -51,11 +51,6 @@ requireRole('promoter');
                     </div>
 
                     <div class="field-group">
-                        <label for="number">Número de capítulo</label>
-                        <input id="number" type="number" name="number" min="1" required>
-                    </div>
-
-                    <div class="field-group">
                         <label for="description">Descripción</label>
                         <textarea id="description" name="description" required minlength="10"
                             maxlength="100"></textarea>

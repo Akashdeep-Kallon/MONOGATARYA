@@ -376,9 +376,6 @@ class Catalog
         if (empty($_POST['title']) || strlen($_POST['title']) < 5) {
             $errors[] = "El título es obligatorio y debe tener al menos 5 caracteres.";
         }
-        if (empty($_POST['number']) || intval($_POST['number']) < 1) {
-            $errors[] = "El número de capítulo debe ser mayor que 0.";
-        }
         if (strlen($_POST['description']) < 10) {
             $errors[] = "La descripción debe tener al menos 10 caracteres.";
         }
@@ -391,8 +388,13 @@ class Catalog
             return;
         }
 
+        $result = $this->connection->query(
+            "SELECT COALESCE(MAX(Chapter_Number), 0) + 1 AS next_num 
+             FROM Chapters WHERE ID_Work = $idWork"
+        );
+        $number = intval($result->fetch_assoc()['next_num']);
+
         $title = $this->connection->real_escape_string($_POST['title']);
-        $number = intval($_POST['number']);
         $description = $this->connection->real_escape_string($_POST['description']);
 
         // Insertar el capítulo en BD

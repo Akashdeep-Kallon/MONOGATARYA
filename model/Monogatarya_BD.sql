@@ -73,7 +73,7 @@ CREATE TABLE IF NOT EXISTS Chapters (
     ID_Chapter INT AUTO_INCREMENT,
     Title VARCHAR(50),
     Description VARCHAR(100),
-    Chapter_Number INT UNIQUE NOT NULL,
+    Chapter_Number INT NOT NULL,
     File VARCHAR(500),
     ID_Work INT,
 

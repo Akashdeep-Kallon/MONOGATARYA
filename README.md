@@ -15,7 +15,7 @@ Existen dos tipos de usuario:
 ### Login (RF1)
 - Formulario único de login para ambos tipos de usuario (`login.php`).
 - Verificación de email y contraseña contra la base de datos.
-- Redirección al perfil (`index.php`) si las credenciales son correctas.
+- Redirección al perfil (`profile.php`) si las credenciales son correctas.
 - Mensaje de error descriptivo si los datos son incorrectos.
 - Protección de páginas privadas mediante `requireLogin()` y `requireRole()`.
 - El promotor accede a funcionalidades exclusivas (creación de obras, eventos, subida de avatar).
@@ -26,7 +26,7 @@ Existen dos tipos de usuario:
   - `register-reader.php` → lector (status = 0)
   - `register-promoter.php` → promotor (status = 1)
 - Alta del usuario en la base de datos con los datos del formulario.
-- Redirección a `profile.php` si el registro es correcto.
+- Redirección a `index.php` si el registro es correcto.
 - Mensajes de error descriptivos si la validación falla (nombre, email, contraseña, confirmación).
 - El promotor puede subir una imagen de avatar durante el registro/edición de perfil.
 

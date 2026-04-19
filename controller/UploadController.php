@@ -170,31 +170,58 @@ class UploadController
     }
 
     //capitulos
-
     public function uploadChapter($idWork, $idChapter, $type, $media)
     {
-        $errors = [];
-        $messages = [];
+        if ($media['error'] !== UPLOAD_ERR_OK) {
+            return ["Error al recibir el archivo."];
+        }
 
-        // Detectar MIME real
         $mime = mime_content_type($media['tmp_name']);
-        $isZip = ($mime === 'application/zip' || $mime === 'application/x-zip-compressed');
 
-        // Definir destino según tipo de obra
         $basePath = ($type === 'Anime')
             ? $this->animeLocation . $idWork . '/'
             : $this->mangaLocation . $idWork . '/';
         $chaptersPath = $basePath . "chapters/";
+        $extractFolder = $chaptersPath . $idChapter . "/";
 
-        // Validaciones
-        if ($media['error'] !== UPLOAD_ERR_OK) {
-            return ["Error al recibir el archivo ZIP."];
+        if (!is_dir($extractFolder)) {
+            mkdir($extractFolder, 0755, true);
         }
+
+        // Anime
+        if ($type === 'Anime') {
+
+            $isVideo = strpos($mime, 'video/') === 0;
+            if (!$isVideo) {
+                return ["El archivo debe ser un vídeo (MP4, WEBM, MOV)."];
+            }
+            if ($media['size'] > 500000000) {
+                return ["El vídeo es demasiado grande. Máximo 500MB."];
+            }
+
+            $ext = strtolower(pathinfo($media['name'], PATHINFO_EXTENSION));
+            if (!in_array($ext, ['mp4', 'webm', 'mov'])) {
+                return ["Formato no permitido. Usa MP4, WEBM o MOV."];
+            }
+
+            $finalPath = $extractFolder . "episode." . $ext;
+            if (!move_uploaded_file($media['tmp_name'], $finalPath)) {
+                return ["Error al mover el vídeo al directorio destino."];
+            }
+
+            $rutaBD = $idWork . '/chapters/' . $idChapter . '/';
+            $this->connection->query("UPDATE Chapters SET File = '$rutaBD' WHERE ID_Chapter = '$idChapter'");
+
+            return ["Episodio subido correctamente."];
+        }
+
+        // Manga
+        $isZip = ($mime === 'application/zip' || $mime === 'application/x-zip-compressed');
         if (!$isZip) {
             return ["El archivo debe ser un ZIP válido."];
         }
         if ($media['size'] > 500000000) {
-            return ["El archivo ZIP es demasiado grande. Máximo 500MB."];
+            return ["El ZIP es demasiado grande. Máximo 500MB."];
         }
 
         $ext = strtolower(pathinfo($media['name'], PATHINFO_EXTENSION));
@@ -202,37 +229,19 @@ class UploadController
             return ["El archivo debe tener extensión .zip."];
         }
 
-        // Crear carpeta chapters/ si no existe
-        if (!is_dir($chaptersPath)) {
-            mkdir($chaptersPath, 0755, true);
-        }
-
-        // Carpeta final del capítulo
-        $extractFolder = $chaptersPath . $idChapter . "/";
-        if (!is_dir($extractFolder)) {
-            mkdir($extractFolder, 0755, true);
-        }
-
-        // Mover zip
         $zipPath = $extractFolder . "chapter.zip";
         if (!move_uploaded_file($media['tmp_name'], $zipPath)) {
-            return ["Error al mover el archivo ZIP al directorio destino."];
+            return ["Error al mover el ZIP al directorio destino."];
         }
 
-        // Descomprimir ZIP
         $zip = new ZipArchive;
-        if ($zip->open($zipPath) === TRUE) {
-            $zip->extractTo($extractFolder);
-            $zip->close();
-            $messages[] = "Capítulo descomprimido correctamente.";
-        } else {
+        if ($zip->open($zipPath) !== TRUE) {
             return ["No se pudo descomprimir el archivo ZIP."];
         }
-
-        // Borrar zip
+        $zip->extractTo($extractFolder);
+        $zip->close();
         unlink($zipPath);
 
-        // Generar index.txt con la lista de imágenes
         $files = array_filter(scandir($extractFolder), function ($file) {
             return preg_match('/\.(jpg|jpeg|png|webp)$/i', $file);
         });
@@ -242,17 +251,12 @@ class UploadController
         }
 
         natsort($files);
+        file_put_contents($extractFolder . "index.txt", implode(PHP_EOL, $files));
 
-        $txtPath = $extractFolder . "index.txt";
-        file_put_contents($txtPath, implode(PHP_EOL, $files));
-        $messages[] = "Archivo index.txt generado correctamente.";
-
-        // Actualizar ruta del capítulo en BD
         $rutaBD = $idWork . '/chapters/' . $idChapter . '/';
         $this->connection->query("UPDATE Chapters SET File = '$rutaBD' WHERE ID_Chapter = '$idChapter'");
 
-        $messages[] = "Capítulo subido correctamente.";
-        return $messages;
+        return ["Capítulo subido correctamente."];
     }
 
     public function deleteChapterUploads($idWork, $idChapter, $type)

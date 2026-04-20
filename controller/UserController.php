@@ -116,7 +116,7 @@ class UserController
             $this->message($errors, $location);
         }
 
-        if ($user = $this->getUser($email, $password)) {
+        if ($user = $this->getUser($email, $_SESSION['password'])) {
 
             $mensages = [];
             $user->updateUser($email, $name, $surname, $password, $bio);

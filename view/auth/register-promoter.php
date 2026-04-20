@@ -20,19 +20,7 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/DAM-Transversal/core/config.php';
 
         <h1 id="register-promoter-title">Registro de promotor</h1>
 
-        <?php if (!empty($_SESSION['login_error'])) { ?>
-            <div class="error-box">
-                <span class="icon">ⓘ</span>
-                <span>
-                    <?php
-                    foreach ($_SESSION['login_error'] as $error) {
-                        echo htmlspecialchars($error) . "<br>";
-                    }
-                    ?>
-                </span>
-            </div>
-            <?php unset($_SESSION['login_error']); ?>
-        <?php } ?>
+        <?php include $_SERVER['DOCUMENT_ROOT'] . '/DAM-Transversal/view/includes/message.php'; ?>
 
         <form action="<?php echo CONTROLLER_URL; ?>/UserController.php" method="POST">
 

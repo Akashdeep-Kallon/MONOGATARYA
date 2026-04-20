@@ -342,7 +342,7 @@ class Catalog
                 'title' => $chapRow['Title'],
                 'description' => $chapRow['Description'],
                 'number' => $chapRow['Chapter_Number'],
-                'file' => $chapRow['File'],
+                'File' => $chapRow['File'],
                 'prev_id' => $prev['ID_Chapter'] ?? null,
                 'next_id' => $next['ID_Chapter'] ?? null,
             ];

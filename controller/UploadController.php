@@ -83,9 +83,26 @@ class UploadController
         $errors = [];
         $messages = [];
 
-        // Detectar MIME real
-        $mime = mime_content_type($media['tmp_name']);
+        // Comprobar si hubo algún error al subir el archivo
+        if ($media['error'] !== UPLOAD_ERR_OK) {
+            // Caso 1: archivo demasiado grande
+            if ($media['error'] === UPLOAD_ERR_INI_SIZE || $media['error'] === UPLOAD_ERR_FORM_SIZE) {
+                $errors[] = "El archivo supera el tamaño máximo permitido.";
+            }
+            // Caso 2: no se envió ningún archivo
+            else if ($media['error'] === UPLOAD_ERR_NO_FILE) {
+                $errors[] = "No se recibió ningún archivo.";
+            }
+            // Caso 3: cualquier otro error
+            else {
+                $errors[] = "Error al recibir el archivo (código: {$media['error']}).";
+            }
+            return $errors;
+        }
 
+
+        // 2. llamar a mime_content_type
+        $mime = mime_content_type($media['tmp_name']);
         $isImage = str_starts_with($mime, 'image/');
         $isVideo = str_starts_with($mime, 'video/');
 
@@ -209,7 +226,7 @@ class UploadController
                 return ["Error al mover el vídeo al directorio destino."];
             }
 
-            $rutaBD = $idWork . '/chapters/' . $idChapter . '/';
+            $rutaBD = $idWork . '/chapters/' . $idChapter . '/episode.' . $ext;
             $this->connection->query("UPDATE Chapters SET File = '$rutaBD' WHERE ID_Chapter = '$idChapter'");
 
             return ["Episodio subido correctamente."];

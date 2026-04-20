@@ -76,19 +76,7 @@ requireRole('promoter');
                     </div>
 
                 </form>
-                <?php if (!empty($_SESSION['login_error'])) { ?>
-                    <div class="error-box">
-                        <span class="icon">ⓘ</span>
-                        <span>
-                            <?php
-                            foreach ($_SESSION['login_error'] as $error) {
-                                echo htmlspecialchars($error) . "<br>";
-                            }
-                            ?>
-                        </span>
-                    </div>
-                    <?php unset($_SESSION['login_error']); ?>
-                <?php } ?>
+                <?php include $_SERVER['DOCUMENT_ROOT'] . '/DAM-Transversal/view/includes/message.php'; ?>
             </section>
         </div>
     </main>

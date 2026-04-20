@@ -23,7 +23,7 @@ requireLogin();
     <main class="page-main">
         <div class="layout-container">
             <section class="card-panel profile-panel" aria-labelledby="perfil-titulo">
-                
+
                 <?php echo "<h2 id=\"perfil-titulo\" class=\"section-title\">Perfil " . htmlspecialchars(ucfirst($_SESSION['status'])) . "</h2>"; ?>
 
                 <form class="profile-layout" action="/DAM-Transversal/controller/UserController.php" method="post"
@@ -83,21 +83,7 @@ requireLogin();
                             <button type="submit" class="btn btn-delete" name="delete">Borrar cuenta</button>
                             <button type="reset" class="btn btn-add">Reiniciar</button>
                         </div>
-
-                        <?php if (!empty($_SESSION['login_error'])) { ?>
-                            <div class="error-box">
-                                <span class="icon">ⓘ</span>
-                                <span>
-                                    <?php
-                                    foreach ($_SESSION['login_error'] as $error) {
-                                        echo htmlspecialchars($error) . "<br>";
-                                    }
-                                    ?>
-                                </span>
-                            </div>
-                            <?php unset($_SESSION['login_error']); ?>
-                        <?php } ?>
-
+                        <?php include $_SERVER['DOCUMENT_ROOT'] . '/DAM-Transversal/view/includes/message.php'; ?>
                     </section>
                 </form>
             </section>

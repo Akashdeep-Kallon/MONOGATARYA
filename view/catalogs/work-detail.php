@@ -3,10 +3,13 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/DAM-Transversal/core/config.php';
 require_once $_SERVER['DOCUMENT_ROOT'] . '/DAM-Transversal/core/auth.php';
 require_once $_SERVER['DOCUMENT_ROOT'] . '/DAM-Transversal/controller/CatalogController.php';
 
-$type = $_GET['type'] ?? 'Anime';
+$type = $_GET['type'];
 $id = $_GET['id'] ?? 0;
 
 $result = (new Catalog())->returnWorkDetail($id, $type);
+
+$title = $result['active'];
+
 $title = $result['title'];
 $subtitle = $result['subtitle'];
 $image = $result['image'];
@@ -18,8 +21,13 @@ $gender = $result['gender'];
 $chapters = $result['chapters'];
 
 $redirectType = strtolower($type);
-if (!in_array($redirectType, ['anime', 'manga']))
+if ($redirectType !== 'anime' && $redirectTyp === 'manga') {
+    $redirectType = 'manga';
+}
+if ($redirectType !== 'manga' && $redirectTyp === 'anime') {
     $redirectType = 'anime';
+}
+
 $linkMedia = ($redirectType === 'manga') ? MANGA_URL : ANIME_URL;
 ?>
 <!DOCTYPE html>

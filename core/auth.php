@@ -31,4 +31,9 @@ function isRole($role)
     return isset($_SESSION['status']) && $_SESSION['status'] === $role;
 }
 
+function isActive($active)
+{
+    return isset($_SESSION['status']) && $_SESSION['status'] === $role;
+}
+
 ?>

@@ -31,9 +31,12 @@ function isRole($role)
     return isset($_SESSION['status']) && $_SESSION['status'] === $role;
 }
 
-function isActive($active)
+function requiereActive($active)
 {
-    return isset($_SESSION['status']) && $_SESSION['status'] === $role;
+    if ($active) {
+        header("Location: " . VIEW_URL . "/index.php");
+        exit();
+    }
 }
 
 ?>

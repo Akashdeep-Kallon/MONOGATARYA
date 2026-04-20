@@ -8,7 +8,8 @@ $id = $_GET['id'] ?? 0;
 
 $result = (new Catalog())->returnWorkDetail($id, $type);
 
-$title = $result['active'];
+$active = $result['active'];
+requiereActive($active);
 
 $title = $result['title'];
 $subtitle = $result['subtitle'];

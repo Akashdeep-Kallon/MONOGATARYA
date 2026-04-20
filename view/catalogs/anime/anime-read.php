@@ -9,10 +9,6 @@ $idChapter = $_GET['idChapter'];
 $chapterNumber = $_GET['numberChapter'];
 
 $result = (new Catalog())->returnChapter($id, $idChapter, $chapterNumber, $type);
-$active = $result['active'];
-
-requiereActive($active);
-
 $title = $result['title'];
 $description = $result['description'];
 $number = $result['number'];

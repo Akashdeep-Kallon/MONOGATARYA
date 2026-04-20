@@ -33,9 +33,9 @@ function isRole($role)
 
 function requiereActive($active)
 {
-    if ($active) {
-        header("Location: " . VIEW_URL . "/index.php");
-        exit();
+    if (!$active) {
+        http_response_code(403);
+        exit("No autorizado");
     }
 }
 

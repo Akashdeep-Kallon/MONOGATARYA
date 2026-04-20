@@ -5,7 +5,7 @@ INSERT INTO Works (
     Image,
     Trailer,
     Description,
-    PremiereDate,
+    Date_premiere,
     Studio,
     Gender,
     Chapters,

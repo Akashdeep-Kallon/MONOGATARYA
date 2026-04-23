@@ -345,6 +345,7 @@ class Catalog
                 'File' => $chapRow['File'],
                 'prev_id' => $prev['ID_Chapter'] ?? null,
                 'next_id' => $next['ID_Chapter'] ?? null,
+                
             ];
         }
 

@@ -41,16 +41,16 @@ requireRole('promoter');
                         <input id="subtitle" type="text" name="subtitle" required minlength="5" maxlength="75">
                     </div>
                     <div class="field-group">
-                        <label for="image-file" class="file-label">Subir imagen de portada</label>
+                        <label for="image-file" class="file-label">Subir imagen de portada(Png, Jpg, Webp...)</label>
                         <input id="image-file" type="file" accept="image/*" name="image_file">
                     </div>
 
                     <div class="field-group">
-                        <label for="image-url">URL de la imagen de portada</label>
+                        <label for="image-url">URL de la imagen de portada (opcional)</label>
                         <input id="image-url" type="text" name="image_url">
                     </div>
                     <div class="field-group">
-                        <label for="video">Subir tráiler</label>
+                        <label for="video">Subir tráiler (opcional)</label>
                         <input id="video" type="file" name="trailer" accept="video/*">
                     </div>
                     <div class="field-group">

@@ -20,7 +20,7 @@ class UserController
         $errors = [];
         // Validar campos vacíos
         if (empty($_POST['name']) || empty($_POST['username']) || empty($_POST['email']) || empty($_POST['password']) || empty($_POST['password_confirm'])) {
-            $this->message("Por favor, completa todos los campos para poder registrarse.", $location);
+            setError("Por favor, completa todos los campos para poder registrarse.", $location);
         }
         // Recoger datos
         $name = $_POST['name'];
@@ -45,7 +45,7 @@ class UserController
             $errors[] = "Las contraseñas no coinciden.";
         }
         if (!empty($errors)) {
-            $this->message($errors, $location);
+            setError($errors, $location);
         }
 
         $this->connection->query("CALL sp_comprove_email('$email', @result)");
@@ -53,7 +53,7 @@ class UserController
         $exist = intval($result->fetch_assoc()["exist"]);
 
         if ($exist === 1) {
-            $this->message("El correo electrónico ya está registrado.", $location);
+            setError("El correo electrónico ya está registrado.", $location);
         }
 
         if ($exist === 0) {
@@ -67,7 +67,7 @@ class UserController
             exit();
         }
         // Si no se registró
-        $this->message("Credenciales incorrectas.", $location);
+        setError("Credenciales incorrectas.", $location);
     }
 
     public function login()
@@ -75,7 +75,7 @@ class UserController
         $location = AUTH_URL . "/login.php";
 
         if (empty($_POST['email']) || empty($_POST['password'])) {
-            $this->message("Por favor, completa todos los campos para poder iniciar sesión.", $location);
+            setError("Por favor, completa todos los campos para poder iniciar sesión.", $location);
         }
         $email = $_POST['email'];
         $password = $_POST['password'];
@@ -86,10 +86,10 @@ class UserController
             header('Location: ' . VIEW_URL . '/profile.php');
             exit();
         } else {
-            $this->message("El correo electrónico o la contraseña es incorrecta.", $location);
+            setError("El correo electrónico o la contraseña es incorrecta.", $location);
         }
         // Si no se logea
-        $this->message("Credenciales incorrectas.", $location);
+        setError("Credenciales incorrectas.", $location);
     }
 
     public function update()
@@ -97,7 +97,7 @@ class UserController
         $location = "/DAM-Transversal/view/profile.php";
         $errors = [];
         if (empty($_POST['name']) || empty($_POST['surname']) || empty($_POST['email']) || empty($_POST['password'])) {
-            $this->message("Por favor, completa todos los campos.", $location);
+            setError("Por favor, completa todos los campos.", $location);
         }
         // Recoger datos
         $name = $_POST['name'];
@@ -116,7 +116,7 @@ class UserController
             $errors[] = "La contraseña debe tener al menos 6 caracteres.";
         }
         if (!empty($errors)) {
-            $this->message($errors, $location);
+            setError($errors, $location);
         }
 
         if ($user = $this->getUser($email, $_SESSION['password'])) {
@@ -135,11 +135,11 @@ class UserController
             session_unset();
             $user->setSessionUser();
             $mensages[] = "Los datos se han actualizado correctamente.";
-            $this->message($mensages, $location);
+            setError($mensages, $location);
 
         }
         // Si no se logea
-        $this->message("Credenciales incorrectas.", $location);
+        setError("Credenciales incorrectas.", $location);
     }
 
     public function delete()
@@ -147,7 +147,7 @@ class UserController
         $location = "/DAM-Transversal/view/profile.php";
         $errors = [];
         if (empty($_POST['name']) || empty($_POST['surname']) || empty($_POST['email']) || empty($_POST['password'])) {
-            $this->message("Por favor, completa todos los campos.", $location);
+            setError("Por favor, completa todos los campos.", $location);
         }
         // Recoger datos
         $email = $_POST['email'];
@@ -157,7 +157,7 @@ class UserController
             $errors[] = "La contraseña debe tener al menos 6 caracteres.";
         }
         if (!empty($errors)) {
-            $this->message($errors, $location);
+            setError($errors, $location);
         }
 
         if ($user = $this->getUser($email, $password)) {
@@ -166,10 +166,10 @@ class UserController
             (new UploadController)->deleteUserUploads($userID);
             $this->logout();
         } else {
-            $this->message("Contraseña incorrecta. Asegurate de poner la contraseña correcta para borrar la cuenta", $location);
+            setError("Contraseña incorrecta. Asegurate de poner la contraseña correcta para borrar la cuenta", $location);
         }
 
-        $this->message("Credenciales incorrectas.", $location);
+        setError("Credenciales incorrectas.", $location);
     }
 
     public function logout()
@@ -208,19 +208,6 @@ class UserController
         return false;
     }
 
-    public function message($message, $location)
-    {
-        if (!isset($_SESSION['login_error']) || !is_array($_SESSION['login_error'])) {
-            $_SESSION['login_error'] = [];
-        }
-        if (is_array($message)) {
-            $_SESSION['login_error'] = array_merge($_SESSION['login_error'], $message);
-        } else {
-            $_SESSION['login_error'][] = $message;
-        }
-        header("Location: " . $location);
-        exit();
-    }
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {

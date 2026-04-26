@@ -2,6 +2,7 @@
 require_once $_SERVER['DOCUMENT_ROOT'] . '/DAM-Transversal/core/config.php';
 require_once $_SERVER['DOCUMENT_ROOT'] . '/DAM-Transversal/core/database.php';
 require_once $_SERVER['DOCUMENT_ROOT'] . '/DAM-Transversal/controller/UploadController.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/DAM-Transversal/view/includes/message.php';
 
 class Catalog
 {
@@ -104,7 +105,7 @@ class Catalog
         }
 
         if (!empty($errors)) {
-            $this->exitMenssage($errors, $location);
+            setError($errors, $location);
             return;
         }
 
@@ -135,7 +136,7 @@ class Catalog
         // Ahora recuperar el OUT parameter
         $idResult = $this->connection->query("SELECT @p_ID_Work AS ID_Work");
         if (!$idResult) {
-            $this->exitMenssage(["Error al obtener el ID de la obra creada."], $location);
+            setError(["Error al obtener el ID de la obra creada."], $location);
             return;
         }
         $row = $idResult->fetch_assoc();
@@ -166,8 +167,12 @@ class Catalog
             }
         }
 
-        $mensajes[] = "Se ha creado correctamente la obra.";
-        $this->exitMenssage($mensajes, $location);
+        if (!empty($mensajes)) {
+            setError($mensajes, $location);
+        } else {
+            setSuccess("Obra creada correctamente.");
+            header("Location: " . $location);
+        }
     }
 
     public function updateWork()
@@ -211,7 +216,7 @@ class Catalog
         }
 
         if (!empty($errors)) {
-            $this->exitMenssage($errors, $location);
+            setError($errors, $location);
             return;
         }
 
@@ -258,8 +263,12 @@ class Catalog
             }
         }
 
-        $mensajes[] = "La obra se ha actualizado correctamente.";
-        $this->exitMenssage($mensajes, $location);
+        if (!empty($mensajes)) {
+            setError($mensajes, $location);
+        } else {
+            setSuccess("Obra actualizada correctamente.");
+            header("Location: " . $location);
+        }
     }
 
     public function deleteWork()
@@ -280,7 +289,8 @@ class Catalog
         // Eliminar los archivos del servidor
         (new UploadController())->deleteWorkUploads($id, $type);
 
-        $this->exitMenssage(["La obra se ha eliminado correctamente."], $location);
+        setSuccess("Obra eliminada correctamente.");
+        header("Location: " . $location);
     }
 
     public function returnWorkDetail($id, $type)
@@ -383,7 +393,7 @@ class Catalog
         }
 
         if (!empty($errors)) {
-            $this->exitMenssage($errors, $location);
+            setError($errors, $location);
             return;
         }
 
@@ -403,7 +413,7 @@ class Catalog
         ");
 
         if (!$result) {
-            $this->exitMenssage(["Error al crear el capítulo. Puede que el número de capítulo ya exista."], $location);
+            setError(["Error al crear el capítulo. Puede que el número de capítulo ya exista."], $location);
             return;
         }
 
@@ -418,8 +428,12 @@ class Catalog
             $mensajes[] = $uploadResult;
         }
 
-        $mensajes[] = "Capítulo añadido correctamente.";
-        $this->exitMenssage($mensajes, $location);
+        if (!empty($mensajes)) {
+            setError($mensajes, $location);
+        } else {
+            setSuccess("Capítulo añadido correctamente.");
+            header("Location: " . $location);
+        }
     }
 
     public function deleteChapter()
@@ -441,7 +455,8 @@ class Catalog
         // Eliminar archivos del servidor
         (new UploadController())->deleteChapterUploads($idWork, $idChapter, $type);
 
-        $this->exitMenssage(["Capítulo eliminado correctamente."], $location);
+        setSuccess("Capítulo eliminado correctamente.");
+        header("Location: " . $location);
     }
 
     //eventos
@@ -514,7 +529,7 @@ class Catalog
         }
 
         if (!empty($errors)) {
-            $this->exitMenssage($errors, $location);
+            setError($errors, $location);
             return;
         }
 
@@ -555,8 +570,12 @@ class Catalog
             }
         }
 
-        $mensajes[] = "Evento creado correctamente.";
-        $this->exitMenssage($mensajes, $location);
+        if (!empty($mensajes)) {
+            setError($mensajes, $location);
+        } else {
+            setSuccess("Evento creado correctamente.");
+            header("Location: " . $location);
+        }
     }
 
     public function updateEvent()
@@ -609,7 +628,7 @@ class Catalog
         }
 
         if (!empty($errors)) {
-            $this->exitMenssage($errors, $location);
+            setError($errors, $location);
             return;
         }
 
@@ -698,8 +717,12 @@ class Catalog
             }
         }
 
-        $mensajes[] = "El evento se ha actualizado correctamente.";
-        $this->exitMenssage($mensajes, $location);
+        if (!empty($mensajes)) {
+            setError($mensajes, $location);
+        } else {
+            setSuccess("Evento actualizado correctamente.");
+            header("Location: " . $location);
+        }
     }
 
     public function deleteEvent()
@@ -713,23 +736,10 @@ class Catalog
         // Eliminar los archivos del servidor
         (new UploadController())->deleteEventUploads($id);
 
-        $this->exitMenssage(["Evento eliminado correctamente."], $location);
+        setSuccess("Evento eliminado correctamente.");
+        header("Location: " . $location);
     }
 
-    //salir con mensaje
-    public function exitMenssage($message, $location)
-    {
-        if (!isset($_SESSION['login_error']) || !is_array($_SESSION['login_error'])) {
-            $_SESSION['login_error'] = [];
-        }
-        if (is_array($message)) {
-            $_SESSION['login_error'] = array_merge($_SESSION['login_error'], $message);
-        } else {
-            $_SESSION['login_error'][] = $message;
-        }
-        header("Location: " . $location);
-        exit();
-    }
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {

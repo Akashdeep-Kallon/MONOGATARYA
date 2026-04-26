@@ -3,6 +3,7 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/DAM-Transversal/core/config.php';
 require_once $_SERVER['DOCUMENT_ROOT'] . '/DAM-Transversal/core/database.php';
 require_once $_SERVER['DOCUMENT_ROOT'] . '/DAM-Transversal/model/User.php';
 require_once $_SERVER['DOCUMENT_ROOT'] . '/DAM-Transversal/controller/UploadController.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/DAM-Transversal/core/helpers.php';
 
 class UserController
 {

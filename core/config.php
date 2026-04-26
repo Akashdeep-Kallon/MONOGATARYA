@@ -25,4 +25,23 @@ define('ANIME_URL', '/uploads/Anime/');
 define('EVENT_URL', '/uploads/Event/');
 define('MANGA_URL', '/uploads/Manga/');
 define('USER_URL', '/uploads/User/');
+
+
+function getCoverImageUrl($image, $type)
+{
+    if (empty($image)) {
+        return ASSETS_URL . '/img/background-image.webp';
+    }
+
+    $image = trim($image);
+
+    $isExternal = str_starts_with($image, 'http://') || str_starts_with($image, 'https://');
+    if ($isExternal) {
+        return $image;
+    }
+
+    $base = strtolower($type) === 'manga' ? MANGA_URL : ANIME_URL;
+    return $base . $image;
+}
+
 ?>

@@ -331,11 +331,11 @@ class Catalog
         if ($chapRow = $chapQuery->fetch_assoc()) {
 
             $prev = $this->connection->query(
-                "SELECT ID_Chapter FROM Chapters WHERE ID_Work = $id AND Chapter_Number < {$chapRow['Chapter_Number']} ORDER BY Chapter_Number DESC LIMIT 1"
+                "SELECT ID_Chapter, Chapter_Number FROM Chapters WHERE ID_Work = $id AND Chapter_Number < {$chapRow['Chapter_Number']} ORDER BY Chapter_Number DESC LIMIT 1"
             )->fetch_assoc();
 
             $next = $this->connection->query(
-                "SELECT ID_Chapter FROM Chapters WHERE ID_Work = $id AND Chapter_Number > {$chapRow['Chapter_Number']} ORDER BY Chapter_Number ASC LIMIT 1"
+                "SELECT ID_Chapter, Chapter_Number FROM Chapters WHERE ID_Work = $id AND Chapter_Number > {$chapRow['Chapter_Number']} ORDER BY Chapter_Number ASC LIMIT 1"
             )->fetch_assoc();
 
             return [
@@ -345,6 +345,8 @@ class Catalog
                 'File' => $chapRow['File'],
                 'prev_id' => $prev['ID_Chapter'] ?? null,
                 'next_id' => $next['ID_Chapter'] ?? null,
+                'prev_chapter' => $prev['Chapter_Number'] ?? null,
+                'next_chapter' => $next['Chapter_Number'] ?? null,
             ];
         }
 

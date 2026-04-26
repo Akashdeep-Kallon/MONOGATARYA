@@ -15,7 +15,8 @@ $number = $result['number'];
 $file = $result['File'];
 $prevId = $result['prev_id'];
 $nextId = $result['next_id'];
-
+$prevChapter = $result['prev_chapter'];
+$nextChapter = $result['next_chapter'];
 // Ruta absoluta al index.txt
 $chapterPath = MANGA_URL . $file;
 $indexFile = $_SERVER['DOCUMENT_ROOT'] . '/DAM-Transversal/media/' . $file . 'index.txt';

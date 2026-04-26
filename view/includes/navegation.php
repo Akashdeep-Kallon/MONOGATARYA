@@ -1,17 +1,21 @@
 <!-- Navegación -->
 <div class="pagination">
+    <?php $readPage = strtolower($type) . '-read.php'; ?>
+
     <?php if ($prevId) { ?>
-        <a href="anime-read.php?type=<?php echo $type; ?>&id=<?php echo $id; ?>&idChapter=<?php echo $prevId; ?>">
+        <a href="<?php echo $readPage; ?>?type=<?php echo $type; ?>&id=<?php echo $id; ?>&idChapter=<?php echo $prevId; ?>&numberChapter=<?php echo $prevChapter; ?>">
             &laquo;
         </a>
     <?php } else { ?>
         <span class="pagination-disabled">&laquo;</span>
     <?php } ?>
 
-    <a href="../work-detail.php?type=<?php echo $type; ?>&id=<?php echo $id; ?>">⌂</a>
+    <a href="../work-detail.php?type=<?php echo $type; ?>&id=<?php echo $id; ?>">
+        ⌂
+    </a>
 
     <?php if ($nextId) { ?>
-        <a href="anime-read.php?type=<?php echo $type; ?>&id=<?php echo $id; ?>&idChapter=<?php echo $nextId; ?>">
+        <a href="<?php echo $readPage; ?>?type=<?php echo $type; ?>&id=<?php echo $id; ?>&idChapter=<?php echo $nextId; ?>&numberChapter=<?php echo $nextChapter; ?>">
             &raquo;
         </a>
     <?php } else { ?>

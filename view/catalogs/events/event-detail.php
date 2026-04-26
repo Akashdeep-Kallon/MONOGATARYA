@@ -47,7 +47,8 @@ $capacity = $result['capacity'];
                     </h2>
 
                     <figure class="event-hero-image">
-                        <img src="<?php echo htmlspecialchars($image); ?>"
+
+                        <img src="<?php echo !empty($image) ? EVENT_URL . htmlspecialchars($image) : ASSETS_URL . '/img/background-image.webp'; ?>"
                             alt="Imagen del evento <?php echo htmlspecialchars($title); ?>">
                     </figure>
 
@@ -99,15 +100,15 @@ $capacity = $result['capacity'];
                     <div class="stack-actions">
                         <button type="button" class="btn btn-add">Reservar plaza</button>
                         <button type="button" class="btn btn-add">Anular reserva</button>
-                        <?php if(isPromoter()) { ?>
-                        <a href="<?php echo VIEW_URL; ?>/event/event-edit.php?id=<?php echo $id; ?>"
-                            class="btn btn-add">
-                            Editar evento
-                        </a>
-                        <a href="<?php echo CONTROLLER_URL; ?>/CatalogController.php?delete_event=<?php echo $id; ?>"
-                            class="btn btn-delete">
-                            Eliminar evento
-                        </a>
+                        <?php if (isPromoter()) { ?>
+                            <a href="<?php echo VIEW_URL; ?>/event/event-edit.php?id=<?php echo $id; ?>"
+                                class="btn btn-add">
+                                Editar evento
+                            </a>
+                            <a href="<?php echo CONTROLLER_URL; ?>/CatalogController.php?delete_event=<?php echo $id; ?>"
+                                class="btn btn-delete">
+                                Eliminar evento
+                            </a>
                         <?php } ?>
                     </div>
                 </aside>

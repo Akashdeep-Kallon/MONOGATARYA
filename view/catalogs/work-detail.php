@@ -109,10 +109,10 @@ $linkMedia = ($redirectType === 'manga') ? MANGA_URL : ANIME_URL;
 
                 <!-- Aside -->
                 <aside class="event-aside" aria-labelledby="datos-work">
-                    <?php if (!empty($image)) { ?>
-                        <img class="aside-cover" src="<?php echo htmlspecialchars($image); ?>"
-                            alt="Portada de <?php echo htmlspecialchars($title); ?>">
-                    <?php } ?>
+                    <?php $img = !empty($image) ? ANIME_URL . htmlspecialchars($image) : ASSETS_URL . '/img/background-image.webp'; ?>
+
+                    <img class="aside-cover" src="<?php echo $image; ?>"
+                        alt="Portada de <?php echo htmlspecialchars($title); ?>">
 
                     <?php if (!empty($description)) { ?>
                         <p class="work-description"><?php echo htmlspecialchars($description); ?></p>

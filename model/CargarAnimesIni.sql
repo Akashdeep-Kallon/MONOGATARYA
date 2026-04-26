@@ -101,17 +101,4 @@ INSERT INTO Works (
     'Ciencia ficción',
     24,
     1
-),
-(
-    'anime',
-    'Ficha 9',
-    'Contenido de prueba',
-    '../../assets/img/background-image.webp',
-    NULL,
-    'Descripción de la ficha',
-    '2020-01-01',
-    'Desconocido',
-    'Otro',
-    0,
-    1
 );

@@ -42,7 +42,7 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/DAM-Transversal/core/auth.php';
                 <div class="card-grid card-grid-3">
                     <?php while ($manga = mysqli_fetch_assoc($query)) {
                         // Si la BD tiene columna de imagen úsala; si no, placeholder
-                        $img = !empty($manga['Image']) ? htmlspecialchars($manga['Image']) : ASSETS_URL . '/img/background-image.webp';
+                        $img = !empty($manga['Image']) ? MANGA_URL . htmlspecialchars($manga['Image']) : ASSETS_URL . '/img/background-image.webp';
                         $title = htmlspecialchars($manga['Title']);
                         $subtitle = htmlspecialchars($manga['Subtitle']);
                         $id = $manga['ID_Work'];

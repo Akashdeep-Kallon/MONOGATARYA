@@ -175,21 +175,17 @@ class UserController
     public function logout()
     {
         setSuccess('Sesión cerrada correctamente.');
-        session_unset();
-        if (ini_get("session.use_cookies")) {
-            $params = session_get_cookie_params();
-            setcookie(
-                session_name(),
-                '',
-                time() - 42000,
-                $params["path"],
-                $params["domain"],
-                $params["secure"],
-                $params["httponly"]
-            );
-        }
-        session_destroy();
-        header("Cache-Control: no-cache, no-store, must-revalidate, max-age=0");
+
+        unset(
+            $_SESSION['email'],
+            $_SESSION['status'],
+            $_SESSION['name'],
+            $_SESSION['surname'],
+            $_SESSION['avatar'],
+            $_SESSION['bio']
+        );
+        $_SESSION['status'] = 'guest';
+
         header("Location: " . AUTH_URL . "/login.php");
         exit();
     }

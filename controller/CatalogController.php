@@ -99,9 +99,6 @@ class Catalog
         $hasImage = !empty($_FILES['image_file']['name']);
         $hasUrl = !empty($_POST['image_url']);
 
-        if (!$hasImage && !$hasUrl) {
-            $errors[] = "Debes subir una imagen de portada o proporcionar una URL.";
-        }
         if ($hasImage && $hasUrl) {
             $errors[] = "Solo puedes usar una opción: imagen de portada o URL, no ambas.";
         }

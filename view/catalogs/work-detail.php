@@ -22,14 +22,12 @@ $gender = $result['gender'];
 $chapters = $result['chapters'];
 
 $redirectType = strtolower($type);
-if ($redirectType !== 'anime' && $redirectTyp === 'manga') {
-    $redirectType = 'manga';
-}
-if ($redirectType !== 'manga' && $redirectTyp === 'anime') {
+if ($redirectType !== 'anime' && $redirectType !== 'manga') {
     $redirectType = 'anime';
 }
 
 $linkMedia = ($redirectType === 'manga') ? MANGA_URL : ANIME_URL;
+$coverUrl = getCoverImageUrl($image, $type);
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -109,9 +107,7 @@ $linkMedia = ($redirectType === 'manga') ? MANGA_URL : ANIME_URL;
 
                 <!-- Aside -->
                 <aside class="event-aside" aria-labelledby="datos-work">
-                    <?php $img = !empty($image) ? ANIME_URL . htmlspecialchars($image) : ASSETS_URL . '/img/background-image.webp'; ?>
-
-                    <img class="aside-cover" src="<?php echo $image; ?>"
+                    <img class="aside-cover" src="<?php echo htmlspecialchars($coverUrl); ?>"
                         alt="Portada de <?php echo htmlspecialchars($title); ?>">
 
                     <?php if (!empty($description)) { ?>
@@ -151,7 +147,8 @@ $linkMedia = ($redirectType === 'manga') ? MANGA_URL : ANIME_URL;
                             $firstUrl = $redirectType . '/' . $redirectType . '-read.php'
                                 . '?type=' . $type
                                 . '&id=' . $id
-                                . '&idChapter=' . $chapters[0]['ID_Chapter'];
+                                . '&idChapter=' . $chapters[0]['ID_Chapter']
+                                . '&numberChapter=' . $chapters[0]['Chapter_Number'];
                             ?>
                             <a href="<?php echo $firstUrl; ?>" class="btn btn-add">
                                 Empezar a ver

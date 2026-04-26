@@ -42,14 +42,15 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/DAM-Transversal/core/auth.php';
                 <div class="card-grid card-grid-3">
                     <?php while ($manga = mysqli_fetch_assoc($query)) {
                         // Si la BD tiene columna de imagen úsala; si no, placeholder
-                        $img = !empty($manga['Image']) ? MANGA_URL . htmlspecialchars($manga['Image']) : ASSETS_URL . '/img/background-image.webp';
+                        $img = getCoverImageUrl($manga['Image'], 'Manga');
                         $title = htmlspecialchars($manga['Title']);
                         $subtitle = htmlspecialchars($manga['Subtitle']);
                         $id = $manga['ID_Work'];
                         $active = $manga['Active'];
                         ?>
+
                         <article class="content-card">
-                            <img class="card-image" src="<?php echo $img; ?>" alt="Portada de <?php echo $title; ?>">
+                            <img class="card-image" src="<?php echo htmlspecialchars($img); ?>" alt="Portada de <?php echo $title; ?>">
                             <h3><?php echo $title; ?></h3>
                             <p><?php echo $subtitle; ?></p>
                             <?php if ($active || isPromoter()) { ?>

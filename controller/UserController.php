@@ -3,7 +3,8 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/DAM-Transversal/core/config.php';
 require_once $_SERVER['DOCUMENT_ROOT'] . '/DAM-Transversal/core/database.php';
 require_once $_SERVER['DOCUMENT_ROOT'] . '/DAM-Transversal/model/User.php';
 require_once $_SERVER['DOCUMENT_ROOT'] . '/DAM-Transversal/controller/UploadController.php';
-require_once $_SERVER['DOCUMENT_ROOT'] . '/DAM-Transversal/core/helpers.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/DAM-Transversal/view/includes/message.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . 'DAM-Transversal/core/helper.php';
 
 class UserController
 {
@@ -62,6 +63,7 @@ class UserController
             session_unset();
             $user = new User($email, $status, $name, $surname, $password);
             $user->setSessionUser();
+            setSuccess('Registro completado correctamente.');
             header('Location: ' . VIEW_URL . '/index.php');
             exit();
         }
@@ -81,6 +83,7 @@ class UserController
         if ($user = $this->getUser($email, $password)) {
             session_unset();
             $user->setSessionUser();
+            setSuccess('Sesión iniciada correctamente.');
             header('Location: ' . VIEW_URL . '/profile.php');
             exit();
         } else {
@@ -172,6 +175,7 @@ class UserController
 
     public function logout()
     {
+        setSuccess('Sesión cerrada correctamente.');
         session_unset();
         if (ini_get("session.use_cookies")) {
             $params = session_get_cookie_params();

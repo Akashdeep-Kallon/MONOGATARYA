@@ -50,7 +50,6 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/DAM-Transversal/core/config.php';
             <input class="btn btn-primary" type="submit" value="Registrarse" name="register_lector">
         </form>
     </main>
-
 </body>
 
 </html>

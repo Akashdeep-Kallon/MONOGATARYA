@@ -72,7 +72,7 @@ if (!empty($errors) || !empty($successes)):
 
             <?php if (!empty($successes)) { ?>
                 <p id="flash-title" class="flash-heading">
-                    ✓ Se han completado correctamente la siguiente accion:
+                    ✓ Se ha completado correctamente la siguiente accion:
                 </p>
                 <ul class="flash-list">
                     <?php foreach ($successes as $msg) { ?>

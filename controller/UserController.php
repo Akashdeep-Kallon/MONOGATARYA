@@ -135,7 +135,7 @@ class UserController
             session_unset();
             $user->setSessionUser();
             $mensages[] = "Los datos se han actualizado correctamente.";
-            setError($mensages, $location);
+            setSuccess($mensages, $location);
 
         }
         // Si no se logea

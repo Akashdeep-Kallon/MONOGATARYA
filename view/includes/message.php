@@ -4,8 +4,19 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
 }
 
 // Mensajes de éxito
-function setSuccess($msg) {
-    $_SESSION['flash_success'][] = $msg;
+function setSuccess($msg, $location = null) {
+    if (!isset($_SESSION['flash_success']) || !is_array($_SESSION['flash_success'])) {
+        $_SESSION['flash_success'] = [];
+    }
+    if (is_array($msg)) {
+        $_SESSION['flash_success'] = array_merge($_SESSION['flash_success'], $msg);
+    } else {
+        $_SESSION['flash_success'][] = $msg;
+    }
+    if ($location) {
+        header("Location: " . $location);
+        exit();
+    }
 }
 
 // Mensajes de error

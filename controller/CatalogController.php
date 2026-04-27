@@ -170,8 +170,7 @@ class Catalog
         if (!empty($mensajes)) {
             setError($mensajes, $location);
         } else {
-            setSuccess("Obra creada correctamente.");
-            header("Location: " . $location);
+            setSuccess("Obra creada correctamente.", $location);
         }
     }
 
@@ -266,8 +265,7 @@ class Catalog
         if (!empty($mensajes)) {
             setError($mensajes, $location);
         } else {
-            setSuccess("Obra actualizada correctamente.");
-            header("Location: " . $location);
+            setSuccess("Obra actualizada correctamente.", $location);
         }
     }
 
@@ -289,8 +287,7 @@ class Catalog
         // Eliminar los archivos del servidor
         (new UploadController())->deleteWorkUploads($id, $type);
 
-        setSuccess("Obra eliminada correctamente.");
-        header("Location: " . $location);
+        setSuccess("Obra eliminada correctamente.", $location);
     }
 
     public function returnWorkDetail($id, $type)
@@ -431,8 +428,7 @@ class Catalog
         if (!empty($mensajes)) {
             setError($mensajes, $location);
         } else {
-            setSuccess("Capítulo añadido correctamente.");
-            header("Location: " . $location);
+            setSuccess("Capítulo añadido correctamente.", $location);
         }
     }
 
@@ -455,8 +451,7 @@ class Catalog
         // Eliminar archivos del servidor
         (new UploadController())->deleteChapterUploads($idWork, $idChapter, $type);
 
-        setSuccess("Capítulo eliminado correctamente.");
-        header("Location: " . $location);
+        setSuccess("Capítulo eliminado correctamente.", $location);
     }
 
     //eventos
@@ -573,8 +568,7 @@ class Catalog
         if (!empty($mensajes)) {
             setError($mensajes, $location);
         } else {
-            setSuccess("Evento creado correctamente.");
-            header("Location: " . $location);
+            setSuccess("Evento creado correctamente.", $location);
         }
     }
 
@@ -720,8 +714,7 @@ class Catalog
         if (!empty($mensajes)) {
             setError($mensajes, $location);
         } else {
-            setSuccess("Evento actualizado correctamente.");
-            header("Location: " . $location);
+            setSuccess("Evento actualizado correctamente.", $location);
         }
     }
 
@@ -736,8 +729,7 @@ class Catalog
         // Eliminar los archivos del servidor
         (new UploadController())->deleteEventUploads($id);
 
-        setSuccess("Evento eliminado correctamente.");
-        header("Location: " . $location);
+        setSuccess("Evento eliminado correctamente.", $location);
     }
 
 }

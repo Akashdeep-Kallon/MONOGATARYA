@@ -129,7 +129,7 @@ class UserController
                 if (is_array($avatarResult)) {
                     $mensages = array_merge($mensages, $avatarResult);
                 } else {
-                    $mensages[] = $avatarResult;
+                    setError($avatarResult, $location);
                 }
             }
             session_unset();

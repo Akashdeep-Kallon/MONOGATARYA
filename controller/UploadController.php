@@ -138,8 +138,8 @@ class UploadController
             }
 
             $ext = strtolower(pathinfo($media['name'], PATHINFO_EXTENSION));
-            if (!in_array($ext, ['mp4', 'webm', 'mov'])) {
-                $errors[] = "El tráiler debe ser MP4, WEBM o MOV.";
+            if (!in_array($ext, ['mp4', 'webm', 'mov', 'mkv'])) {
+                $errors[] = "El tráiler debe ser MP4, WEBM, MOV o MKV.";
             }
 
             $finalName = "trailer.$ext";

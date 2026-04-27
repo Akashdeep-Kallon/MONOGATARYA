@@ -33,7 +33,7 @@ function isRole($role)
 
 function requiereActive($active)
 {
-    if (!$active) {
+    if (!$active && !isPromoter()) {
         http_response_code(403);
         exit("No autorizado");
     }

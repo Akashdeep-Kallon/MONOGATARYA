@@ -38,7 +38,7 @@ if (!empty($_SESSION['flash_success']) && is_array($_SESSION['flash_success'])) 
 
 if (!empty($errors) || !empty($successes)):
 ?>
-<!-- ===== Modal de mensajes flash ===== -->
+<!-- Modal de mensajes flash -->
 <div id="flash-backdrop" role="dialog" aria-modal="true" aria-labelledby="flash-title">
 
     <div id="flash-modal" class="<?php echo !empty($errors) ? 'flash-error' : 'flash-success'; ?>">
@@ -46,29 +46,29 @@ if (!empty($errors) || !empty($successes)):
         <button id="flash-close" aria-label="Cerrar"
                 onclick="document.getElementById('flash-backdrop').remove()">✕</button>
 
-        <?php if (!empty($errors)): ?>
+        <?php if (!empty($errors)) { ?>
             <p id="flash-title" class="flash-heading">
                 ⚠ Se han producido los siguientes errores:
             </p>
             <ul class="flash-list">
-                <?php foreach ($errors as $msg): ?>
+                <?php foreach ($errors as $msg){ ?>
                     <li><?php echo htmlspecialchars($msg); ?></li>
-                <?php endforeach; ?>
+                <?php } ?>
             </ul>
-        <?php endif; ?>
+        <?php } ?>
 
-        <?php if (!empty($successes)): ?>
+        <?php if (!empty($successes)){ ?>
             <p id="flash-title" class="flash-heading">
                 ✓ <?php echo htmlspecialchars($successes[0]); ?>
             </p>
-            <?php if (count($successes) > 1): ?>
+            <?php if (count($successes) > 1){ ?>
                 <ul class="flash-list">
-                    <?php foreach (array_slice($successes, 1) as $msg): ?>
+                    <?php foreach (array_slice($successes, 1) as $msg){ ?>
                         <li><?php echo htmlspecialchars($msg); ?></li>
-                    <?php endforeach; ?>
+                    <?php }?>
                 </ul>
-            <?php endif; ?>
-        <?php endif; ?>
+            <?php } ?>
+        <?php } ?>
 
     </div>
 </div>
@@ -106,9 +106,17 @@ if (!empty($errors) || !empty($successes)):
 
 /* Estilo éxito */
 #flash-modal.flash-success {
-    background: #d4edda;
-    color: #155724;
-    border: 1px solid #b8dfc4;
+    background: #d1e7dd;
+    color: #0f5132;
+    border: 1px solid #badbcc;
+}
+
+#flash-modal.flash-success,
+#flash-modal.flash-success .flash-heading,
+#flash-modal.flash-success .flash-list,
+#flash-modal.flash-success .flash-list li,
+#flash-modal.flash-success #flash-close {
+    color: #0f5132;
 }
 
 .flash-heading {

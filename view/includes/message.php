@@ -122,6 +122,14 @@ if (!empty($errors) || !empty($successes)):
     border: 1px solid #badbcc;
 }
 
+#flash-modal.flash-error,
+#flash-modal.flash-error .flash-heading,
+#flash-modal.flash-error .flash-list,
+#flash-modal.flash-error .flash-list li,
+#flash-modal.flash-error #flash-close {
+    color: #9c0000;
+}
+
 #flash-modal.flash-success,
 #flash-modal.flash-success .flash-heading,
 #flash-modal.flash-success .flash-list,

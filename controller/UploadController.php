@@ -9,7 +9,7 @@ class UploadController
     private $animeLocation = '/var/www/uploads/Anime/';
     private $eventLocation = '/var/www/uploads/Event/';
     private $mangaLocation = '/var/www/uploads/Manga/';
-    private $userLocation  = '/var/www/uploads/User/';
+    private $userLocation = '/var/www/uploads/User/';
 
     public function __construct()
     {
@@ -22,10 +22,10 @@ class UploadController
     {
         $errors = [];
 
-        $type        = strtolower(pathinfo($avatar['name'], PATHINFO_EXTENSION));
-        $userId      = $user->getUserID();
+        $type = strtolower(pathinfo($avatar['name'], PATHINFO_EXTENSION));
+        $userId = $user->getUserID();
         $destination = $this->userLocation . $userId . '/';
-        $file_dest   = $destination . 'avatar.' . $type;
+        $file_dest = $destination . 'avatar.' . $type;
 
         if ($avatar['error'] !== UPLOAD_ERR_OK) {
             $errors[] = "Error al recibir el archivo.";
@@ -89,7 +89,7 @@ class UploadController
             return ["Error al recibir el archivo (código: {$media['error']})."];
         }
 
-        $mime    = mime_content_type($media['tmp_name']);
+        $mime = mime_content_type($media['tmp_name']);
         $isImage = str_starts_with($mime, 'image/');
         $isVideo = str_starts_with($mime, 'video/');
 
@@ -106,7 +106,7 @@ class UploadController
                 $errors[] = "La imagen debe ser JPG, JPEG, PNG o WEBP.";
             }
             $finalName = "banner.$ext";
-            $column    = "Image";
+            $column = "Image";
 
         } elseif ($isVideo) {
             if ($media['size'] > 50000000) {
@@ -117,7 +117,7 @@ class UploadController
                 $errors[] = "El tráiler debe ser MP4, WEBM, MOV o MKV.";
             }
             $finalName = "trailer.$ext";
-            $column    = "Trailer";
+            $column = "Trailer";
 
         } else {
             return ["El archivo no es una imagen ni un vídeo válido."];
@@ -168,11 +168,11 @@ class UploadController
             return ["Error al recibir el archivo (código: {$media['error']})."];
         }
 
-        $mime         = mime_content_type($media['tmp_name']);
-        $basePath     = ($type === 'Anime')
+        $mime = mime_content_type($media['tmp_name']);
+        $basePath = ($type === 'Anime')
             ? $this->animeLocation . $idWork . '/'
             : $this->mangaLocation . $idWork . '/';
-        $chaptersPath  = $basePath . "chapters/";
+        $chaptersPath = $basePath . "chapters/";
         $extractFolder = $chaptersPath . $idChapter . "/";
 
         if (!is_dir($extractFolder)) {
@@ -315,7 +315,7 @@ class UploadController
             return ["Error al recibir el vídeo del evento."];
         }
 
-        $mime    = mime_content_type($media['tmp_name']);
+        $mime = mime_content_type($media['tmp_name']);
         $isVideo = str_starts_with($mime, 'video/');
         if (!$isVideo) {
             return ["El archivo no es un vídeo válido."];
@@ -359,7 +359,7 @@ class UploadController
             return ["Error al recibir el audio del evento."];
         }
 
-        $mime    = mime_content_type($media['tmp_name']);
+        $mime = mime_content_type($media['tmp_name']);
         $isAudio = str_starts_with($mime, 'audio/');
         if (!$isAudio) {
             return ["El archivo no es un audio válido."];

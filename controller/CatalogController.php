@@ -364,9 +364,6 @@ class Catalog
 
         $maxResult = $this->connection->query("SELECT COALESCE(MAX(Chapter_Number), 0) AS max_num FROM Chapters WHERE ID_Work = $idWork");
         $maxNumber = intval($maxResult->fetch_assoc()['max_num']);
-        if ($chapterNumber > $maxNumber) {
-            $chapterNumber = $maxNumber;
-        }
 
         $location = VIEW_URL . '/catalogs/' . $redirectType . '/' . $redirectType . '-read.php?type=' . urlencode($type) . '&id=' . $idWork . '&idChapter=' . $idChapter . '&numberChapter=' . $chapterNumber;
 
@@ -377,7 +374,7 @@ class Catalog
                      SET Chapter_Number = Chapter_Number + 1
                      WHERE ID_Work = $idWork AND Chapter_Number >= $chapterNumber AND Chapter_Number < $currentNumber"
                 );
-            } else {
+            } elseif ($chapterNumber <= $maxNumber) {
                 $this->connection->query(
                     "UPDATE Chapters
                      SET Chapter_Number = Chapter_Number - 1
@@ -451,9 +448,9 @@ class Catalog
         );
         $nextNumber = intval($nextQuery->fetch_assoc()['next_num']);
 
-        if ($chapterNumber <= 0 || $chapterNumber > $nextNumber) {
+        if ($chapterNumber <= 0) {
             $chapterNumber = $nextNumber;
-        } else {
+        } elseif ($chapterNumber <= $nextNumber) {
             $this->connection->query(
                 "UPDATE Chapters
                  SET Chapter_Number = Chapter_Number + 1

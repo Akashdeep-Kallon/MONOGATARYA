@@ -284,6 +284,41 @@ details summary {
     white-space: nowrap;
 }
 
+/* ── Botón editar capítulo ── */
+.chapter-edit-btn {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.7rem;
+    height: 2.7rem;
+    border-radius: 10px;
+    background: #222;
+    border: 1px solid #333;
+    color: #fff;
+    text-decoration: none;
+    margin-right: 0.6rem;
+    transition: background 0.15s, color 0.15s, border-color 0.15s, transform 0.12s;
+}
+
+.chapter-edit-btn .icon {
+    width: 1.2rem;
+    height: 1.2rem;
+    fill: currentColor;
+    pointer-events: none;
+}
+
+.chapter-edit-btn:hover {
+    background: rgba(255, 65, 65, 0.12);
+    border-color: var(--accent);
+    color: var(--accent);
+    transform: scale(1.08);
+}
+
+.chapter-edit-btn:active {
+    transform: scale(0.94);
+}
+
 .chapter-dot {
     width: 8px;
     height: 8px;

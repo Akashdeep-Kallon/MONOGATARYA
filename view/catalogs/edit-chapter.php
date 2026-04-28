@@ -4,33 +4,47 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/DAM-Transversal/core/auth.php';
 require_once $_SERVER['DOCUMENT_ROOT'] . '/DAM-Transversal/controller/CatalogController.php';
 requireRole('promoter');
 
-$type = $_GET['type'] ?? '';
-$id = intval($_GET['id'] ?? 0);
-$idChapter = intval($_GET['idChapter'] ?? 0);
-$chapterNumber = intval($_GET['numberChapter'] ?? 0);
+if (isset($_GET['type'])) {
+    $type = $_GET['type'];
+} else {
+    $type = '';
+}
+
+if (isset($_GET['id'])) {
+    $id = intval($_GET['id']);
+} else {
+    $id = 0;
+}
+
+if (isset($_GET['idChapter'])) {
+    $idChapter = intval($_GET['idChapter']);
+} else {
+    $idChapter = 0;
+}
 
 $catalog = new Catalog();
 $chapter = $catalog->getChapter($id, $idChapter);
 
-$pageType = ucfirst(strtolower($type));
-$redirectType = strtolower($pageType);
-if (!in_array($redirectType, ['anime', 'manga'])) {
-    $redirectType = 'anime';
-}
-
-$location = VIEW_URL . '/catalogs/' . $redirectType . '/work-detail.php?type=' . urlencode($pageType) . '&id=' . $id;
-
-if ($id <= 0 || $idChapter <= 0 || !$chapter) {
-    header('Location: ' . $location);
+if (!$chapter) {
+    if ($type === 'Manga') {
+        $redirectType = 'manga';
+    } else {
+        $redirectType = 'anime';
+    }
+    header('Location: ' . VIEW_URL . '/catalogs/' . $redirectType . '/work-detail.php?type=' . urlencode($type) . '&id=' . $id);
     exit();
 }
 
-$uploadAccept = $pageType === 'Anime'
-    ? 'video/mp4,video/webm,.mov'
-    : '.zip,application/zip';
-$uploadHint = $pageType === 'Anime'
-    ? 'Sube el vídeo del episodio (MP4, WEBM, MOV — máx. 500MB)'
-    : 'Sube un ZIP con las páginas del capítulo en JPG/PNG/WEBP — máx. 500MB.';
+$pageType = $type;
+$chapterNumber = $chapter['Chapter_Number'];
+
+if ($pageType === 'Anime') {
+    $uploadAccept = 'video/mp4,video/webm,.mov';
+    $uploadHint = 'Sube el vídeo del episodio (MP4, WEBM, MOV — máx. 500MB)';
+} else {
+    $uploadAccept = '.zip,application/zip';
+    $uploadHint = 'Sube un ZIP con las páginas del capítulo en JPG/PNG/WEBP — máx. 500MB.';
+}
 ?>
 
 <!DOCTYPE html>
@@ -87,7 +101,7 @@ $uploadHint = $pageType === 'Anime'
 
                     <div class="inline-actions">
                         <button type="submit" class="btn btn-add" name="edit_chapter">Guardar cambios</button>
-                        <button type="submit" class="btn btn-delete" name="delete_chapter" onclick="return confirm('¿Estás seguro de que quieres eliminar este capítulo?');">Eliminar capítulo</button>
+                        <button type="submit" class="btn btn-delete" name="delete_chapter" onclick="return confirm('¿Estás seguro de que quieres eliminar este capítulo');">Eliminar capítulo</button>
                     </div>
                 </form>
                 <?php include $_SERVER['DOCUMENT_ROOT'] . '/DAM-Transversal/view/includes/message.php'; ?>

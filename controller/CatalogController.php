@@ -332,7 +332,8 @@ class Catalog
             $redirectType = 'anime';
         }
 
-        $location = VIEW_URL . '/catalogs/' . $redirectType . '/work-detail.php?type=' . urlencode($type) . '&id=' . $idWork;
+        $baseLocation = VIEW_URL . '/catalogs/' . $redirectType . '/work-detail.php?type=' . urlencode($type) . '&id=' . $idWork;
+        $location = $baseLocation;
         $errors = [];
 
         if (empty($_POST['title']) || strlen($_POST['title']) < 5) {
@@ -366,6 +367,8 @@ class Catalog
         if ($chapterNumber > $maxNumber) {
             $chapterNumber = $maxNumber;
         }
+
+        $location = VIEW_URL . '/catalogs/' . $redirectType . '/' . $redirectType . '-read.php?type=' . urlencode($type) . '&id=' . $idWork . '&idChapter=' . $idChapter . '&numberChapter=' . $chapterNumber;
 
         if ($chapterNumber !== $currentNumber) {
             if ($chapterNumber < $currentNumber) {
@@ -472,6 +475,8 @@ class Catalog
         }
 
         $idChapter = $this->connection->insert_id;
+        $readLocation = VIEW_URL . '/catalogs/' . $redirectType . '/' . $redirectType . '-read.php?type=' . urlencode($type) . '&id=' . $idWork . '&idChapter=' . $idChapter . '&numberChapter=' . $chapterNumber;
+
         $uploadResult = (new UploadController())->uploadChapter($idWork, $idChapter, $type, $_FILES['video']);
 
         if (is_array($uploadResult)) {
@@ -487,7 +492,7 @@ class Catalog
             return;
         }
 
-        setSuccess($uploadResult, $location);
+        setSuccess($uploadResult, $readLocation);
     }
 
     public function deleteChapter()

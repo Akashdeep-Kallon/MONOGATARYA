@@ -85,7 +85,7 @@ $coverUrl = getCoverImageUrl($image, $type);
                                     . '&idChapter=' . $chId
                                     . '&numberChapter=' . $chNum;
                                 ?>
-                                <li>
+                                <li class="chapter-row">
                                     <a class="chapter-item" href="<?php echo $chUrl; ?>">
                                         <span class="chapter-dot" aria-hidden="true"></span>
                                         <span class="chapter-info">
@@ -99,6 +99,11 @@ $coverUrl = getCoverImageUrl($image, $type);
                                             <?php } ?>
                                         </span>
                                     </a>
+                                    <?php if (isPromoter()) { ?>
+                                        <a class="btn btn-add btn-small" href="edit-chapter.php?type=<?php echo urlencode($type); ?>&id=<?php echo $id; ?>&idChapter=<?php echo $chId; ?>&numberChapter=<?php echo $chNum; ?>">
+                                            Editar
+                                        </a>
+                                    <?php } ?>
                                 </li>
                             <?php } ?>
                         </ul>

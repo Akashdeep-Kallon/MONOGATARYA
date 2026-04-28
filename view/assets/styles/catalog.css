@@ -259,6 +259,24 @@ details summary {
     background: rgba(176, 0, 32, 0.06);
 }
 
+.chapter-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.chapter-row .chapter-item {
+    flex: 1;
+    min-width: 0;
+}
+
+.btn-small {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.82rem;
+    min-width: auto;
+    white-space: nowrap;
+}
+
 .chapter-dot {
     width: 8px;
     height: 8px;

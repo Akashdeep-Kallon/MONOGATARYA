@@ -362,6 +362,73 @@ class Catalog
         exit();
     }
 
+    public function getChapter($idWork, $idChapter)
+    {
+        $idWork = intval($idWork);
+        $idChapter = intval($idChapter);
+
+        $result = $this->connection->query("SELECT * FROM Chapters WHERE ID_Work = $idWork AND ID_Chapter = $idChapter LIMIT 1");
+        return $result ? $result->fetch_assoc() : null;
+    }
+
+    public function updateChapter()
+    {
+        $idChapter = intval($_POST['id_chapter']);
+        $idWork = intval($_POST['id_work']);
+        $type = $_POST['type'];
+
+        $redirectType = strtolower($type);
+        if (!in_array($redirectType, ['anime', 'manga'])) {
+            $redirectType = 'anime';
+        }
+
+        $location = VIEW_URL . '/catalogs/' . $redirectType . '/work-detail.php?type=' . urlencode($type) . '&id=' . $idWork;
+        $errors = [];
+
+        if (empty($_POST['title']) || strlen($_POST['title']) < 5) {
+            $errors[] = "El título es obligatorio y debe tener al menos 5 caracteres.";
+        }
+        if (strlen($_POST['description']) < 10) {
+            $errors[] = "La descripción debe tener al menos 10 caracteres.";
+        }
+
+        if (!empty($errors)) {
+            setError($errors, $location);
+            return;
+        }
+
+        $chapterQuery = $this->connection->query("SELECT ID_Chapter FROM Chapters WHERE ID_Chapter = $idChapter AND ID_Work = $idWork");
+        if (!$chapterQuery || $chapterQuery->num_rows === 0) {
+            setError(["No se encontró el capítulo solicitado."], $location);
+            return;
+        }
+
+        $title = $this->connection->real_escape_string($_POST['title']);
+        $description = $this->connection->real_escape_string($_POST['description']);
+
+        $this->connection->query(
+            "UPDATE Chapters
+             SET Title = '$title', Description = '$description'
+             WHERE ID_Chapter = $idChapter AND ID_Work = $idWork"
+        );
+
+        $mensajes = [];
+        if (!empty($_FILES['video']['name'])) {
+            $uploadResult = (new UploadController())->uploadChapter($idWork, $idChapter, $type, $_FILES['video']);
+            if (is_array($uploadResult)) {
+                $mensajes = array_merge($mensajes, $uploadResult);
+            } else {
+                $mensajes[] = $uploadResult;
+            }
+        }
+
+        if (!empty($mensajes)) {
+            setError($mensajes, $location);
+        } else {
+            setSuccess("Capítulo actualizado correctamente.", $location);
+        }
+    }
+
     public function addChapter()
     {
         $type = $_POST['type'];
@@ -445,8 +512,26 @@ class Catalog
 
         $location = VIEW_URL . '/catalogs/' . $redirectType . '/' . $redirectType . '-catalog.php';
 
-        // Eliminar de BD
+        // Obtener número del capítulo a eliminar antes de borrarlo
+        $result = $this->connection->query("SELECT Chapter_Number FROM Chapters WHERE ID_Chapter = $idChapter AND ID_Work = $idWork");
+        $chapterRow = $result ? $result->fetch_assoc() : null;
+
+        if (!$chapterRow) {
+            setError(["No se encontró el capítulo solicitado."], $location);
+            return;
+        }
+
+        $deletedNumber = intval($chapterRow['Chapter_Number']);
+
+        // Eliminar capítulo de BD
         $this->connection->query("DELETE FROM Chapters WHERE ID_Chapter = $idChapter");
+
+        // Reenumerar los capítulos siguientes para evitar huecos
+        $this->connection->query(
+            "UPDATE Chapters \
+             SET Chapter_Number = Chapter_Number - 1 \
+             WHERE ID_Work = $idWork AND Chapter_Number > $deletedNumber"
+        );
 
         // Eliminar archivos del servidor
         (new UploadController())->deleteChapterUploads($idWork, $idChapter, $type);
@@ -749,6 +834,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
     if (isset($_POST['add_chapter'])) {
         $catalog->addChapter();
+    }
+    if (isset($_POST['edit_chapter'])) {
+        $catalog->updateChapter();
     }
     if (isset($_POST['delete_chapter'])) {
         $catalog->deleteChapter();

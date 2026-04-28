@@ -437,7 +437,7 @@ class Catalog
         if (!in_array($redirectType, ['anime', 'manga']))
             $redirectType = 'anime';
         $idWork = intval($_POST['id_work']);
-        $location = VIEW_URL . '/catalogs/' . $redirectType . '/work-detail.php?type=' . urlencode($type) . '&id=' . $idWork;
+        $location = VIEW_URL . '/catalogs/work-detail.php?type=' . urlencode($type) . '&id=' . $idWork;
 
         $errors = [];
 
@@ -499,13 +499,6 @@ class Catalog
 
         if (is_array($uploadResult)) {
             $this->connection->query("DELETE FROM Chapters WHERE ID_Chapter = $idChapter");
-            if ($chapterNumber < $nextNumber) {
-                $this->connection->query(
-                    "UPDATE Chapters
-                     SET Chapter_Number = Chapter_Number - 1
-                     WHERE ID_Work = $idWork AND Chapter_Number > $chapterNumber"
-                );
-            }
             setError($uploadResult, $location);
             return;
         }
@@ -534,12 +527,6 @@ class Catalog
         $deletedNumber = intval($chapterRow['Chapter_Number']);
 
         $this->connection->query("DELETE FROM Chapters WHERE ID_Chapter = $idChapter");
-
-        $this->connection->query(
-            "UPDATE Chapters
-             SET Chapter_Number = Chapter_Number - 1
-             WHERE ID_Work = $idWork AND Chapter_Number > $deletedNumber"
-        );
 
         (new UploadController())->deleteChapterUploads($idWork, $idChapter, $type);
 

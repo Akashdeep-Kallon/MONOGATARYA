@@ -11,7 +11,9 @@
     <?php } ?>
 
     <a href="../work-detail.php?type=<?php echo $type; ?>&id=<?php echo $id; ?>">
-        <svg class="icon icon-home" aria-label="Inicio" role="img"><use href="/view/assets/img/icon-sprites.svg#home"></use></svg>
+        <svg class="icon icon-home" aria-label="Inicio" role="img">
+            <use href="<?php echo ASSETS_URL; ?>/img/icon-sprites.svg#home"></use>
+        </svg>
     </a>
 
     <?php if ($nextId) { ?>

@@ -332,7 +332,8 @@ class Catalog
             $redirectType = 'anime';
         }
 
-        $location = VIEW_URL . '/catalogs/' . $redirectType . '/work-detail.php?type=' . urlencode($type) . '&id=' . $idWork;
+        $baseLocation = VIEW_URL . '/catalogs/' . $redirectType . '/work-detail.php?type=' . urlencode($type) . '&id=' . $idWork;
+        $location = $baseLocation;
         $errors = [];
 
         if (empty($_POST['title']) || strlen($_POST['title']) < 5) {
@@ -352,6 +353,23 @@ class Catalog
             return;
         }
 
+        $duplicateQuery = $this->connection->query(
+            "SELECT ID_Chapter FROM Chapters WHERE ID_Work = $idWork AND Chapter_Number = $chapterNumber LIMIT 1"
+        );
+        if ($duplicateQuery && $duplicateQuery->num_rows > 0) {
+            $duplicateRow = $duplicateQuery->fetch_assoc();
+            if (intval($duplicateRow['ID_Chapter']) !== $idChapter) {
+                $editLocation = VIEW_URL . '/catalogs/edit-chapter.php?type=' . urlencode($type)
+                    . '&id=' . $idWork
+                    . '&idChapter=' . $idChapter
+                    . '&numberChapter=' . $chapterNumber;
+                setError([
+                    "El número de capítulo $chapterNumber ya está asignado a otro capítulo. Elige otro número."
+                ], $editLocation);
+                return;
+            }
+        }
+
         $chapterQuery = $this->connection->query("SELECT Chapter_Number FROM Chapters WHERE ID_Chapter = $idChapter AND ID_Work = $idWork");
         if (!$chapterQuery || $chapterQuery->num_rows === 0) {
             setError(["No se encontró el capítulo solicitado."], $location);
@@ -363,9 +381,8 @@ class Catalog
 
         $maxResult = $this->connection->query("SELECT COALESCE(MAX(Chapter_Number), 0) AS max_num FROM Chapters WHERE ID_Work = $idWork");
         $maxNumber = intval($maxResult->fetch_assoc()['max_num']);
-        if ($chapterNumber > $maxNumber) {
-            $chapterNumber = $maxNumber;
-        }
+
+        $location = VIEW_URL . '/catalogs/' . $redirectType . '/' . $redirectType . '-read.php?type=' . urlencode($type) . '&id=' . $idWork . '&idChapter=' . $idChapter . '&numberChapter=' . $chapterNumber;
 
         if ($chapterNumber !== $currentNumber) {
             if ($chapterNumber < $currentNumber) {
@@ -374,7 +391,7 @@ class Catalog
                      SET Chapter_Number = Chapter_Number + 1
                      WHERE ID_Work = $idWork AND Chapter_Number >= $chapterNumber AND Chapter_Number < $currentNumber"
                 );
-            } else {
+            } elseif ($chapterNumber <= $maxNumber) {
                 $this->connection->query(
                     "UPDATE Chapters
                      SET Chapter_Number = Chapter_Number - 1
@@ -448,14 +465,18 @@ class Catalog
         );
         $nextNumber = intval($nextQuery->fetch_assoc()['next_num']);
 
-        if ($chapterNumber <= 0 || $chapterNumber > $nextNumber) {
+        if ($chapterNumber <= 0) {
             $chapterNumber = $nextNumber;
-        } else {
-            $this->connection->query(
-                "UPDATE Chapters
-                 SET Chapter_Number = Chapter_Number + 1
-                 WHERE ID_Work = $idWork AND Chapter_Number >= $chapterNumber"
+        } elseif ($chapterNumber < $nextNumber) {
+            $duplicateQuery = $this->connection->query(
+                "SELECT 1 FROM Chapters WHERE ID_Work = $idWork AND Chapter_Number = $chapterNumber LIMIT 1"
             );
+            if ($duplicateQuery && $duplicateQuery->num_rows > 0) {
+                setError([
+                    "El número de capítulo $chapterNumber ya está asignado a otro capítulo. Elige otro número o deja el campo vacío para usar el siguiente número disponible."
+                ], $location);
+                return;
+            }
         }
 
         $title = $this->connection->real_escape_string($_POST['title']);
@@ -472,6 +493,8 @@ class Catalog
         }
 
         $idChapter = $this->connection->insert_id;
+        $readLocation = VIEW_URL . '/catalogs/' . $redirectType . '/' . $redirectType . '-read.php?type=' . urlencode($type) . '&id=' . $idWork . '&idChapter=' . $idChapter . '&numberChapter=' . $chapterNumber;
+
         $uploadResult = (new UploadController())->uploadChapter($idWork, $idChapter, $type, $_FILES['video']);
 
         if (is_array($uploadResult)) {
@@ -487,7 +510,7 @@ class Catalog
             return;
         }
 
-        setSuccess($uploadResult, $location);
+        setSuccess($uploadResult, $readLocation);
     }
 
     public function deleteChapter()

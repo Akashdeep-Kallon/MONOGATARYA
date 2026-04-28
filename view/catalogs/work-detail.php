@@ -100,8 +100,8 @@ $coverUrl = getCoverImageUrl($image, $type);
                                         </span>
                                     </a>
                                     <?php if (isPromoter()) { ?>
-                                        <a class="btn btn-add btn-small" href="edit-chapter.php?type=<?php echo urlencode($type); ?>&id=<?php echo $id; ?>&idChapter=<?php echo $chId; ?>&numberChapter=<?php echo $chNum; ?>">
-                                            Editar
+                                        <a class="chapter-edit-btn" href="edit-chapter.php?type=<?php echo urlencode($type); ?>&id=<?php echo $id; ?>&idChapter=<?php echo $chId; ?>&numberChapter=<?php echo $chNum; ?>" aria-label="Editar capítulo <?php echo $chNum; ?>">
+                                            <svg class="icon" aria-hidden="true"><use href="<?php echo ASSETS_URL; ?>/img/icon-sprites.svg#edit"></use></svg>
                                         </a>
                                     <?php } ?>
                                 </li>

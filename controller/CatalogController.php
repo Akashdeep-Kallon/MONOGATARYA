@@ -437,7 +437,7 @@ class Catalog
         if (!in_array($redirectType, ['anime', 'manga']))
             $redirectType = 'anime';
         $idWork = intval($_POST['id_work']);
-        $location = VIEW_URL . '/catalogs/' . $redirectType . '/work-detail.php?type=' . urlencode($type) . '&id=' . $idWork;
+        $location = VIEW_URL . '/catalogs/work-detail.php?type=' . urlencode($type) . '&id=' . $idWork;
 
         $errors = [];
 
@@ -499,13 +499,6 @@ class Catalog
 
         if (is_array($uploadResult)) {
             $this->connection->query("DELETE FROM Chapters WHERE ID_Chapter = $idChapter");
-            if ($chapterNumber < $nextNumber) {
-                $this->connection->query(
-                    "UPDATE Chapters
-                     SET Chapter_Number = Chapter_Number - 1
-                     WHERE ID_Work = $idWork AND Chapter_Number > $chapterNumber"
-                );
-            }
             setError($uploadResult, $location);
             return;
         }
@@ -521,7 +514,7 @@ class Catalog
         $redirectType = strtolower($type);
         if (!in_array($redirectType, ['anime', 'manga']))
             $redirectType = 'anime';
-        $location = VIEW_URL . '/catalogs/' . $redirectType . '/work-detail.php?type=' . urlencode($type) . '&id=' . $idWork;
+        $location = VIEW_URL . '/catalogs/work-detail.php?type=' . urlencode($type) . '&id=' . $idWork;
 
         $result = $this->connection->query("SELECT Chapter_Number FROM Chapters WHERE ID_Chapter = $idChapter AND ID_Work = $idWork");
         $chapterRow = $result ? $result->fetch_assoc() : null;
@@ -534,12 +527,6 @@ class Catalog
         $deletedNumber = intval($chapterRow['Chapter_Number']);
 
         $this->connection->query("DELETE FROM Chapters WHERE ID_Chapter = $idChapter");
-
-        $this->connection->query(
-            "UPDATE Chapters
-             SET Chapter_Number = Chapter_Number - 1
-             WHERE ID_Work = $idWork AND Chapter_Number > $deletedNumber"
-        );
 
         (new UploadController())->deleteChapterUploads($idWork, $idChapter, $type);
 
@@ -763,22 +750,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (isset($_POST['create_work']))
         $catalog->createWork();
+
     if (isset($_POST['edit_work']))
         $catalog->updateWork();
+
     if (isset($_POST['delete_work']))
         $catalog->deleteWork();
+
     if (isset($_POST['add_chapter']))
         $catalog->addChapter();
-    }
-    if (isset($_POST['edit_chapter'])) {
+
+    if (isset($_POST['edit_chapter']))
         $catalog->updateChapter();
-    }
-    if (isset($_POST['delete_chapter'])) {
+
+    if (isset($_POST['delete_chapter']))
         $catalog->deleteChapter();
+
     if (isset($_POST['create_event']))
         $catalog->createEvent();
+
     if (isset($_POST['edit_event']))
         $catalog->updateEvent();
+
     if (isset($_POST['delete_event']))
         $catalog->deleteEvent();
 }

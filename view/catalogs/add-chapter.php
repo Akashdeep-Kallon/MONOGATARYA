@@ -35,6 +35,11 @@ requireRole('promoter');
                             value="<?php echo htmlspecialchars($_GET['type'] ?? ''); ?>" readonly>
                     </div>
                     <div class="field-group">
+                        <label for="chapter-number">Número de capítulo</label>
+                        <input id="chapter-number" type="number" name="chapter_number" min="1" placeholder="Dejar vacío para usar el siguiente número" value="<?php echo !empty($_GET['number']) ? intval($_GET['number']) : ''; ?>">
+                    </div>
+
+                    <div class="field-group">
                         <label for="title">Título del capítulo</label>
                         <input id="title" type="text" name="title" required minlength="5" maxlength="50" required>
                     </div>

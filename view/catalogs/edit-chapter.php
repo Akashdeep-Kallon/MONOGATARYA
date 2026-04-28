@@ -52,7 +52,7 @@ $uploadHint = $pageType === 'Anime'
     <main class="page-main">
         <div class="layout-container">
             <section class="card-panel" aria-labelledby="edit-chapter-title">
-                <h2 id="edit-chapter-title" class="section-title">Editar capítulo <?php echo $chapterNumber; ?></h2>
+                <h2 id="edit-chapter-title" class="section-title">Editar capítulo <?php echo htmlspecialchars($chapter['Chapter_Number']); ?></h2>
 
                 <form class="form-vertical" action="<?php echo CONTROLLER_URL; ?>/CatalogController.php" method="post" enctype="multipart/form-data">
                     <input type="hidden" name="id_work" value="<?php echo $id; ?>">
@@ -62,6 +62,11 @@ $uploadHint = $pageType === 'Anime'
                     <div class="field-group">
                         <label for="tipo-obra">Tipo</label>
                         <input id="tipo-obra" type="text" name="type_display" value="<?php echo htmlspecialchars($pageType); ?>" readonly>
+                    </div>
+
+                    <div class="field-group">
+                        <label for="chapter-number">Número de capítulo</label>
+                        <input id="chapter-number" type="number" name="chapter_number" min="1" value="<?php echo htmlspecialchars($chapter['Chapter_Number']); ?>" required>
                     </div>
 
                     <div class="field-group">

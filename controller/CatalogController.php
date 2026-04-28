@@ -162,7 +162,7 @@ class Catalog
         $redirectType = strtolower($type);
         if (!in_array($redirectType, ['anime', 'manga']))
             $redirectType = 'anime';
-        $location = VIEW_URL . '/catalogs/' . $redirectType . '/' . $redirectType . '-catalog.php';
+        $location = VIEW_URL . '/catalogs/' . $redirectType . '/work-detail.php?type=' . urlencode($type) . '&id=' . $id;
 
         $errors = [];
 
@@ -342,15 +342,51 @@ class Catalog
             $errors[] = "La descripción debe tener al menos 10 caracteres.";
         }
 
+        $chapterNumber = isset($_POST['chapter_number']) ? intval($_POST['chapter_number']) : 0;
+        if ($chapterNumber <= 0) {
+            $errors[] = "El número de capítulo debe ser un número válido mayor que cero.";
+        }
+
         if (!empty($errors)) {
             setError($errors, $location);
             return;
         }
 
-        $chapterQuery = $this->connection->query("SELECT ID_Chapter FROM Chapters WHERE ID_Chapter = $idChapter AND ID_Work = $idWork");
+        $chapterQuery = $this->connection->query("SELECT Chapter_Number FROM Chapters WHERE ID_Chapter = $idChapter AND ID_Work = $idWork");
         if (!$chapterQuery || $chapterQuery->num_rows === 0) {
             setError(["No se encontró el capítulo solicitado."], $location);
             return;
+        }
+
+        $currentRow = $chapterQuery->fetch_assoc();
+        $currentNumber = intval($currentRow['Chapter_Number']);
+
+        $maxResult = $this->connection->query("SELECT COALESCE(MAX(Chapter_Number), 0) AS max_num FROM Chapters WHERE ID_Work = $idWork");
+        $maxNumber = intval($maxResult->fetch_assoc()['max_num']);
+        if ($chapterNumber > $maxNumber) {
+            $chapterNumber = $maxNumber;
+        }
+
+        if ($chapterNumber !== $currentNumber) {
+            if ($chapterNumber < $currentNumber) {
+                $this->connection->query(
+                    "UPDATE Chapters
+                     SET Chapter_Number = Chapter_Number + 1
+                     WHERE ID_Work = $idWork AND Chapter_Number >= $chapterNumber AND Chapter_Number < $currentNumber"
+                );
+            } else {
+                $this->connection->query(
+                    "UPDATE Chapters
+                     SET Chapter_Number = Chapter_Number - 1
+                     WHERE ID_Work = $idWork AND Chapter_Number <= $chapterNumber AND Chapter_Number > $currentNumber"
+                );
+            }
+
+            $this->connection->query(
+                "UPDATE Chapters
+                 SET Chapter_Number = $chapterNumber
+                 WHERE ID_Chapter = $idChapter AND ID_Work = $idWork"
+            );
         }
 
         $title = $this->connection->real_escape_string($_POST['title']);
@@ -362,18 +398,16 @@ class Catalog
              WHERE ID_Chapter = $idChapter AND ID_Work = $idWork"
         );
 
-        $mensajes = [];
+        $uploadErrors = [];
+        $uploadSuccesses = [];
         if (!empty($_FILES['video']['name'])) {
-            $uploadResult = (new UploadController())->uploadChapter($idWork, $idChapter, $type, $_FILES['video']);
-            if (is_array($uploadResult)) {
-                $mensajes = array_merge($mensajes, $uploadResult);
-            } else {
-                $mensajes[] = $uploadResult;
-            }
+            $result = (new UploadController())->uploadChapter($idWork, $idChapter, $type, $_FILES['video']);
+            $this->handleUploadResult($result, $uploadErrors, $uploadSuccesses);
         }
 
-        if (!empty($mensajes)) {
-            setError($mensajes, $location);
+        if (!empty($uploadErrors)) {
+            setSuccess("Capítulo actualizado correctamente.");
+            setError($uploadErrors, $location);
         } else {
             setSuccess("Capítulo actualizado correctamente.", $location);
         }
@@ -385,10 +419,10 @@ class Catalog
         $redirectType = strtolower($type);
         if (!in_array($redirectType, ['anime', 'manga']))
             $redirectType = 'anime';
-        $location = VIEW_URL . '/catalogs/' . $redirectType . '/' . $redirectType . '-catalog.php';
+        $idWork = intval($_POST['id_work']);
+        $location = VIEW_URL . '/catalogs/' . $redirectType . '/work-detail.php?type=' . urlencode($type) . '&id=' . $idWork;
 
         $errors = [];
-        $idWork = intval($_POST['id_work']);
 
         if ($idWork <= 0)
             $errors[] = "La obra no es válida.";
@@ -397,31 +431,40 @@ class Catalog
         if (strlen($_POST['description']) < 10)
             $errors[] = "La descripción debe tener al menos 10 caracteres.";
 
-        // Mensaje de validación adaptado al tipo de obra
         $fileLabel = ($type === 'Anime') ? 'un vídeo (MP4, WEBM, MOV o MKV)' : 'un archivo ZIP';
         if (empty($_FILES['video']['name']) || $_FILES['video']['error'] === UPLOAD_ERR_NO_FILE) {
             $errors[] = "Debes subir $fileLabel con el capítulo.";
         }
+
+        $chapterNumber = isset($_POST['chapter_number']) ? intval($_POST['chapter_number']) : 0;
 
         if (!empty($errors)) {
             setError($errors, $location);
             return;
         }
 
-        // Número de capítulo
-        $result = $this->connection->query(
+        $nextQuery = $this->connection->query(
             "SELECT COALESCE(MAX(Chapter_Number), 0) + 1 AS next_num FROM Chapters WHERE ID_Work = $idWork"
         );
-        $number = intval($result->fetch_assoc()['next_num']);
+        $nextNumber = intval($nextQuery->fetch_assoc()['next_num']);
+
+        if ($chapterNumber <= 0 || $chapterNumber > $nextNumber) {
+            $chapterNumber = $nextNumber;
+        } else {
+            $this->connection->query(
+                "UPDATE Chapters
+                 SET Chapter_Number = Chapter_Number + 1
+                 WHERE ID_Work = $idWork AND Chapter_Number >= $chapterNumber"
+            );
+        }
 
         $title = $this->connection->real_escape_string($_POST['title']);
         $description = $this->connection->real_escape_string($_POST['description']);
 
-        // Insertar capítulo en BD
-        $inserted = $this->connection->query("
-            INSERT INTO Chapters (Title, Description, Chapter_Number, ID_Work)
-            VALUES ('$title', '$description', $number, $idWork)
-        ");
+        $inserted = $this->connection->query(
+            "INSERT INTO Chapters (Title, Description, Chapter_Number, ID_Work)
+             VALUES ('$title', '$description', $chapterNumber, $idWork)"
+        );
 
         if (!$inserted) {
             setError(["Error al crear el capítulo. Puede que el número de capítulo ya exista."], $location);
@@ -429,13 +472,17 @@ class Catalog
         }
 
         $idChapter = $this->connection->insert_id;
-
-        // Subir archivo — si falla, eliminar el capítulo de BD
         $uploadResult = (new UploadController())->uploadChapter($idWork, $idChapter, $type, $_FILES['video']);
 
         if (is_array($uploadResult)) {
-            // Rollback: borrar el capítulo recién creado
             $this->connection->query("DELETE FROM Chapters WHERE ID_Chapter = $idChapter");
+            if ($chapterNumber < $nextNumber) {
+                $this->connection->query(
+                    "UPDATE Chapters
+                     SET Chapter_Number = Chapter_Number - 1
+                     WHERE ID_Work = $idWork AND Chapter_Number > $chapterNumber"
+                );
+            }
             setError($uploadResult, $location);
             return;
         }
@@ -451,9 +498,8 @@ class Catalog
         $redirectType = strtolower($type);
         if (!in_array($redirectType, ['anime', 'manga']))
             $redirectType = 'anime';
-        $location = VIEW_URL . '/catalogs/' . $redirectType . '/' . $redirectType . '-catalog.php';
+        $location = VIEW_URL . '/catalogs/' . $redirectType . '/work-detail.php?type=' . urlencode($type) . '&id=' . $idWork;
 
-        // Obtener número del capítulo a eliminar antes de borrarlo
         $result = $this->connection->query("SELECT Chapter_Number FROM Chapters WHERE ID_Chapter = $idChapter AND ID_Work = $idWork");
         $chapterRow = $result ? $result->fetch_assoc() : null;
 
@@ -464,17 +510,14 @@ class Catalog
 
         $deletedNumber = intval($chapterRow['Chapter_Number']);
 
-        // Eliminar capítulo de BD
         $this->connection->query("DELETE FROM Chapters WHERE ID_Chapter = $idChapter");
 
-        // Reenumerar los capítulos siguientes para evitar huecos
         $this->connection->query(
-            "UPDATE Chapters \
-             SET Chapter_Number = Chapter_Number - 1 \
+            "UPDATE Chapters
+             SET Chapter_Number = Chapter_Number - 1
              WHERE ID_Work = $idWork AND Chapter_Number > $deletedNumber"
         );
 
-        // Eliminar archivos del servidor
         (new UploadController())->deleteChapterUploads($idWork, $idChapter, $type);
 
         setSuccess("Capítulo eliminado correctamente.", $location);

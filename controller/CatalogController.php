@@ -353,6 +353,23 @@ class Catalog
             return;
         }
 
+        $duplicateQuery = $this->connection->query(
+            "SELECT ID_Chapter FROM Chapters WHERE ID_Work = $idWork AND Chapter_Number = $chapterNumber LIMIT 1"
+        );
+        if ($duplicateQuery && $duplicateQuery->num_rows > 0) {
+            $duplicateRow = $duplicateQuery->fetch_assoc();
+            if (intval($duplicateRow['ID_Chapter']) !== $idChapter) {
+                $editLocation = VIEW_URL . '/catalogs/edit-chapter.php?type=' . urlencode($type)
+                    . '&id=' . $idWork
+                    . '&idChapter=' . $idChapter
+                    . '&numberChapter=' . $chapterNumber;
+                setError([
+                    "El número de capítulo $chapterNumber ya está asignado a otro capítulo. Elige otro número."
+                ], $editLocation);
+                return;
+            }
+        }
+
         $chapterQuery = $this->connection->query("SELECT Chapter_Number FROM Chapters WHERE ID_Chapter = $idChapter AND ID_Work = $idWork");
         if (!$chapterQuery || $chapterQuery->num_rows === 0) {
             setError(["No se encontró el capítulo solicitado."], $location);
@@ -450,12 +467,16 @@ class Catalog
 
         if ($chapterNumber <= 0) {
             $chapterNumber = $nextNumber;
-        } elseif ($chapterNumber <= $nextNumber) {
-            $this->connection->query(
-                "UPDATE Chapters
-                 SET Chapter_Number = Chapter_Number + 1
-                 WHERE ID_Work = $idWork AND Chapter_Number >= $chapterNumber"
+        } elseif ($chapterNumber < $nextNumber) {
+            $duplicateQuery = $this->connection->query(
+                "SELECT 1 FROM Chapters WHERE ID_Work = $idWork AND Chapter_Number = $chapterNumber LIMIT 1"
             );
+            if ($duplicateQuery && $duplicateQuery->num_rows > 0) {
+                setError([
+                    "El número de capítulo $chapterNumber ya está asignado a otro capítulo. Elige otro número o deja el campo vacío para usar el siguiente número disponible."
+                ], $location);
+                return;
+            }
         }
 
         $title = $this->connection->real_escape_string($_POST['title']);

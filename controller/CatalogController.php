@@ -740,22 +740,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (isset($_POST['create_work']))
         $catalog->createWork();
+
     if (isset($_POST['edit_work']))
         $catalog->updateWork();
+
     if (isset($_POST['delete_work']))
         $catalog->deleteWork();
+
     if (isset($_POST['add_chapter']))
         $catalog->addChapter();
-    }
-    if (isset($_POST['edit_chapter'])) {
+
+    if (isset($_POST['edit_chapter']))
         $catalog->updateChapter();
-    }
-    if (isset($_POST['delete_chapter'])) {
+
+    if (isset($_POST['delete_chapter']))
         $catalog->deleteChapter();
+
     if (isset($_POST['create_event']))
         $catalog->createEvent();
+
     if (isset($_POST['edit_event']))
         $catalog->updateEvent();
+
     if (isset($_POST['delete_event']))
         $catalog->deleteEvent();
 }

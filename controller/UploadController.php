@@ -109,8 +109,8 @@ class UploadController
             $column = "Image";
 
         } elseif ($isVideo) {
-            if ($media['size'] > 50000000) {
-                $errors[] = "El vídeo es demasiado grande. Máximo 50MB.";
+            if ($media['size'] > 1073741824) {
+                $errors[] = "El vídeo es demasiado grande. Máximo 1GB.";
             }
             $ext = strtolower(pathinfo($media['name'], PATHINFO_EXTENSION));
             if (!in_array($ext, ['mp4', 'webm', 'mov', 'mkv'])) {
@@ -185,8 +185,8 @@ class UploadController
             if (!$isVideo) {
                 return ["El archivo debe ser un vídeo (MP4, WEBM, MOV o MKV)."];
             }
-            if ($media['size'] > 500000000) {
-                return ["El vídeo es demasiado grande. Máximo 500MB."];
+            if ($media['size'] > 1073741824) {
+                return ["El vídeo es demasiado grande. Máximo 1GB."];
             }
 
             $ext = strtolower(pathinfo($media['name'], PATHINFO_EXTENSION));

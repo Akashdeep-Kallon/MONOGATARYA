@@ -41,7 +41,13 @@ function getCoverImageUrl($image, $type)
     }
 
     $base = strtolower($type) === 'manga' ? MANGA_URL : ANIME_URL;
-    return $base . $image;
+    $url = $base . $image;
+
+    $diskBase = strtolower($type) === 'manga' ? '/var/www/uploads/Manga/' : '/var/www/uploads/Anime/';
+    $filePath = $diskBase . $image;
+    $v = file_exists($filePath) ? filemtime($filePath) : 1;
+
+    return $url . '?v=' . $v;
 }
 
 ?>

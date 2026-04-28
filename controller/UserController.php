@@ -127,7 +127,10 @@ class UserController
             if ($user->isPromoter() && isset($_FILES['avatar']) && $_FILES['avatar']['error'] !== UPLOAD_ERR_NO_FILE) {
                 $avatarResult = (new UploadController())->uploadAvatar($user, $_FILES['avatar']);
                 if (is_array($avatarResult)) {
-                    $mensages = array_merge($mensages, $avatarResult);
+                    session_unset();
+                    $user->setSessionUser();
+                    setError($avatarResult, $location);
+                    return;
                 } else {
                     $mensages[] = $avatarResult;
                 }

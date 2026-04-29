@@ -63,8 +63,9 @@ class User
 
     public function getUserID()
     {
-        $userQuery = $this->connection->query("SELECT * FROM Users WHERE email = '$this->email'");
-        $userRow = $userQuery->fetch_assoc();
+        $stmt = $this->connection->prepare("SELECT ID_User FROM Users WHERE email = :email");
+        $stmt->execute([':email' => $this->email]);
+        $userRow = $stmt->fetch();
         return $userRow['ID_User'];
     }
 

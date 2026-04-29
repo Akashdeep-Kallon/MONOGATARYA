@@ -355,8 +355,13 @@ requireRole('promoter');
                     backdrop.hidden = true;
                 });
 
+                const formData = new FormData(form);
+                if (e.submitter && e.submitter.name) {
+                    formData.append(e.submitter.name, e.submitter.value || '1');
+                }
+
                 xhr.open('POST', form.action);
-                xhr.send(new FormData(form));
+                xhr.send(formData);
             });
         })();
     </script>

@@ -63,7 +63,7 @@
 /* Dots de navegación */
 .gallery-dots {
     position: absolute;
-    bottom: 0.55rem;
+    bottom: 0.75rem;
     left: 50%;
     transform: translateX(-50%);
     display: flex;

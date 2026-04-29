@@ -60,8 +60,18 @@ class UserController
         }
 
         if ($exist === 0) {
-            $this->connection->query("INSERT INTO Users (email, status, name, surname, password) 
-            VALUES ('$email', " . ($status ? 1 : 0) . ", '$name', '$surname', '$password')");
+            $stmt = $this->connection->prepare(
+                "INSERT INTO Users (email, status, name, surname, password)
+                 VALUES (:email, :status, :name, :surname, :password)"
+            );
+            $stmt->execute([
+                ':email'    => $email,
+                ':status'   => $status ? 1 : 0,
+                ':name'     => $name,
+                ':surname'  => $surname,
+                ':password' => $password,
+            ]);
+            
             session_unset();
             $user = new User($email, $status, $name, $surname, $password);
             $user->setSessionUser();

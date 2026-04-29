@@ -162,7 +162,7 @@ class Catalog
         $redirectType = strtolower($type);
         if (!in_array($redirectType, ['anime', 'manga']))
             $redirectType = 'anime';
-        $location = VIEW_URL . '/catalogs/' . $redirectType . '/work-detail.php?type=' . urlencode($type) . '&id=' . $id;
+        $location = VIEW_URL . '/catalogs/work-detail.php?type=' . urlencode($type) . '&id=' . $id;
 
         $errors = [];
 

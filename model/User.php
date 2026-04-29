@@ -57,7 +57,13 @@ class User
 
     public function updateAvatar($avatar)
     {
-        $this->connection->query("UPDATE Users SET avatar = '$avatar' WHERE email = '$this->email'");
+        $stmt = $this->connection->prepare(
+            "UPDATE Users SET avatar = :avatar WHERE email = :email"
+        );
+        $stmt->execute([
+            ':avatar' => $avatar,
+            ':email'  => $this->email,
+        ]);
     }
 
     public function isPromoter()

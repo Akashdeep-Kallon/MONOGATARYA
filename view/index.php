@@ -30,22 +30,89 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/DAM-Transversal/core/config.php';
                         <a class="btn-link" href="catalogs/anime/anime-catalog.php">Explorar catálogo</a>
                     </div>
                 </div>
-                <div class="gallery" aria-label="Galería destacada">
-                    <input type="radio" name="slider" id="s1" checked>
-                    <input type="radio" name="slider" id="s2">
-                    <input type="radio" name="slider" id="s3">
+                <div class="gallery" id="heroGallery" aria-label="Galería destacada" aria-roledescription="carrusel">
                     <div class="cards">
-                        <label for="s1" class="card" aria-label="Mostrar portada de One Piece">
+                        <div class="card" data-index="0" aria-label="Portada de One Piece">
                             <img src="<?php echo ASSETS_URL; ?>/gallery/card-onePiece.webp" alt="Portada de One Piece">
-                        </label>
-                        <label for="s2" class="card" aria-label="Mostrar portada de Dragon Ball Z">
+                        </div>
+                        <div class="card" data-index="1" aria-label="Portada de Dragon Ball Z">
                             <img src="<?php echo ASSETS_URL; ?>/gallery/card-dragonBall.webp" alt="Portada de Dragon Ball Z">
-                        </label>
-                        <label for="s3" class="card" aria-label="Mostrar portada de Attack on Titan">
+                        </div>
+                        <div class="card" data-index="2" aria-label="Portada de Attack on Titan">
                             <img src="<?php echo ASSETS_URL; ?>/gallery/card-shingekyNoKyojin.webp" alt="Portada de Attack on Titan">
-                        </label>
+                        </div>
                     </div>
+                    <div class="gallery-dots" aria-label="Navegación del carrusel"></div>
                 </div>
+
+                <script>
+                (function () {
+                    const gallery  = document.getElementById('heroGallery');
+                    const cards    = Array.from(gallery.querySelectorAll('.card'));
+                    const dotsWrap = gallery.querySelector('.gallery-dots');
+                    const TOTAL    = cards.length;
+                    let current    = 0;
+                    let autoTimer  = null;
+
+                    // Crear dots de navegación
+                    const dots = cards.map((_, i) => {
+                        const btn = document.createElement('button');
+                        btn.className = 'gallery-dot';
+                        btn.setAttribute('aria-label', `Mostrar portada ${i + 1}`);
+                        btn.addEventListener('click', () => { stopAutoplay(); goTo(i); startAutoplay(); });
+                        dotsWrap.appendChild(btn);
+                        return btn;
+                    });
+
+                    function goTo(index) {
+                        const prev = (index - 1 + TOTAL) % TOTAL;
+                        const next = (index + 1) % TOTAL;
+
+                        cards.forEach(c => { c.classList.remove('is-active', 'is-prev', 'is-next'); });
+                        dots.forEach(d => d.classList.remove('is-active'));
+
+                        cards[index].classList.add('is-active');
+                        cards[prev].classList.add('is-prev');
+                        cards[next].classList.add('is-next');
+                        dots[index].classList.add('is-active');
+
+                        current = index;
+                    }
+
+                    function startAutoplay() {
+                        autoTimer = setInterval(() => goTo((current + 1) % TOTAL), 3500);
+                    }
+
+                    function stopAutoplay() {
+                        clearInterval(autoTimer);
+                    }
+
+                    // Clic en carta lateral → avanza al slide
+                    cards.forEach((card, i) => card.addEventListener('click', () => {
+                        stopAutoplay(); goTo(i); startAutoplay();
+                    }));
+
+                    // Soporte swipe táctil
+                    let touchStartX = 0;
+                    gallery.addEventListener('touchstart', e => {
+                        touchStartX = e.touches[0].clientX;
+                        stopAutoplay();
+                    }, { passive: true });
+                    gallery.addEventListener('touchend', e => {
+                        const diff = touchStartX - e.changedTouches[0].clientX;
+                        if (Math.abs(diff) > 40)
+                            goTo(diff > 0 ? (current + 1) % TOTAL : (current - 1 + TOTAL) % TOTAL);
+                        startAutoplay();
+                    }, { passive: true });
+
+                    // Pausar autoplay con hover
+                    gallery.addEventListener('mouseenter', stopAutoplay);
+                    gallery.addEventListener('mouseleave', startAutoplay);
+
+                    goTo(0);
+                    startAutoplay();
+                })();
+                </script>
             </section>
 
             <section class="card-panel" aria-labelledby="ultimos-title">

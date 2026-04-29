@@ -115,7 +115,7 @@ class Catalog
         $description = $this->connection->quote($_POST['description']);
 
         $this->connection->query("
-            CALL sp_add_Work('$type','$title','$subtitle','$studio','$premiereDate','$gender','$description',@p_ID_Work)
+            CALL sp_add_Work($type,$title,$subtitle,$studio,$premiereDate,$gender,$description,@p_ID_Work)
         ");
 
         $idResult = $this->connection->query("SELECT @p_ID_Work AS ID_Work");
@@ -133,7 +133,7 @@ class Catalog
 
         if ($hasUrl) {
             $imageUrl = $this->connection->quote($_POST['image_url']);
-            $this->connection->query("UPDATE Works SET Image = '$imageUrl' WHERE ID_Work = $idWork");
+            $this->connection->query("UPDATE Works SET Image = $imageUrl WHERE ID_Work = $idWork");
         }
         if ($hasImage) {
             $result = (new UploadController())->uploadWork($idWork, $type, $_FILES['image_file']);
@@ -156,7 +156,7 @@ class Catalog
     public function updateWork()
     {
         $id = intval($_POST['id']);
-        $type = $_POST['type'];
+        $type = $this->connection->quote($_POST['type']);
         $redirectType = strtolower($type);
         if (!in_array($redirectType, ['anime', 'manga']))
             $redirectType = 'anime';
@@ -198,8 +198,8 @@ class Catalog
 
         $this->connection->query("
             UPDATE Works
-            SET Title = '$title', Subtitle = '$subtitle', Date_premiere = '$premiereDate',
-                Studio = '$studio', Gender = '$gender', Description = '$description', Active = $active
+            SET Title = $title, Subtitle = $subtitle, Date_premiere = $premiereDate,
+                Studio = $studio, Gender = $gender, Description = $description, Active = $active
             WHERE ID_Work = $id
         ");
 
@@ -208,7 +208,7 @@ class Catalog
 
         if ($hasUrl) {
             $imageUrl = $this->connection->quote($_POST['image_url']);
-            $this->connection->query("UPDATE Works SET Image = '$imageUrl' WHERE ID_Work = $id");
+            $this->connection->query("UPDATE Works SET Image = $imageUrl WHERE ID_Work = $id");
         }
         if ($hasImage) {
             $result = (new UploadController())->uploadWork($id, $type, $_FILES['image_file']);
@@ -245,7 +245,8 @@ class Catalog
     public function returnWorkDetail($id, $type)
     {
         $id = intval($id);
-        $workQuery = $this->connection->query("SELECT * FROM Works WHERE ID_Work = $id AND Type = '$type'");
+        $type = $this->connection->quote($type);
+        $workQuery = $this->connection->query("SELECT * FROM Works WHERE ID_Work = $id AND Type = $type");
 
         if ($workRow = $workQuery->fetch()) {
             $chapQuery = $this->connection->query("SELECT * FROM Chapters WHERE ID_Work = $id ORDER BY Chapter_Number ASC");
@@ -411,7 +412,7 @@ class Catalog
 
         $this->connection->query(
             "UPDATE Chapters
-             SET Title = '$title', Description = '$description'
+             SET Title = $title, Description = $description
              WHERE ID_Chapter = $idChapter AND ID_Work = $idWork"
         );
 
@@ -485,7 +486,7 @@ class Catalog
 
         $inserted = $this->connection->query(
             "INSERT INTO Chapters (Title, Description, Chapter_Number, ID_Work)
-             VALUES ('$title', '$description', $chapterNumber, $idWork)"
+             VALUES ($title, $description, $chapterNumber, $idWork)"
         );
 
         if (!$inserted) {
@@ -605,7 +606,7 @@ class Catalog
         $image = $hasImageUrl ? $this->connection->quote($_POST['image_url']) : '';
 
         $this->connection->query("
-            CALL sp_add_Event('$title','$subtitle','$description','$image','$dateEvent','$locationVal',$capacity)
+            CALL sp_add_Event($title,$subtitle,$description,$image,$dateEvent,$locationVal,$capacity)
         ");
 
         $idResult = $this->connection->query("SELECT LAST_INSERT_ID() AS ID_Event");
@@ -675,8 +676,8 @@ class Catalog
 
         $this->connection->query("
             UPDATE Events
-            SET Title = '$title', Subtitle = '$subtitle', Description = '$description',
-                Date_event = '$dateEvent', Location = '$locationVal', Capacity = $capacity, Active = $active
+            SET Title = $title, Subtitle = $subtitle, Description = $description,
+                Date_event = $dateEvent, Location = $locationVal, Capacity = $capacity, Active = $active
             WHERE ID_Event = $id
         ");
 
@@ -685,7 +686,7 @@ class Catalog
 
         if ($hasImageUrl) {
             $imageUrl = $this->connection->quote($_POST['image_url']);
-            $this->connection->query("UPDATE Events SET Image = '$imageUrl' WHERE ID_Event = $id");
+            $this->connection->query("UPDATE Events SET Image = $imageUrl WHERE ID_Event = $id");
         }
         if ($hasImageFile) {
             $result = (new UploadController())->uploadEventImage($id, $_FILES['image_file']);
@@ -704,13 +705,13 @@ class Catalog
             $idMedia = $mediaRow['ID_Media'];
             $this->connection->query("
                 UPDATE Event_Media
-                SET Transcription_Video = '$tVideo', Transcription_Audio = '$tAudio'
+                SET Transcription_Video = $tVideo, Transcription_Audio = $tAudio
                 WHERE ID_Media = $idMedia
             ");
         } else {
             $this->connection->query("
                 INSERT INTO Event_Media (ID_Event, Video, Audio, Transcription_Video, Transcription_Audio)
-                VALUES ($id, '$videoValue', '$audioValue', '$tVideo', '$tAudio')
+                VALUES ($id, $videoValue, $audioValue, $tVideo, $tAudio)
             ");
             $idMedia = intval($this->connection->lastInsertId());
         }

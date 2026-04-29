@@ -36,7 +36,9 @@ requireRole('promoter');
                     </div>
                     <div class="field-group">
                         <label for="chapter-number">Número de capítulo</label>
-                        <input id="chapter-number" type="number" name="chapter_number" min="1" placeholder="Dejar vacío para usar el siguiente número" value="<?php echo !empty($_GET['number']) ? intval($_GET['number']) : ''; ?>">
+                        <input id="chapter-number" type="number" name="chapter_number" min="1"
+                            placeholder="Dejar vacío para usar el siguiente número"
+                            value="<?php echo !empty($_GET['number']) ? intval($_GET['number']) : ''; ?>">
                     </div>
 
                     <div class="field-group">

@@ -5,11 +5,12 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/DAM-Transversal/core/auth.php';
 
 <header>
     <div class="header-group">
-        <label for="menu-toggle" class="icon-btn white" aria-label="Menú">
+        <button id="menuBtn" class="icon-btn white" aria-label="Abrir menú" aria-expanded="false"
+            aria-controls="menuSidebar">
             <svg class="icon">
                 <use href="<?php echo ASSETS_URL; ?>/img/icon-sprites.svg#menu"></use>
             </svg>
-        </label>
+        </button>
 
         <a href="<?php echo VIEW_URL; ?>/index.php" class="logo-link" aria-label="Volver a inicio">
             <img src="<?php echo ASSETS_URL; ?>/img/logo.webp" alt="Logo de la página Monogatarya">

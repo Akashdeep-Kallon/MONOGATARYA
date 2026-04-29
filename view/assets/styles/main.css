@@ -245,11 +245,6 @@ header {
 }
 
 /* ===== Menú lateral ===== */
-#menu-toggle {
-    display: none;
-}
-
-.menu-width,
 .menu-sidebar {
     position: fixed;
     top: 0;
@@ -259,6 +254,7 @@ header {
     max-width: 300px;
     height: 100%;
     margin: 0;
+    padding: 0;
     padding-top: 120px;
     overflow-y: auto;
     list-style: none;
@@ -266,22 +262,41 @@ header {
     transition: left 0.3s ease;
 }
 
-.menu-width li,
+.menu-sidebar ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
 .menu-sidebar li {
     padding: 20px 30px;
     border-bottom: 1px solid #444;
 }
 
-.menu-width li a,
 .menu-sidebar li a {
     color: var(--text);
     font-size: 18px;
     text-decoration: none;
 }
 
-.menu-width li a:hover,
 .menu-sidebar li a:hover {
     color: var(--accent);
+}
+
+.menu-sidebar.is-open {
+    left: 0;
+}
+
+.menu-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 999;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.menu-overlay.is-open {
+    display: block;
 }
 
 .logout button {
@@ -297,10 +312,7 @@ header {
     border-bottom: 2px solid var(--accent);
 }
 
-#menu-toggle:checked~.menu-width,
-#menu-toggle:checked~.menu-sidebar {
-    left: 0;
-}
+
 
 /* ===== Utilidades ===== */
 .sr-only {

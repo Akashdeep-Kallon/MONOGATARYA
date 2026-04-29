@@ -30,7 +30,7 @@ class User
         $stmt = $this->connection->prepare("SELECT avatar, bio FROM Users WHERE email = :email");
         $stmt->execute([':email' => $this->email]);
         $userRow = $stmt->fetch();
-        
+
         $_SESSION['avatar'] = $userRow['avatar'];
         $_SESSION['bio'] = $userRow['bio'];
     }
@@ -46,11 +46,11 @@ class User
             "CALL sp_update_user(:name, :surname, :email, :password, :bio)"
         );
         $stmt->execute([
-            ':name'     => $this->name,
-            ':surname'  => $this->surname,
-            ':email'    => $this->email,
+            ':name' => $this->name,
+            ':surname' => $this->surname,
+            ':email' => $this->email,
             ':password' => $this->password,
-            ':bio'      => $bio,
+            ':bio' => $bio,
         ]);
         $stmt->closeCursor();
     }
@@ -62,7 +62,7 @@ class User
         );
         $stmt->execute([
             ':avatar' => $avatar,
-            ':email'  => $this->email,
+            ':email' => $this->email,
         ]);
     }
 

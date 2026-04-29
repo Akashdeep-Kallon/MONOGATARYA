@@ -31,19 +31,18 @@ class Catalog
 
     // Paginación de catálogos
 
-    public function returnCatalog($type, $catalog)
+    public function returnCatalog(string $type, string $catalog)
     {
-        $queryTotal = false;
-
+        $queryTotal = null;
         if ($type === 'Works') {
-            $queryTotal = mysqli_query($this->connection, "SELECT COUNT(*) AS total FROM Works WHERE Type = '$catalog'");
+            $queryTotal = $this->connection->query("SELECT COUNT(*) AS total FROM Works WHERE Type = '$catalog'");
         }
         if ($type === 'Events') {
-            $queryTotal = mysqli_query($this->connection, "SELECT COUNT(*) AS total FROM Events");
+            $queryTotal = $this->connection->query("SELECT COUNT(*) AS total FROM Events");
         }
 
-        $fila = $queryTotal ? mysqli_fetch_assoc($queryTotal) : null;
-        $totalMedia = $fila['total'] ?? 0;
+        $fila = $queryTotal->fetch();
+        $totalMedia = $fila['total'];
         $limit = 6;
         $totalPages = max(1, ceil($totalMedia / $limit));
         $page = isset($_GET['page']) ? intval($_GET['page']) : 1;
@@ -56,13 +55,13 @@ class Catalog
         $offset = ($page - 1) * $limit;
 
         if ($type === 'Events') {
-            $sql = "SELECT * FROM Events LIMIT $limit OFFSET $offset";
+            $sql = $this->connection->prepare("SELECT * FROM Events LIMIT $limit OFFSET $offset");
         } else {
-            $escapedCatalog = $this->connection->real_escape_string($catalog);
-            $sql = "SELECT * FROM Works WHERE Type = '$escapedCatalog' LIMIT $limit OFFSET $offset";
+            $escapedCatalog = $this->connection->quote($catalog);
+            $sql = $this->connection->prepare("SELECT * FROM Works WHERE Type = $escapedCatalog LIMIT $limit OFFSET $offset");
         }
 
-        $query = mysqli_query($this->connection, $sql);
+        $query = $this->connection->query($sql);
 
         return [
             'page' => $page,

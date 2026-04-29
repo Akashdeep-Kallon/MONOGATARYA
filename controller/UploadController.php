@@ -10,6 +10,8 @@ class UploadController
     private $eventLocation = '/var/www/uploads/Event/';
     private $mangaLocation = '/var/www/uploads/Manga/';
     private $userLocation = '/var/www/uploads/User/';
+    private $ffmpegPath = 'ffmpeg';
+    private $ffprobePath = 'ffprobe';
 
     public function __construct()
     {
@@ -90,8 +92,9 @@ class UploadController
         }
 
         $mime = mime_content_type($media['tmp_name']);
+        $ext = strtolower(pathinfo($media['name'], PATHINFO_EXTENSION));
         $isImage = str_starts_with($mime, 'image/');
-        $isVideo = str_starts_with($mime, 'video/');
+        $isVideo = str_starts_with($mime, 'video/') || in_array($ext, ['mp4', 'webm', 'mov', 'mkv']);
 
         $destination = ($type === 'Anime')
             ? $this->animeLocation . $id . '/'
@@ -101,7 +104,6 @@ class UploadController
             if ($media['size'] > 5000000) {
                 $errors[] = "La imagen es demasiado grande. Máximo 5MB.";
             }
-            $ext = strtolower(pathinfo($media['name'], PATHINFO_EXTENSION));
             if (!in_array($ext, ['jpg', 'jpeg', 'png', 'webp'])) {
                 $errors[] = "La imagen debe ser JPG, JPEG, PNG o WEBP.";
             }
@@ -112,11 +114,14 @@ class UploadController
             if ($media['size'] > 1073741824) {
                 $errors[] = "El vídeo es demasiado grande. Máximo 1GB.";
             }
-            $ext = strtolower(pathinfo($media['name'], PATHINFO_EXTENSION));
             if (!in_array($ext, ['mp4', 'webm', 'mov', 'mkv'])) {
                 $errors[] = "El tráiler debe ser MP4, WEBM, MOV o MKV.";
             }
-            $finalName = "trailer.$ext";
+            if (!$this->commandExists($this->ffmpegPath) || !$this->commandExists($this->ffprobePath)) {
+                $errors[] = "FFmpeg/ffprobe no esta instalado o no esta disponible para PHP. No se puede convertir el trailer a MP4.";
+            }
+            $finalName = "trailer.mp4";
+            $sourceName = "upload-trailer-source.$ext";
             $column = "Trailer";
 
         } else {
@@ -132,6 +137,24 @@ class UploadController
         }
 
         $finalPath = $destination . $finalName;
+        if ($isVideo) {
+            $sourcePath = $destination . $sourceName;
+            if (!move_uploaded_file($media['tmp_name'], $sourcePath)) {
+                return ["Error al mover el archivo al directorio destino."];
+            }
+
+            $conversionResult = $this->convertVideoToMp4($sourcePath, $finalPath);
+            @unlink($sourcePath);
+            if (is_array($conversionResult)) {
+                return $conversionResult;
+            }
+
+            $rutaBD = $id . '/' . $finalName;
+            $this->connection->query("UPDATE Works SET $column = '$rutaBD' WHERE ID_Work = '$id';");
+
+            return "Trailer convertido a MP4 correctamente.";
+        }
+
         if (!move_uploaded_file($media['tmp_name'], $finalPath)) {
             return ["Error al mover el archivo al directorio destino."];
         }
@@ -181,7 +204,8 @@ class UploadController
 
         // Anime: vídeo 
         if ($type === 'Anime') {
-            $isVideo = str_starts_with($mime, 'video/');
+            $ext = strtolower(pathinfo($media['name'], PATHINFO_EXTENSION));
+            $isVideo = str_starts_with($mime, 'video/') || in_array($ext, ['mp4', 'webm', 'mov', 'mkv']);
             if (!$isVideo) {
                 return ["El archivo debe ser un vídeo (MP4, WEBM, MOV o MKV)."];
             }
@@ -189,20 +213,38 @@ class UploadController
                 return ["El vídeo es demasiado grande. Máximo 1GB."];
             }
 
-            $ext = strtolower(pathinfo($media['name'], PATHINFO_EXTENSION));
             if (!in_array($ext, ['mp4', 'webm', 'mov', 'mkv'])) {
                 return ["Formato no permitido. Usa MP4, WEBM, MOV o MKV."];
             }
 
-            $finalPath = $extractFolder . "episode." . $ext;
-            if (!move_uploaded_file($media['tmp_name'], $finalPath)) {
+            if (!$this->commandExists($this->ffmpegPath) || !$this->commandExists($this->ffprobePath)) {
+                return ["FFmpeg/ffprobe no esta instalado o no esta disponible para PHP. No se puede convertir el video ni extraer subtitulos."];
+            }
+
+            $sourcePath = $extractFolder . "upload-source." . $ext;
+            $finalPath = $extractFolder . "episode.mp4";
+            $subtitlesPath = $extractFolder . "subtitles/";
+            if (!move_uploaded_file($media['tmp_name'], $sourcePath)) {
                 return ["Error al mover el vídeo al directorio destino."];
             }
 
-            $rutaBD = $idWork . '/chapters/' . $idChapter . '/episode.' . $ext;
+            $conversionResult = $this->convertVideoToMp4($sourcePath, $finalPath);
+            if (is_array($conversionResult)) {
+                @unlink($sourcePath);
+                return $conversionResult;
+            }
+
+            $subtitleCount = $this->extractEmbeddedSubtitles($sourcePath, $subtitlesPath);
+            @unlink($sourcePath);
+
+            $rutaBD = $idWork . '/chapters/' . $idChapter . '/episode.mp4';
             $this->connection->query("UPDATE Chapters SET File = '$rutaBD' WHERE ID_Chapter = '$idChapter'");
 
-            return "Episodio subido correctamente.";
+            if ($subtitleCount > 0) {
+                return "Episodio convertido a MP4 correctamente. Subtitulos extraidos: $subtitleCount.";
+            }
+
+            return "Episodio convertido a MP4 correctamente. No se encontraron subtitulos compatibles.";
         }
 
         // Manga: ZIP 
@@ -316,14 +358,14 @@ class UploadController
         }
 
         $mime = mime_content_type($media['tmp_name']);
-        $isVideo = str_starts_with($mime, 'video/');
+        $ext = strtolower(pathinfo($media['name'], PATHINFO_EXTENSION));
+        $isVideo = str_starts_with($mime, 'video/') || in_array($ext, ['mp4', 'webm', 'mov', 'mkv']);
         if (!$isVideo) {
             return ["El archivo no es un vídeo válido."];
         }
         if ($media['size'] > 500000000) {
             $errors[] = "El vídeo es demasiado grande. Máximo 500MB.";
         }
-        $ext = strtolower(pathinfo($media['name'], PATHINFO_EXTENSION));
         if (!in_array($ext, ['mp4', 'webm', 'mov', 'mkv'])) {
             $errors[] = "El vídeo debe ser MP4, WEBM, MOV o MKV.";
         }
@@ -336,16 +378,27 @@ class UploadController
             mkdir($destination, 0755, true);
         }
 
-        $finalName = "video.$ext";
+        if (!$this->commandExists($this->ffmpegPath) || !$this->commandExists($this->ffprobePath)) {
+            return ["FFmpeg/ffprobe no esta instalado o no esta disponible para PHP. No se puede convertir el video a MP4."];
+        }
+
+        $sourceName = "upload-video-source.$ext";
+        $finalName = "video.mp4";
         $finalPath = $destination . $finalName;
-        if (!move_uploaded_file($media['tmp_name'], $finalPath)) {
+        $sourcePath = $destination . $sourceName;
+        if (!move_uploaded_file($media['tmp_name'], $sourcePath)) {
             return ["Error al mover el vídeo al directorio destino."];
         }
 
         $rutaBD = 'Event' . $idEvent . '/' . $finalName;
+        $conversionResult = $this->convertVideoToMp4($sourcePath, $finalPath);
+        @unlink($sourcePath);
+        if (is_array($conversionResult)) {
+            return $conversionResult;
+        }
         $this->connection->query("UPDATE Event_Media SET Video = '$rutaBD' WHERE ID_Media = '$idMedia'");
 
-        return "Vídeo del evento subido correctamente.";
+        return "Video del evento convertido a MP4 correctamente.";
     }
 
     /**
@@ -401,6 +454,130 @@ class UploadController
     }
 
     // Utilidades
+
+    private function commandExists($command)
+    {
+        if (!preg_match('/^[a-zA-Z0-9_.-]+$/', $command)) {
+            return false;
+        }
+
+        $checkCommand = stripos(PHP_OS_FAMILY, 'Windows') === 0
+            ? 'where ' . escapeshellcmd($command)
+            : 'command -v ' . escapeshellarg($command);
+
+        exec($checkCommand, $output, $code);
+        return $code === 0;
+    }
+
+    private function convertVideoToMp4($sourcePath, $finalPath)
+    {
+        $command = sprintf(
+            '%s -y -i %s -map 0:v:0 -map 0:a? -c:v libx264 -preset veryfast -crf 23 -c:a aac -b:a 160k -movflags +faststart -sn %s 2>&1',
+            escapeshellcmd($this->ffmpegPath),
+            escapeshellarg($sourcePath),
+            escapeshellarg($finalPath)
+        );
+
+        exec($command, $output, $code);
+
+        if ($code !== 0 || !file_exists($finalPath) || filesize($finalPath) === 0) {
+            @unlink($finalPath);
+            return ["No se pudo convertir el video a MP4. Detalle: " . $this->lastCommandLine($output)];
+        }
+
+        return true;
+    }
+
+    private function extractEmbeddedSubtitles($sourcePath, $subtitlesPath)
+    {
+        $streams = $this->getSubtitleStreams($sourcePath);
+        if (empty($streams)) {
+            return 0;
+        }
+
+        if (!is_dir($subtitlesPath)) {
+            mkdir($subtitlesPath, 0755, true);
+        }
+
+        $count = 0;
+        foreach ($streams as $position => $stream) {
+            $index = intval($stream['index']);
+            $language = $this->sanitizeSubtitleCode($stream['tags']['language'] ?? ('sub' . ($position + 1)));
+            $title = $this->sanitizeSubtitleCode($stream['tags']['title'] ?? '');
+            $suffix = $title !== '' ? $language . '-' . $title : $language;
+            $outputPath = $subtitlesPath . $suffix . '.vtt';
+
+            if (file_exists($outputPath)) {
+                $outputPath = $subtitlesPath . $suffix . '-' . ($position + 1) . '.vtt';
+            }
+
+            $command = sprintf(
+                '%s -y -i %s -map 0:%d -c:s webvtt %s 2>&1',
+                escapeshellcmd($this->ffmpegPath),
+                escapeshellarg($sourcePath),
+                $index,
+                escapeshellarg($outputPath)
+            );
+
+            exec($command, $output, $code);
+            if ($code === 0 && file_exists($outputPath) && filesize($outputPath) > 0) {
+                $count++;
+            } else {
+                @unlink($outputPath);
+            }
+        }
+
+        if ($count === 0 && is_dir($subtitlesPath) && count(array_diff(scandir($subtitlesPath), ['.', '..'])) === 0) {
+            rmdir($subtitlesPath);
+        }
+
+        return $count;
+    }
+
+    private function getSubtitleStreams($sourcePath)
+    {
+        $command = sprintf(
+            '%s -v quiet -print_format json -show_streams %s 2>&1',
+            escapeshellcmd($this->ffprobePath),
+            escapeshellarg($sourcePath)
+        );
+
+        exec($command, $output, $code);
+        if ($code !== 0) {
+            return [];
+        }
+
+        $data = json_decode(implode("\n", $output), true);
+        if (!isset($data['streams']) || !is_array($data['streams'])) {
+            return [];
+        }
+
+        return array_values(array_filter($data['streams'], function ($stream) {
+            return ($stream['codec_type'] ?? '') === 'subtitle';
+        }));
+    }
+
+    private function sanitizeSubtitleCode($value)
+    {
+        $value = strtolower(trim((string) $value));
+        $value = preg_replace('/[^a-z0-9_-]+/', '-', $value);
+        $value = trim($value, '-_');
+
+        return $value !== '' ? $value : 'sub';
+    }
+
+    private function lastCommandLine($output)
+    {
+        $output = array_values(array_filter($output, function ($line) {
+            return trim($line) !== '';
+        }));
+
+        if (empty($output)) {
+            return "FFmpeg no devolvio detalles.";
+        }
+
+        return substr(end($output), 0, 300);
+    }
 
     private function deleteDir($dir)
     {

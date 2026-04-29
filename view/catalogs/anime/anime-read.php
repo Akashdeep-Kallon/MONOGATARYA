@@ -17,6 +17,25 @@ $prevId = $result['prev_id'];
 $nextId = $result['next_id'];
 $prevChapter = $result['prev_chapter'];
 $nextChapter = $result['next_chapter'];
+$subtitleTracks = [];
+$chapterDir = trim(dirname($file), '.\\/') . '/';
+$subtitleDir = '/var/www/uploads/Anime/' . $chapterDir . 'subtitles/';
+$subtitleUrl = ANIME_URL . $chapterDir . 'subtitles/';
+
+if (is_dir($subtitleDir)) {
+    foreach (glob($subtitleDir . '*.vtt') as $subtitlePath) {
+        $filename = basename($subtitlePath);
+        $name = pathinfo($filename, PATHINFO_FILENAME);
+        $label = ucwords(str_replace(['-', '_'], ' ', $name));
+        $language = strtolower(preg_split('/[-_]/', $name)[0] ?? 'sub');
+
+        $subtitleTracks[] = [
+            'src' => $subtitleUrl . rawurlencode($filename),
+            'label' => $label,
+            'srclang' => preg_match('/^[a-z]{2,3}$/', $language) ? $language : 'und'
+        ];
+    }
+}
 
 ?>
 <!DOCTYPE html>
@@ -43,6 +62,11 @@ $nextChapter = $result['next_chapter'];
                     <div class="video-container">
                         <video controls preload="metadata">
                             <source src="<?php echo ANIME_URL . htmlspecialchars($file); ?>" type="video/mp4">
+                            <?php foreach ($subtitleTracks as $track) { ?>
+                                <track kind="subtitles" src="<?php echo htmlspecialchars($track['src']); ?>"
+                                    srclang="<?php echo htmlspecialchars($track['srclang']); ?>"
+                                    label="<?php echo htmlspecialchars($track['label']); ?>">
+                            <?php } ?>
                             Tu navegador no soporta vídeo HTML5.
                         </video>
                     </div>

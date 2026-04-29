@@ -51,7 +51,7 @@ requireRole('promoter');
                         <?php if ($_GET['type'] === 'Anime') { ?>
                             <input id="video" type="file" name="video"
                                 accept="video/mp4,video/webm,video/x-matroska,.mov,.mkv" required>
-                            <small>Sube el vídeo del episodio (MP4, WEBM, MOV, MKV — máx. 500MB)</small>
+                            <small>Sube el vídeo del episodio (MP4, WEBM, MOV, MKV — máx. 1GB)</small>
 
                         <?php } else { ?>
                             <input id="video" type="file" name="video" accept=".zip,application/zip" required>

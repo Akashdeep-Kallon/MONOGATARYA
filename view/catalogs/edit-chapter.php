@@ -40,7 +40,7 @@ $chapterNumber = $chapter['Chapter_Number'];
 
 if ($pageType === 'Anime') {
     $uploadAccept = 'video/mp4,video/webm,.mov';
-    $uploadHint = 'Sube el vídeo del episodio (MP4, WEBM, MOV — máx. 500MB)';
+    $uploadHint = 'Sube el vídeo del episodio (MP4, WEBM, MOV — máx. 1GB)';
 } else {
     $uploadAccept = '.zip,application/zip';
     $uploadHint = 'Sube un ZIP con las páginas del capítulo en JPG/PNG/WEBP — máx. 500MB.';

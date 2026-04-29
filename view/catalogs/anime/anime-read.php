@@ -54,6 +54,7 @@ if (is_dir($subtitleDir)) {
             color: white;
             font-family: 'Inter', Arial, sans-serif;
             font-size: 1.85rem;
+            font-style: normal;
             font-weight: 800;
             line-height: 1.2;
             text-shadow:

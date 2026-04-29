@@ -42,12 +42,28 @@ class User
         $this->surname = $surname;
         $this->password = $password;
 
-        $this->connection->query("CALL sp_update_user('$this->name', '$this->surname', '$this->email', '$this->password','$bio')");
+        $stmt = $this->connection->prepare(
+            "CALL sp_update_user(:name, :surname, :email, :password, :bio)"
+        );
+        $stmt->execute([
+            ':name'     => $this->name,
+            ':surname'  => $this->surname,
+            ':email'    => $this->email,
+            ':password' => $this->password,
+            ':bio'      => $bio,
+        ]);
+        $stmt->closeCursor();
     }
 
     public function updateAvatar($avatar)
     {
-        $this->connection->query("UPDATE Users SET avatar = '$avatar' WHERE email = '$this->email'");
+        $stmt = $this->connection->prepare(
+            "UPDATE Users SET avatar = :avatar WHERE email = :email"
+        );
+        $stmt->execute([
+            ':avatar' => $avatar,
+            ':email'  => $this->email,
+        ]);
     }
 
     public function isPromoter()

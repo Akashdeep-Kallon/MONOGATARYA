@@ -27,8 +27,10 @@ class User
         $_SESSION['surname'] = $this->surname;
         $_SESSION['password'] = $this->password;
 
-        $userQuery = $this->connection->query("SELECT * FROM Users WHERE email = '$this->email'");
-        $userRow = $userQuery->fetch_assoc();
+        $stmt = $this->connection->prepare("SELECT avatar, bio FROM Users WHERE email = :email");
+        $stmt->execute([':email' => $this->email]);
+        $userRow = $stmt->fetch();
+        
         $_SESSION['avatar'] = $userRow['avatar'];
         $_SESSION['bio'] = $userRow['bio'];
     }

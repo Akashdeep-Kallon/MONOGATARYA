@@ -71,7 +71,7 @@ class UserController
                 ':surname'  => $surname,
                 ':password' => $password,
             ]);
-            
+
             session_unset();
             $user = new User($email, $status, $name, $surname, $password);
             $user->setSessionUser();
@@ -177,7 +177,7 @@ class UserController
 
         if ($user = $this->getUser($email, $password)) {
             $userID = $user->getUserID();
-            
+
             $stmt = $this->connection->prepare("DELETE FROM Users WHERE ID_User = :id");
             $stmt->execute([':id' => $userID]);
 
@@ -209,8 +209,16 @@ class UserController
     }
     public function getUser($email, $password)
     {
-        $userQuery = $this->connection->query("SELECT * FROM Users WHERE email = '$email' AND password = '$password'");
-        if ($userRow = $userQuery->fetch_assoc()) {
+        $stmt = $this->connection->prepare(
+            "SELECT * FROM Users WHERE email = :email AND password = :password"
+        );
+        $stmt->execute([
+            ':email'    => $email,
+            ':password' => $password,
+        ]);
+        $userRow = $stmt->fetch();
+        
+        if ($userRow) {
             return new User(
                 $userRow['email'],
                 $userRow['status'],

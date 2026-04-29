@@ -245,10 +245,6 @@ header {
 }
 
 /* ===== Menú lateral ===== */
-#menu-toggle {
-    display: none;
-}
-
 .menu-width,
 .menu-sidebar {
     position: fixed;
@@ -264,6 +260,11 @@ header {
     list-style: none;
     background: #1b1b1b;
     transition: left 0.3s ease;
+}
+
+.menu-width.is-open,
+.menu-sidebar.is-open {
+    left: 0;
 }
 
 .menu-width li,
@@ -290,16 +291,32 @@ header {
     background: none;
     color: var(--accent);
     font-size: large;
+    cursor: pointer;
 }
 
 .logout button:hover {
-    display: inline;
     border-bottom: 2px solid var(--accent);
 }
 
-#menu-toggle:checked~.menu-width,
-#menu-toggle:checked~.menu-sidebar {
-    left: 0;
+/* Overlay oscuro detrás del menú */
+.menu-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 999;
+    background: rgba(0, 0, 0, 0.55);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.menu-overlay.is-open {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* Bloquear scroll del body cuando el menú está abierto */
+body.menu-open {
+    overflow: hidden;
 }
 
 /* ===== Utilidades ===== */

@@ -31,7 +31,7 @@ class Catalog
 
     // Paginación de catálogos
 
-    public function returnCatalog($type, $catalog)
+    public function returnCatalog(string $type, string $catalog)
     {
         $queryTotal = null;
         if ($type === 'Works') {

@@ -177,7 +177,10 @@ class UserController
 
         if ($user = $this->getUser($email, $password)) {
             $userID = $user->getUserID();
-            $this->connection->query("DELETE FROM Users WHERE ID_User = '$userID';");
+            
+            $stmt = $this->connection->prepare("DELETE FROM Users WHERE ID_User = :id");
+            $stmt->execute([':id' => $userID]);
+
             (new UploadController)->deleteUserUploads($userID);
             $this->logout();
         } else {

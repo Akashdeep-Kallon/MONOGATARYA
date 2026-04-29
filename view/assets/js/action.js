@@ -37,6 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.key === 'Escape') closeMenu();
     });
 
+
     /* ── Carrusel / Galería hero ── */
     const gallery = document.getElementById('heroGallery');
     if (!gallery) return;
@@ -46,6 +47,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const TOTAL = cards.length;
     let current = 0;
     let autoTimer = null;
+
+    // Limpiar dots previos para evitar duplicados si el script se ejecuta más de una vez
+    dotsWrap.innerHTML = '';
 
     // Crear dots de navegación
     const dots = cards.map((_, i) => {
@@ -77,7 +81,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function startAutoplay() {
-        autoTimer = setInterval(() => goTo((current + 1) % TOTAL), 2500);
+        autoTimer = setInterval(() => goTo((current + 1) % TOTAL), 4000); 
     }
 
     function stopAutoplay() {

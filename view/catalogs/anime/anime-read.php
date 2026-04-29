@@ -48,6 +48,22 @@ if (is_dir($subtitleDir)) {
     <link rel="stylesheet" href="<?php echo ASSETS_URL; ?>/styles/catalog.css" />
     <link rel="icon" type="image/png" href="<?php echo ASSETS_URL; ?>/img/logo.webp" />
     <title>Monogatarya - Capítulo <?php echo $number; ?></title>
+    <style>
+        video::cue {
+            background: transparent;
+            color: #ffe66d;
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 1.08rem;
+            font-weight: 700;
+            line-height: 1.35;
+            text-shadow:
+                -1px -1px 0 #000,
+                1px -1px 0 #000,
+                -1px 1px 0 #000,
+                1px 1px 0 #000,
+                0 2px 5px rgba(0, 0, 0, .85);
+        }
+    </style>
 </head>
 
 <body>

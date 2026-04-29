@@ -28,19 +28,18 @@ class Database
 
     public function getConnection()
     {
-        $this->connection = new mysqli(
-            $this->host,
-            $this->user,
-            $this->password,
-            $this->database,
-            $this->port
-        );
+        try {
+            $dsn = "mysql:host={$this->host};port={$this->port};dbname={$this->database};charset=utf8mb4";
+            $this->connection = new PDO($dsn, $this->user, $this->password);
 
-        if ($this->connection->connect_error) {
-            die("Error de conexión: " . $this->connection->connect_error);
+            // Configuración importante
+            $this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            $this->connection->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+
+        } catch (PDOException $e) {
+            die("Error de conexión: " . $e->getMessage());
         }
-
-        $this->connection->set_charset("utf8mb4");
+        
         return $this->connection;
     }
 }

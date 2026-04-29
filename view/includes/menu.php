@@ -31,3 +31,5 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/DAM-Transversal/core/auth.php';
 </nav>
 
 <div class="menu-overlay" id="menuOverlay" aria-hidden="true"></div>
+
+<script src="<?php echo ASSETS_URL; ?>/js/action.js" defer></script>

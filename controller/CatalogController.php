@@ -83,8 +83,9 @@ class Catalog
 
         $errors = [];
 
-        if (empty($_POST['title']) || strlen($_POST['title']) < 5)
-            $errors[] = "El título es obligatorio y debe tener al menos 5 caracteres.";
+        $titleLength = strlen(trim($_POST['title'] ?? ''));
+        if ($titleLength < 1 || $titleLength > 50)
+            $errors[] = "El título es obligatorio y debe tener entre 1 y 50 caracteres.";
         if (strlen($_POST['subtitle']) < 5)
             $errors[] = "El subtítulo debe tener al menos 5 caracteres.";
         if (empty($_POST['premiere_date']))
@@ -93,8 +94,6 @@ class Catalog
             $errors[] = "El estudio/plataforma es obligatorio.";
         if (empty($_POST['gender']))
             $errors[] = "El género es obligatorio.";
-        if (strlen($_POST['description']) < 10)
-            $errors[] = "La descripción debe tener al menos 10 caracteres.";
 
         $hasImage = !empty($_FILES['image_file']['name']);
         $hasUrl = !empty($_POST['image_url']);
@@ -164,8 +163,9 @@ class Catalog
 
         $errors = [];
 
-        if (empty($_POST['title']) || strlen($_POST['title']) < 5)
-            $errors[] = "El título es obligatorio y debe tener al menos 5 caracteres.";
+        $titleLength = strlen(trim($_POST['title'] ?? ''));
+        if ($titleLength < 1 || $titleLength > 50)
+            $errors[] = "El título es obligatorio y debe tener entre 1 y 50 caracteres.";
         if (strlen($_POST['subtitle']) < 5)
             $errors[] = "El subtítulo debe tener al menos 5 caracteres.";
         if (empty($_POST['premiere_date']))
@@ -174,8 +174,6 @@ class Catalog
             $errors[] = "El estudio/plataforma es obligatorio.";
         if (empty($_POST['gender']))
             $errors[] = "El género es obligatorio.";
-        if (strlen($_POST['description']) < 10)
-            $errors[] = "La descripción debe tener al menos 10 caracteres.";
 
         $hasImage = !empty($_FILES['image_file']['name']);
         $hasUrl = !empty($_POST['image_url']);
@@ -335,11 +333,9 @@ class Catalog
         $location = $baseLocation;
         $errors = [];
 
-        if (empty($_POST['title']) || strlen($_POST['title']) < 5) {
-            $errors[] = "El título es obligatorio y debe tener al menos 5 caracteres.";
-        }
-        if (strlen($_POST['description']) < 10) {
-            $errors[] = "La descripción debe tener al menos 10 caracteres.";
+        $titleLength = strlen(trim($_POST['title'] ?? ''));
+        if ($titleLength < 1 || $titleLength > 50) {
+            $errors[] = "El título es obligatorio y debe tener entre 1 y 50 caracteres.";
         }
 
         $chapterNumber = isset($_POST['chapter_number']) ? intval($_POST['chapter_number']) : 0;
@@ -444,10 +440,9 @@ class Catalog
 
         if ($idWork <= 0)
             $errors[] = "La obra no es válida.";
-        if (empty($_POST['title']) || strlen($_POST['title']) < 5)
-            $errors[] = "El título es obligatorio y debe tener al menos 5 caracteres.";
-        if (strlen($_POST['description']) < 10)
-            $errors[] = "La descripción debe tener al menos 10 caracteres.";
+        $titleLength = strlen(trim($_POST['title'] ?? ''));
+        if ($titleLength < 1 || $titleLength > 50)
+            $errors[] = "El título es obligatorio y debe tener entre 1 y 50 caracteres.";
 
         $fileLabel = ($type === 'Anime') ? 'un vídeo (MP4, WEBM, MOV o MKV)' : 'un archivo ZIP';
         if (empty($_FILES['video']['name']) || $_FILES['video']['error'] === UPLOAD_ERR_NO_FILE) {

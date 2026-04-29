@@ -89,7 +89,7 @@ if ($pageType === 'Anime') {
 
                     <div class="field-group">
                         <label for="title">Título del capítulo</label>
-                        <input id="title" type="text" name="title" required minlength="5" maxlength="50"
+                        <input id="title" type="text" name="title" required minlength="1" maxlength="50"
                             value="<?php echo htmlspecialchars($chapter['Title']); ?>">
                     </div>
 
@@ -101,7 +101,7 @@ if ($pageType === 'Anime') {
 
                     <div class="field-group">
                         <label for="description">Descripción</label>
-                        <textarea id="description" name="description" required minlength="10"
+                        <textarea id="description" name="description"
                             maxlength="100"><?php echo htmlspecialchars($chapter['Description']); ?></textarea>
                     </div>
 

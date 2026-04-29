@@ -15,15 +15,15 @@ INSERT INTO
 VALUES
     (
         'anime',
-        'One Piece',
-        'La gran aventura de los piratas',
-        'https://i.imgur.com/ZmYD4Uo.jpeg',
+        'Frieren: Beyond Journey''s End',
+        'El viaje después del final',
+        'https://es.web.img3.acsta.net/c_310_420/pictures/23/07/31/10/02/0006409.jpg',
         NULL,
-        'Monkey D. Luffy navega para encontrar el One Piece y convertirse en el rey de los piratas',
-        '1999-10-20',
-        'Toei Animation',
-        'Shounen',
-        1000,
+        'Una maga elfa reflexiona sobre el paso del tiempo tras la derrota del rey demonio',
+        '2023-09-29',
+        'Madhouse',
+        'Fantasía',
+        28,
         1
     ),
     (
@@ -37,19 +37,6 @@ VALUES
         'Studio Trigger',
         'Cyberpunk',
         10,
-        1
-    ),
-    (
-        'anime',
-        'Frieren: Beyond Journey''s End',
-        'El viaje después del final',
-        'https://es.web.img3.acsta.net/c_310_420/pictures/23/07/31/10/02/0006409.jpg',
-        NULL,
-        'Una maga elfa reflexiona sobre el paso del tiempo tras la derrota del rey demonio',
-        '2023-09-29',
-        'Madhouse',
-        'Fantasía',
-        28,
         1
     ),
     (
@@ -103,4 +90,18 @@ VALUES
         'Ciencia ficción',
         24,
         1
+    ),
+	(
+        'anime',
+        'One Piece',
+        'La gran aventura de los piratas',
+        'https://i.imgur.com/ZmYD4Uo.jpeg',
+        NULL,
+        'Monkey D. Luffy navega para encontrar el One Piece y convertirse en el rey de los piratas',
+        '1999-10-20',
+        'Toei Animation',
+        'Shounen',
+        1000,
+        1
     );
+    

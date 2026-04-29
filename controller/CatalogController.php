@@ -156,7 +156,7 @@ class Catalog
     public function updateWork()
     {
         $id = intval($_POST['id']);
-        $type = $this->connection->quote($_POST['type']);
+        $type = $_POST['type'];
         $redirectType = strtolower($type);
         if (!in_array($redirectType, ['anime', 'manga']))
             $redirectType = 'anime';

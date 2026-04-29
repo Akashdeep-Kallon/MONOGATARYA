@@ -30,3 +30,52 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/DAM-Transversal/core/auth.php';
     <?php } ?>
 </ul>
  
+ 
+<script>
+(function () {
+    const sidebar  = document.getElementById('menuSidebar');
+    const overlay  = document.getElementById('menu-overlay');
+    const toggleBtn = document.querySelector('[data-menu-toggle]');
+ 
+    function openMenu() {
+        sidebar.classList.add('is-open');
+        overlay.classList.add('is-open');
+        sidebar.setAttribute('aria-hidden', 'false');
+        overlay.setAttribute('aria-hidden', 'false');
+        document.body.classList.add('menu-open');
+        if (toggleBtn) toggleBtn.setAttribute('aria-expanded', 'true');
+    }
+ 
+    function closeMenu() {
+        sidebar.classList.remove('is-open');
+        overlay.classList.remove('is-open');
+        sidebar.setAttribute('aria-hidden', 'true');
+        overlay.setAttribute('aria-hidden', 'true');
+        document.body.classList.remove('menu-open');
+        if (toggleBtn) toggleBtn.setAttribute('aria-expanded', 'false');
+    }
+ 
+    function toggleMenu() {
+        sidebar.classList.contains('is-open') ? closeMenu() : openMenu();
+    }
+ 
+    // Botón hamburguesa del header
+    if (toggleBtn) toggleBtn.addEventListener('click', toggleMenu);
+ 
+    // Cerrar al hacer clic en el overlay
+    overlay.addEventListener('click', closeMenu);
+ 
+    // Cerrar con Escape
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Escape' && sidebar.classList.contains('is-open')) closeMenu();
+    });
+ 
+    // Cerrar al navegar a otra página
+    sidebar.querySelectorAll('a').forEach(link =>
+        link.addEventListener('click', closeMenu)
+    );
+ 
+    // Exponer función global para el botón del header
+    window.toggleMenu = toggleMenu;
+})();
+</script>

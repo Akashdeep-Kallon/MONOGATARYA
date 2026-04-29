@@ -48,17 +48,30 @@ class UserController
             setError($errors, $location);
         }
 
-        $this->connection->query("CALL sp_comprove_email('$email', @result)");
-        $result = $this->connection->query("SELECT @result AS exist");
-        $exist = intval($result->fetch_assoc()["exist"]);
+        $stmt = $this->connection->prepare("CALL sp_comprove_email(:email, @result)");
+        $stmt->execute([':email' => $email]);
+        $stmt->closeCursor();
+
+        $row = $this->connection->query("SELECT @result AS exist")->fetch();
+        $exist = intval($row['exist']);
 
         if ($exist === 1) {
             setError("El correo electrónico ya está registrado.", $location);
         }
 
         if ($exist === 0) {
-            $this->connection->query("INSERT INTO Users (email, status, name, surname, password) 
-            VALUES ('$email', " . ($status ? 1 : 0) . ", '$name', '$surname', '$password')");
+            $stmt = $this->connection->prepare(
+                "INSERT INTO Users (email, status, name, surname, password)
+                 VALUES (:email, :status, :name, :surname, :password)"
+            );
+            $stmt->execute([
+                ':email'    => $email,
+                ':status'   => $status ? 1 : 0,
+                ':name'     => $name,
+                ':surname'  => $surname,
+                ':password' => $password,
+            ]);
+
             session_unset();
             $user = new User($email, $status, $name, $surname, $password);
             $user->setSessionUser();
@@ -139,7 +152,6 @@ class UserController
             $user->setSessionUser();
             $mensages[] = "Los datos se han actualizado correctamente.";
             setSuccess($mensages, $location);
-
         }
         // Si no se logea
         setError("Credenciales incorrectas.", $location);
@@ -165,7 +177,10 @@ class UserController
 
         if ($user = $this->getUser($email, $password)) {
             $userID = $user->getUserID();
-            $this->connection->query("DELETE FROM Users WHERE ID_User = '$userID';");
+
+            $stmt = $this->connection->prepare("DELETE FROM Users WHERE ID_User = :id");
+            $stmt->execute([':id' => $userID]);
+
             (new UploadController)->deleteUserUploads($userID);
             $this->logout();
         } else {
@@ -194,8 +209,16 @@ class UserController
     }
     public function getUser($email, $password)
     {
-        $userQuery = $this->connection->query("SELECT * FROM Users WHERE email = '$email' AND password = '$password'");
-        if ($userRow = $userQuery->fetch_assoc()) {
+        $stmt = $this->connection->prepare(
+            "SELECT * FROM Users WHERE email = :email AND password = :password"
+        );
+        $stmt->execute([
+            ':email'    => $email,
+            ':password' => $password,
+        ]);
+        $userRow = $stmt->fetch();
+        
+        if ($userRow) {
             return new User(
                 $userRow['email'],
                 $userRow['status'],
@@ -206,7 +229,6 @@ class UserController
         }
         return false;
     }
-
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {

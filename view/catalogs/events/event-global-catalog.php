@@ -20,7 +20,7 @@ $totalPages = $result['totalPages'];
 
     <!-- Tarjetas -->
     <div class="card-grid card-grid-3">
-        <?php while ($event = mysqli_fetch_assoc($query)) {
+        <?php while ($event = $query->fetch()) {
             $img = !empty($event['Image']) ? EVENT_URL . htmlspecialchars($event['Image']) : ASSETS_URL . '/img/background-image.webp';
             $title = htmlspecialchars($event['Title']);
             $subtitle = htmlspecialchars($event['Subtitle']);

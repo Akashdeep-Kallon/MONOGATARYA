@@ -471,6 +471,23 @@ class UploadController
 
     private function convertVideoToMp4($sourcePath, $finalPath)
     {
+        // Fast path: remux copying the video stream, re-encode audio to AAC only.
+        // This handles H.264/H.265 sources (virtually all anime) in seconds instead of minutes.
+        $command = sprintf(
+            '%s -y -i %s -map 0:v:0 -map 0:a? -c:v copy -c:a aac -b:a 160k -movflags +faststart -sn %s 2>&1',
+            escapeshellcmd($this->ffmpegPath),
+            escapeshellarg($sourcePath),
+            escapeshellarg($finalPath)
+        );
+
+        exec($command, $output, $code);
+
+        if ($code === 0 && file_exists($finalPath) && filesize($finalPath) > 0) {
+            return true;
+        }
+
+        // Slow fallback: full re-encode for VP9, AV1, or other codecs incompatible with MP4.
+        @unlink($finalPath);
         $command = sprintf(
             '%s -y -i %s -map 0:v:0 -map 0:a? -c:v libx264 -preset veryfast -crf 23 -c:a aac -b:a 160k -movflags +faststart -sn %s 2>&1',
             escapeshellcmd($this->ffmpegPath),
@@ -499,7 +516,10 @@ class UploadController
             mkdir($subtitlesPath, 0755, true);
         }
 
-        $count = 0;
+        // Build output paths and a single FFmpeg command that extracts all tracks in one pass.
+        $outputParts = [];
+        $outputPaths = [];
+
         foreach ($streams as $position => $stream) {
             $index = intval($stream['index']);
             $language = $this->sanitizeSubtitleCode($stream['tags']['language'] ?? ('sub' . ($position + 1)));
@@ -507,20 +527,26 @@ class UploadController
             $suffix = $title !== '' ? $language . '-' . $title : $language;
             $outputPath = $subtitlesPath . $suffix . '.vtt';
 
-            if (file_exists($outputPath)) {
+            if (file_exists($outputPath) || in_array($outputPath, $outputPaths)) {
                 $outputPath = $subtitlesPath . $suffix . '-' . ($position + 1) . '.vtt';
             }
 
-            $command = sprintf(
-                '%s -y -i %s -map 0:%d -c:s webvtt %s 2>&1',
-                escapeshellcmd($this->ffmpegPath),
-                escapeshellarg($sourcePath),
-                $index,
-                escapeshellarg($outputPath)
-            );
+            $outputPaths[] = $outputPath;
+            $outputParts[] = sprintf('-map 0:%d -c:s webvtt %s', $index, escapeshellarg($outputPath));
+        }
 
-            exec($command, $output, $code);
-            if ($code === 0 && file_exists($outputPath) && filesize($outputPath) > 0) {
+        $command = sprintf(
+            '%s -y -i %s %s 2>&1',
+            escapeshellcmd($this->ffmpegPath),
+            escapeshellarg($sourcePath),
+            implode(' ', $outputParts)
+        );
+
+        exec($command, $output, $code);
+
+        $count = 0;
+        foreach ($outputPaths as $outputPath) {
+            if (file_exists($outputPath) && filesize($outputPath) > 0) {
                 $count++;
             } else {
                 @unlink($outputPath);
@@ -536,8 +562,9 @@ class UploadController
 
     private function getSubtitleStreams($sourcePath)
     {
+        // -select_streams s limits ffprobe to subtitle streams only, avoiding full stream scan.
         $command = sprintf(
-            '%s -v quiet -print_format json -show_streams %s 2>&1',
+            '%s -v quiet -print_format json -show_streams -select_streams s %s 2>&1',
             escapeshellcmd($this->ffprobePath),
             escapeshellarg($sourcePath)
         );
@@ -552,9 +579,7 @@ class UploadController
             return [];
         }
 
-        return array_values(array_filter($data['streams'], function ($stream) {
-            return ($stream['codec_type'] ?? '') === 'subtitle';
-        }));
+        return array_values($data['streams']);
     }
 
     private function sanitizeSubtitleCode($value)

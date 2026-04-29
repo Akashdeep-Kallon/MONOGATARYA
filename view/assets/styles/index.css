@@ -63,7 +63,7 @@
 /* Dots de navegación */
 .gallery-dots {
     position: absolute;
-    bottom: -1.6rem;
+    bottom: 0.55rem;
     left: 50%;
     transform: translateX(-50%);
     display: flex;
@@ -99,4 +99,4 @@
     .card {
         width: 82%;
     }
-}   
+}

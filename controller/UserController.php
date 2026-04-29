@@ -48,9 +48,12 @@ class UserController
             setError($errors, $location);
         }
 
-        $this->connection->query("CALL sp_comprove_email('$email', @result)");
-        $result = $this->connection->query("SELECT @result AS exist");
-        $exist = intval($result->fetch_assoc()["exist"]);
+        $stmt = $this->connection->prepare("CALL sp_comprove_email(:email, @result)");
+        $stmt->execute([':email' => $email]);
+        $stmt->closeCursor();
+
+        $row = $this->connection->query("SELECT @result AS exist")->fetch();
+        $exist = intval($row['exist']);
 
         if ($exist === 1) {
             setError("El correo electrónico ya está registrado.", $location);
@@ -139,7 +142,6 @@ class UserController
             $user->setSessionUser();
             $mensages[] = "Los datos se han actualizado correctamente.";
             setSuccess($mensages, $location);
-
         }
         // Si no se logea
         setError("Credenciales incorrectas.", $location);
@@ -206,7 +208,6 @@ class UserController
         }
         return false;
     }
-
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {

@@ -53,9 +53,27 @@ if (is_dir($subtitleDir)) {
             background: transparent;
             color: white;
             font-family: 'Inter', Arial, sans-serif;
-            font-size: 1.5rem;
-            font-weight: 500;
-            line-height: 1.35;
+            font-size: 1.85rem;
+            font-weight: 800;
+            line-height: 1.2;
+            text-shadow:
+                -3px -3px 0 #000,
+                -2px -3px 0 #000,
+                0 -3px 0 #000,
+                2px -3px 0 #000,
+                3px -3px 0 #000,
+                -3px -2px 0 #000,
+                3px -2px 0 #000,
+                -3px 0 0 #000,
+                3px 0 0 #000,
+                -3px 2px 0 #000,
+                3px 2px 0 #000,
+                -3px 3px 0 #000,
+                -2px 3px 0 #000,
+                0 3px 0 #000,
+                2px 3px 0 #000,
+                3px 3px 0 #000,
+                0 5px 7px rgba(0, 0, 0, .85);
         }
     </style>
 </head>

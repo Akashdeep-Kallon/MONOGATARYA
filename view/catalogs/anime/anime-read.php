@@ -51,17 +51,11 @@ if (is_dir($subtitleDir)) {
     <style>
         video::cue {
             background: transparent;
-            color: #ffe66d;
-            font-family: Arial, Helvetica, sans-serif;
-            font-size: 1.08rem;
-            font-weight: 700;
+            color: white;
+            font-family: 'Inter', Arial, sans-serif;
+            font-size: 1.5rem;
+            font-weight: 500;
             line-height: 1.35;
-            text-shadow:
-                -1px -1px 0 #000,
-                1px -1px 0 #000,
-                -1px 1px 0 #000,
-                1px 1px 0 #000,
-                0 2px 5px rgba(0, 0, 0, .85);
         }
     </style>
 </head>

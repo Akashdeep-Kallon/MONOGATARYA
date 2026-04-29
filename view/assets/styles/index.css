@@ -14,7 +14,7 @@
     height: clamp(300px, 42vw, 420px);
     margin-inline: auto;
 }
- 
+
 .cards {
     position: relative;
     width: 100%;
@@ -40,36 +40,36 @@
     object-fit: cover;
     box-shadow: 0 8px 20px rgba(0, 0, 0, .35);
 }
- 
+
 /* Estados controlados por JavaScript */
 .card.is-active {
     z-index: 3;
     transform: translateX(-50%) scale(1);
     opacity: 1;
 }
- 
+
 .card.is-prev {
     z-index: 2;
     transform: translateX(-102%) scale(0.78);
     opacity: 0.6;
 }
- 
+
 .card.is-next {
     z-index: 2;
     transform: translateX(2%) scale(0.78);
     opacity: 0.6;
 }
- 
+
 /* Dots de navegación */
 .gallery-dots {
     position: absolute;
-    bottom: -1.6rem;
+    bottom: 0.55rem;
     left: 50%;
     transform: translateX(-50%);
     display: flex;
     gap: 0.5rem;
 }
- 
+
 .gallery-dot {
     width: 8px;
     height: 8px;
@@ -80,11 +80,11 @@
     padding: 0;
     transition: background 0.3s;
 }
- 
+
 .gallery-dot.is-active {
     background: #e63946;
 }
- 
+
 @media (max-width: 1024px) {
     .home-hero {
         grid-template-columns: 1fr;
@@ -99,4 +99,4 @@
     .card {
         width: 82%;
     }
-}   
+}

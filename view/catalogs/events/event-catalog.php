@@ -15,7 +15,8 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/DAM-Transversal/core/config.php';
 </head>
 
 <body>
-    <?php $showSearch = true; include $_SERVER['DOCUMENT_ROOT'] . '/DAM-Transversal/view/includes/header.php'; ?>
+    <?php $showSearch = true;
+    include $_SERVER['DOCUMENT_ROOT'] . '/DAM-Transversal/view/includes/header.php'; ?>
     <main class="page-main">
         <div class="layout-container">
 

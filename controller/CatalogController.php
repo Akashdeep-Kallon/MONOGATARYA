@@ -33,6 +33,8 @@ class Catalog
 
     public function returnCatalog($type, $catalog)
     {
+        $queryTotal = false;
+
         if ($type === 'Works') {
             $queryTotal = mysqli_query($this->connection, "SELECT COUNT(*) AS total FROM Works WHERE Type = '$catalog'");
         }
@@ -40,8 +42,8 @@ class Catalog
             $queryTotal = mysqli_query($this->connection, "SELECT COUNT(*) AS total FROM Events");
         }
 
-        $fila = mysqli_fetch_assoc($queryTotal);
-        $totalMedia = $fila['total'];
+        $fila = $queryTotal ? mysqli_fetch_assoc($queryTotal) : null;
+        $totalMedia = $fila['total'] ?? 0;
         $limit = 6;
         $totalPages = max(1, ceil($totalMedia / $limit));
         $page = isset($_GET['page']) ? intval($_GET['page']) : 1;

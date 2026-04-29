@@ -86,7 +86,7 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/DAM-Transversal/core/config.php';
                         }
 
                         function startAutoplay() {
-                            autoTimer = setInterval(() => goTo((current + 1) % TOTAL), 3500);
+                            autoTimer = setInterval(() => goTo((current + 1) % TOTAL), 2500);
                         }
 
                         function stopAutoplay() {

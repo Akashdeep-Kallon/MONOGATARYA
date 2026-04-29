@@ -117,6 +117,21 @@ if ($pageType === 'Anime') {
         </div>
     </main>
 
+    <div id="uploadOverlay" class="upload-overlay" aria-hidden="true">
+        <div class="upload-overlay__box">
+            <p class="upload-overlay__title">Subiendo archivo…</p>
+            <div class="upload-overlay__bar-track">
+                <div class="upload-overlay__bar-fill" id="uploadBarFill"></div>
+            </div>
+            <p class="upload-overlay__pct" id="uploadPct">0%</p>
+            <p class="upload-overlay__mb" id="uploadMB">0.0 MB / — MB</p>
+            <p class="upload-overlay__speed" id="uploadSpeed">—</p>
+            <p class="upload-overlay__eta" id="uploadETA"></p>
+            <p class="upload-overlay__hint" id="uploadHint">Esto puede tardar unos minutos según el tamaño del archivo.
+            </p>
+        </div>
+    </div>
+
     <?php include $_SERVER['DOCUMENT_ROOT'] . '/DAM-Transversal/view/includes/menu.php'; ?>
     <?php include $_SERVER['DOCUMENT_ROOT'] . '/DAM-Transversal/view/includes/footer.php'; ?>
 

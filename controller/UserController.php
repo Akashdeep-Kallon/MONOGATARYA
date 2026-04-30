@@ -118,7 +118,7 @@ class UserController
         $name = $_POST['name'];
         $surname = $_POST['surname'];
         $email = $_POST['email'];
-        $password = $_POST['password'];
+        $password = $_POST['password'] ?? '';
         $bio = $_POST['bio'];
         // VALIDACIONES
         if (strlen($name) < 2) {

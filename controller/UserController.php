@@ -134,10 +134,26 @@ class UserController
             setError($errors, $location);
         }
 
-        if ($user = $this->getUser($email, $_SESSION['password'])) {
+        $stmt = $this->connection->prepare("SELECT * FROM Users WHERE email = :email");
+        $stmt->execute([':email' => $email]);
+        $userRow = $stmt->fetch();
 
+
+        if ($userRow) {
+            $finalPasswordHash = !empty($password)
+                ? password_hash($password, PASSWORD_DEFAULT)
+                : $userRow['password'];
+
+
+            $user = new User(
+                $userRow['email'],
+                $userRow['status'],
+                $userRow['name'],
+                $userRow['surname'],
+                $finalPasswordHash
+            );
             $mensages = [];
-            $user->updateUser($email, $name, $surname, $password, $bio);
+            $user->updateUser($email, $name, $surname, $finalPasswordHash, $bio);
 
             if ($user->isPromoter() && isset($_FILES['avatar']) && $_FILES['avatar']['error'] !== UPLOAD_ERR_NO_FILE) {
                 $avatarResult = (new UploadController())->uploadAvatar($user, $_FILES['avatar']);
@@ -219,7 +235,7 @@ class UserController
             ':password' => $password,
         ]);
         $userRow = $stmt->fetch();
-        
+
         if ($userRow) {
             return new User(
                 $userRow['email'],

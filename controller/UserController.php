@@ -60,7 +60,6 @@ class UserController
         }
 
         if ($exist === 0) {
-            $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
             $stmt = $this->connection->prepare(
                 "INSERT INTO Users (email, status, name, surname, password)
@@ -71,11 +70,11 @@ class UserController
                 ':status'   => $status ? 1 : 0,
                 ':name'     => $name,
                 ':surname'  => $surname,
-                ':password' => $hashedPassword,
+                ':password' => $password,
             ]);
 
             session_unset();
-            $user = new User($email, $status, $name, $surname, $hashedPassword);
+            $user = new User($email, $status, $name, $surname, $password);
             $user->setSessionUser();
             setSuccess('Registro completado correctamente.');
             header('Location: ' . VIEW_URL . '/index.php');
@@ -118,7 +117,7 @@ class UserController
         $name = $_POST['name'];
         $surname = $_POST['surname'];
         $email = $_POST['email'];
-        $password = $_POST['password'] ?? '';
+        $password = $_POST['password'];
         $bio = $_POST['bio'];
         // VALIDACIONES
         if (strlen($name) < 2) {
@@ -139,12 +138,7 @@ class UserController
         $userRow = $stmt->fetch();
 
 
-        if ($userRow) {
-            if (!empty($password)) {
-                $finalPasswordHash = password_hash($password, PASSWORD_DEFAULT);
-            } else {
-                $finalPasswordHash = $userRow['password'];
-            }
+
 
 
             $user = new User(
@@ -152,10 +146,10 @@ class UserController
                 $userRow['status'],
                 $userRow['name'],
                 $userRow['surname'],
-                $finalPasswordHash
+
             );
             $mensages = [];
-            $user->updateUser($email, $name, $surname, $finalPasswordHash, $bio);
+            $user->updateUser($email, $name, $surname, $password, $bio);
 
             if ($user->isPromoter() && isset($_FILES['avatar']) && $_FILES['avatar']['error'] !== UPLOAD_ERR_NO_FILE) {
                 $avatarResult = (new UploadController())->uploadAvatar($user, $_FILES['avatar']);

@@ -230,7 +230,7 @@ class UserController
     public function getUser($email, $password)
     {
         $stmt = $this->connection->prepare(
-            "SELECT * FROM Users WHERE email = :email AND password = :password"
+            "SELECT * FROM Users WHERE email = :email"
         );
         $stmt->execute([
             ':email'    => $email,

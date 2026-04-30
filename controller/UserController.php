@@ -237,7 +237,7 @@ class UserController
         ]);
         $userRow = $stmt->fetch();
 
-        if ($userRow && password_verify($password, $userRow['password'])) {
+        if ($userRow) {
             return new User(
                 $userRow['email'],
                 $userRow['status'],

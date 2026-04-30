@@ -75,7 +75,7 @@ class UserController
             ]);
 
             session_unset();
-            $user = new User($email, $status, $name, $surname, $password);
+            $user = new User($email, $status, $name, $surname, $hashedPassword);
             $user->setSessionUser();
             setSuccess('Registro completado correctamente.');
             header('Location: ' . VIEW_URL . '/index.php');

@@ -61,7 +61,7 @@ class UserController
 
         if ($exist === 0) {
             $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
-            
+
             $stmt = $this->connection->prepare(
                 "INSERT INTO Users (email, status, name, surname, password)
                  VALUES (:email, :status, :name, :surname, :password)"
@@ -71,7 +71,7 @@ class UserController
                 ':status'   => $status ? 1 : 0,
                 ':name'     => $name,
                 ':surname'  => $surname,
-                ':password' => $password,
+                ':password' => $hashedPassword,
             ]);
 
             session_unset();

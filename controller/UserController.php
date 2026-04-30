@@ -140,9 +140,11 @@ class UserController
 
 
         if ($userRow) {
-            $finalPasswordHash = !empty($password)
-                ? password_hash($password, PASSWORD_DEFAULT)
-                : $userRow['password'];
+            if (!empty($password)) {
+                $finalPasswordHash = password_hash($password, PASSWORD_DEFAULT);
+            } else {
+                $finalPasswordHash = $userRow['password'];
+            }
 
 
             $user = new User(

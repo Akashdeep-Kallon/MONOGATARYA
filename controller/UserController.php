@@ -111,7 +111,7 @@ class UserController
     {
         $location = "/DAM-Transversal/view/profile.php";
         $errors = [];
-        if (empty($_POST['name']) || empty($_POST['surname']) || empty($_POST['email']) || empty($_POST['password'])) {
+        if (empty($_POST['name']) || empty($_POST['surname']) || empty($_POST['email'])) {
             setError("Por favor, completa todos los campos.", $location);
         }
         // Recoger datos

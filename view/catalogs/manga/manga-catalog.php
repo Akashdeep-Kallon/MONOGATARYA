@@ -40,7 +40,7 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/DAM-Transversal/core/auth.php';
                 </div>
                 <!-- Tarjetas de esta página -->
                 <div class="card-grid card-grid-3">
-                    <?php while ($manga = mysqli_fetch_assoc($query)) {
+                    <?php while ($manga = $query->fetch()) {
                         // Si la BD tiene columna de imagen úsala; si no, placeholder
                         $img = getCoverImageUrl($manga['Image'], 'Manga');
                         $title = htmlspecialchars($manga['Title']);
@@ -50,7 +50,8 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/DAM-Transversal/core/auth.php';
                         ?>
 
                         <article class="content-card">
-                            <img class="card-image" src="<?php echo htmlspecialchars($img); ?>" alt="Portada de <?php echo $title; ?>">
+                            <img class="card-image" src="<?php echo htmlspecialchars($img); ?>"
+                                alt="Portada de <?php echo $title; ?>">
                             <h3><?php echo $title; ?></h3>
                             <p><?php echo $subtitle; ?></p>
                             <?php if ($active || isPromoter()) { ?>

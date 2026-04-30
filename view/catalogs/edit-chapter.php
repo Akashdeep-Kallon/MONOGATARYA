@@ -40,7 +40,7 @@ $chapterNumber = $chapter['Chapter_Number'];
 
 if ($pageType === 'Anime') {
     $uploadAccept = 'video/mp4,video/webm,.mov';
-    $uploadHint = 'Sube el vídeo del episodio (MP4, WEBM, MOV — máx. 500MB)';
+    $uploadHint = 'Sube el vídeo del episodio (MP4, WEBM, MOV — máx. 1GB)';
 } else {
     $uploadAccept = '.zip,application/zip';
     $uploadHint = 'Sube un ZIP con las páginas del capítulo en JPG/PNG/WEBP — máx. 500MB.';
@@ -66,26 +66,31 @@ if ($pageType === 'Anime') {
     <main class="page-main">
         <div class="layout-container">
             <section class="card-panel" aria-labelledby="edit-chapter-title">
-                <h2 id="edit-chapter-title" class="section-title">Editar capítulo <?php echo htmlspecialchars($chapter['Chapter_Number']); ?></h2>
+                <h2 id="edit-chapter-title" class="section-title">Editar capítulo
+                    <?php echo htmlspecialchars($chapter['Chapter_Number']); ?></h2>
 
-                <form class="form-vertical" action="<?php echo CONTROLLER_URL; ?>/CatalogController.php" method="post" enctype="multipart/form-data">
+                <form class="form-vertical" action="<?php echo CONTROLLER_URL; ?>/CatalogController.php" method="post"
+                    enctype="multipart/form-data">
                     <input type="hidden" name="id_work" value="<?php echo $id; ?>">
                     <input type="hidden" name="id_chapter" value="<?php echo $idChapter; ?>">
                     <input type="hidden" name="type" value="<?php echo htmlspecialchars($pageType); ?>">
 
                     <div class="field-group">
                         <label for="tipo-obra">Tipo</label>
-                        <input id="tipo-obra" type="text" name="type_display" value="<?php echo htmlspecialchars($pageType); ?>" readonly>
+                        <input id="tipo-obra" type="text" name="type_display"
+                            value="<?php echo htmlspecialchars($pageType); ?>" readonly>
                     </div>
 
                     <div class="field-group">
                         <label for="chapter-number">Número de capítulo</label>
-                        <input id="chapter-number" type="number" name="chapter_number" min="1" value="<?php echo htmlspecialchars($chapter['Chapter_Number']); ?>" required>
+                        <input id="chapter-number" type="number" name="chapter_number" min="1"
+                            value="<?php echo htmlspecialchars($chapter['Chapter_Number']); ?>" required>
                     </div>
 
                     <div class="field-group">
                         <label for="title">Título del capítulo</label>
-                        <input id="title" type="text" name="title" required minlength="5" maxlength="50" value="<?php echo htmlspecialchars($chapter['Title']); ?>">
+                        <input id="title" type="text" name="title" required minlength="1" maxlength="50"
+                            value="<?php echo htmlspecialchars($chapter['Title']); ?>">
                     </div>
 
                     <div class="field-group">
@@ -96,12 +101,15 @@ if ($pageType === 'Anime') {
 
                     <div class="field-group">
                         <label for="description">Descripción</label>
-                        <textarea id="description" name="description" required minlength="10" maxlength="100"><?php echo htmlspecialchars($chapter['Description']); ?></textarea>
+                        <textarea id="description" name="description"
+                            maxlength="100"><?php echo htmlspecialchars($chapter['Description']); ?></textarea>
                     </div>
 
                     <div class="inline-actions">
                         <button type="submit" class="btn btn-add" name="edit_chapter">Guardar cambios</button>
-                        <button type="submit" class="btn btn-delete" name="delete_chapter" onclick="return confirm('¿Estás seguro de que quieres eliminar este capítulo');">Eliminar capítulo</button>
+                        <button type="submit" class="btn btn-delete" name="delete_chapter"
+                            onclick="return confirm('¿Estás seguro de que quieres eliminar este capítulo');">Eliminar
+                            capítulo</button>
                     </div>
                 </form>
                 <?php include $_SERVER['DOCUMENT_ROOT'] . '/DAM-Transversal/view/includes/message.php'; ?>

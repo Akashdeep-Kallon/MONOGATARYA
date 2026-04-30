@@ -6,7 +6,7 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/DAM-Transversal/view/includes/message
 
 class Catalog
 {
-    private $connection;
+    private PDO $connection;
 
     public function __construct()
     {
@@ -33,14 +33,16 @@ class Catalog
 
     public function returnCatalog($type, $catalog)
     {
+        $queryTotal = null;
+
         if ($type === 'Works') {
-            $queryTotal = mysqli_query($this->connection, "SELECT COUNT(*) AS total FROM Works WHERE Type = '$catalog'");
+            $queryTotal = $this->connection->query("SELECT COUNT(*) AS total FROM Works WHERE Type = '$catalog'");
         }
         if ($type === 'Events') {
-            $queryTotal = mysqli_query($this->connection, "SELECT COUNT(*) AS total FROM Events");
+            $queryTotal = $this->connection->query("SELECT COUNT(*) AS total FROM Events");
         }
 
-        $fila = mysqli_fetch_assoc($queryTotal);
+        $fila = $queryTotal->fetch();
         $totalMedia = $fila['total'];
         $limit = 6;
         $totalPages = max(1, ceil($totalMedia / $limit));
@@ -56,11 +58,11 @@ class Catalog
         if ($type === 'Events') {
             $sql = "SELECT * FROM Events LIMIT $limit OFFSET $offset";
         } else {
-            $escapedCatalog = $this->connection->real_escape_string($catalog);
-            $sql = "SELECT * FROM Works WHERE Type = '$escapedCatalog' LIMIT $limit OFFSET $offset";
+            $escapedCatalog = $this->connection->quote($catalog);
+            $sql = "SELECT * FROM Works WHERE Type = $escapedCatalog LIMIT $limit OFFSET $offset";
         }
 
-        $query = mysqli_query($this->connection, $sql);
+        $query = $this->connection->query($sql);
 
         return [
             'page' => $page,
@@ -81,8 +83,9 @@ class Catalog
 
         $errors = [];
 
-        if (empty($_POST['title']) || strlen($_POST['title']) < 5)
-            $errors[] = "El título es obligatorio y debe tener al menos 5 caracteres.";
+        $titleLength = strlen(trim($_POST['title'] ?? ''));
+        if ($titleLength < 1 || $titleLength > 50)
+            $errors[] = "El título es obligatorio y debe tener entre 1 y 50 caracteres.";
         if (strlen($_POST['subtitle']) < 5)
             $errors[] = "El subtítulo debe tener al menos 5 caracteres.";
         if (empty($_POST['premiere_date']))
@@ -91,8 +94,6 @@ class Catalog
             $errors[] = "El estudio/plataforma es obligatorio.";
         if (empty($_POST['gender']))
             $errors[] = "El género es obligatorio.";
-        if (strlen($_POST['description']) < 10)
-            $errors[] = "La descripción debe tener al menos 10 caracteres.";
 
         $hasImage = !empty($_FILES['image_file']['name']);
         $hasUrl = !empty($_POST['image_url']);
@@ -105,37 +106,33 @@ class Catalog
             return;
         }
 
-        $title = $this->connection->real_escape_string($_POST['title']);
-        $subtitle = $this->connection->real_escape_string($_POST['subtitle']);
-        $premiereDate = $this->connection->real_escape_string($_POST['premiere_date']);
-        $studio = $this->connection->real_escape_string($_POST['studio']);
-        $gender = $this->connection->real_escape_string($_POST['gender']);
-        $description = $this->connection->real_escape_string($_POST['description']);
+        $title = $this->connection->quote($_POST['title']);
+        $subtitle = $this->connection->quote($_POST['subtitle']);
+        $premiereDate = $this->connection->quote($_POST['premiere_date']);
+        $studio = $this->connection->quote($_POST['studio']);
+        $gender = $this->connection->quote($_POST['gender']);
+        $description = $this->connection->quote($_POST['description']);
 
         $this->connection->query("
-            CALL sp_add_Work('$type','$title','$subtitle','$studio','$premiereDate','$gender','$description',@p_ID_Work)
+            CALL sp_add_Work($type,$title,$subtitle,$studio,$premiereDate,$gender,$description,@p_ID_Work)
         ");
-
-        while ($this->connection->more_results()) {
-            $this->connection->next_result();
-        }
 
         $idResult = $this->connection->query("SELECT @p_ID_Work AS ID_Work");
         if (!$idResult) {
             setError(["Error al obtener el ID de la obra creada."], $location);
             return;
         }
-        $row = $idResult->fetch_assoc();
+        $row = $idResult->fetch();
         $idWork = intval($row['ID_Work']);
 
-        $this->connection->next_result();
+
 
         $uploadErrors = [];
         $uploadSuccesses = [];
 
         if ($hasUrl) {
-            $imageUrl = $this->connection->real_escape_string($_POST['image_url']);
-            $this->connection->query("UPDATE Works SET Image = '$imageUrl' WHERE ID_Work = $idWork");
+            $imageUrl = $this->connection->quote($_POST['image_url']);
+            $this->connection->query("UPDATE Works SET Image = $imageUrl WHERE ID_Work = $idWork");
         }
         if ($hasImage) {
             $result = (new UploadController())->uploadWork($idWork, $type, $_FILES['image_file']);
@@ -166,8 +163,9 @@ class Catalog
 
         $errors = [];
 
-        if (empty($_POST['title']) || strlen($_POST['title']) < 5)
-            $errors[] = "El título es obligatorio y debe tener al menos 5 caracteres.";
+        $titleLength = strlen(trim($_POST['title'] ?? ''));
+        if ($titleLength < 1 || $titleLength > 50)
+            $errors[] = "El título es obligatorio y debe tener entre 1 y 50 caracteres.";
         if (strlen($_POST['subtitle']) < 5)
             $errors[] = "El subtítulo debe tener al menos 5 caracteres.";
         if (empty($_POST['premiere_date']))
@@ -176,8 +174,6 @@ class Catalog
             $errors[] = "El estudio/plataforma es obligatorio.";
         if (empty($_POST['gender']))
             $errors[] = "El género es obligatorio.";
-        if (strlen($_POST['description']) < 10)
-            $errors[] = "La descripción debe tener al menos 10 caracteres.";
 
         $hasImage = !empty($_FILES['image_file']['name']);
         $hasUrl = !empty($_POST['image_url']);
@@ -190,18 +186,18 @@ class Catalog
             return;
         }
 
-        $title = $this->connection->real_escape_string($_POST['title']);
-        $subtitle = $this->connection->real_escape_string($_POST['subtitle']);
-        $premiereDate = $this->connection->real_escape_string($_POST['premiere_date']);
-        $studio = $this->connection->real_escape_string($_POST['studio']);
-        $gender = $this->connection->real_escape_string($_POST['gender']);
-        $description = $this->connection->real_escape_string($_POST['description']);
+        $title = $this->connection->quote($_POST['title']);
+        $subtitle = $this->connection->quote($_POST['subtitle']);
+        $premiereDate = $this->connection->quote($_POST['premiere_date']);
+        $studio = $this->connection->quote($_POST['studio']);
+        $gender = $this->connection->quote($_POST['gender']);
+        $description = $this->connection->quote($_POST['description']);
         $active = isset($_POST['active']) ? 1 : 0;
 
         $this->connection->query("
             UPDATE Works
-            SET Title = '$title', Subtitle = '$subtitle', Date_premiere = '$premiereDate',
-                Studio = '$studio', Gender = '$gender', Description = '$description', Active = $active
+            SET Title = $title, Subtitle = $subtitle, Date_premiere = $premiereDate,
+                Studio = $studio, Gender = $gender, Description = $description, Active = $active
             WHERE ID_Work = $id
         ");
 
@@ -209,8 +205,8 @@ class Catalog
         $uploadSuccesses = [];
 
         if ($hasUrl) {
-            $imageUrl = $this->connection->real_escape_string($_POST['image_url']);
-            $this->connection->query("UPDATE Works SET Image = '$imageUrl' WHERE ID_Work = $id");
+            $imageUrl = $this->connection->quote($_POST['image_url']);
+            $this->connection->query("UPDATE Works SET Image = $imageUrl WHERE ID_Work = $id");
         }
         if ($hasImage) {
             $result = (new UploadController())->uploadWork($id, $type, $_FILES['image_file']);
@@ -247,12 +243,13 @@ class Catalog
     public function returnWorkDetail($id, $type)
     {
         $id = intval($id);
-        $workQuery = $this->connection->query("SELECT * FROM Works WHERE ID_Work = $id AND Type = '$type'");
+        $type = $this->connection->quote($type);
+        $workQuery = $this->connection->query("SELECT * FROM Works WHERE ID_Work = $id AND Type = $type");
 
-        if ($workRow = $workQuery->fetch_assoc()) {
+        if ($workRow = $workQuery->fetch()) {
             $chapQuery = $this->connection->query("SELECT * FROM Chapters WHERE ID_Work = $id ORDER BY Chapter_Number ASC");
             $chapters = [];
-            while ($ch = $chapQuery->fetch_assoc()) {
+            while ($ch = $chapQuery->fetch()) {
                 $chapters[] = $ch;
             }
             return [
@@ -285,13 +282,13 @@ class Catalog
         $chapQuery = $this->connection->query(
             "SELECT * FROM Chapters WHERE ID_Chapter = $idChapter AND ID_Work = $id AND Chapter_Number = $chapterNumber"
         );
-        if ($chapRow = $chapQuery->fetch_assoc()) {
+        if ($chapRow = $chapQuery->fetch()) {
             $prev = $this->connection->query(
                 "SELECT ID_Chapter, Chapter_Number FROM Chapters WHERE ID_Work = $id AND Chapter_Number < {$chapRow['Chapter_Number']} ORDER BY Chapter_Number DESC LIMIT 1"
-            )->fetch_assoc();
+            )->fetch();
             $next = $this->connection->query(
                 "SELECT ID_Chapter, Chapter_Number FROM Chapters WHERE ID_Work = $id AND Chapter_Number > {$chapRow['Chapter_Number']} ORDER BY Chapter_Number ASC LIMIT 1"
-            )->fetch_assoc();
+            )->fetch();
 
             return [
                 'title' => $chapRow['Title'],
@@ -318,7 +315,7 @@ class Catalog
         $idChapter = intval($idChapter);
 
         $result = $this->connection->query("SELECT * FROM Chapters WHERE ID_Work = $idWork AND ID_Chapter = $idChapter LIMIT 1");
-        return $result ? $result->fetch_assoc() : null;
+        return $result ? $result->fetch() : null;
     }
 
     public function updateChapter()
@@ -336,11 +333,9 @@ class Catalog
         $location = $baseLocation;
         $errors = [];
 
-        if (empty($_POST['title']) || strlen($_POST['title']) < 5) {
-            $errors[] = "El título es obligatorio y debe tener al menos 5 caracteres.";
-        }
-        if (strlen($_POST['description']) < 10) {
-            $errors[] = "La descripción debe tener al menos 10 caracteres.";
+        $titleLength = strlen(trim($_POST['title'] ?? ''));
+        if ($titleLength < 1 || $titleLength > 50) {
+            $errors[] = "El título es obligatorio y debe tener entre 1 y 50 caracteres.";
         }
 
         $chapterNumber = isset($_POST['chapter_number']) ? intval($_POST['chapter_number']) : 0;
@@ -356,8 +351,10 @@ class Catalog
         $duplicateQuery = $this->connection->query(
             "SELECT ID_Chapter FROM Chapters WHERE ID_Work = $idWork AND Chapter_Number = $chapterNumber LIMIT 1"
         );
-        if ($duplicateQuery && $duplicateQuery->num_rows > 0) {
-            $duplicateRow = $duplicateQuery->fetch_assoc();
+
+        $duplicateRow = $duplicateQuery->fetch();
+
+        if ($duplicateRow && $duplicateRow['ID_Chapter'] != $idChapter) {
             if (intval($duplicateRow['ID_Chapter']) !== $idChapter) {
                 $editLocation = VIEW_URL . '/catalogs/edit-chapter.php?type=' . urlencode($type)
                     . '&id=' . $idWork
@@ -371,16 +368,16 @@ class Catalog
         }
 
         $chapterQuery = $this->connection->query("SELECT Chapter_Number FROM Chapters WHERE ID_Chapter = $idChapter AND ID_Work = $idWork");
-        if (!$chapterQuery || $chapterQuery->num_rows === 0) {
+        $currentRow = $chapterQuery ? $chapterQuery->fetch() : false;
+        if (!$currentRow) {
             setError(["No se encontró el capítulo solicitado."], $location);
             return;
         }
 
-        $currentRow = $chapterQuery->fetch_assoc();
         $currentNumber = intval($currentRow['Chapter_Number']);
 
         $maxResult = $this->connection->query("SELECT COALESCE(MAX(Chapter_Number), 0) AS max_num FROM Chapters WHERE ID_Work = $idWork");
-        $maxNumber = intval($maxResult->fetch_assoc()['max_num']);
+        $maxNumber = intval($maxResult->fetch()['max_num']);
 
         $location = VIEW_URL . '/catalogs/' . $redirectType . '/' . $redirectType . '-read.php?type=' . urlencode($type) . '&id=' . $idWork . '&idChapter=' . $idChapter . '&numberChapter=' . $chapterNumber;
 
@@ -406,12 +403,12 @@ class Catalog
             );
         }
 
-        $title = $this->connection->real_escape_string($_POST['title']);
-        $description = $this->connection->real_escape_string($_POST['description']);
+        $title = $this->connection->quote($_POST['title']);
+        $description = $this->connection->quote($_POST['description']);
 
         $this->connection->query(
             "UPDATE Chapters
-             SET Title = '$title', Description = '$description'
+             SET Title = $title, Description = $description
              WHERE ID_Chapter = $idChapter AND ID_Work = $idWork"
         );
 
@@ -443,10 +440,9 @@ class Catalog
 
         if ($idWork <= 0)
             $errors[] = "La obra no es válida.";
-        if (empty($_POST['title']) || strlen($_POST['title']) < 5)
-            $errors[] = "El título es obligatorio y debe tener al menos 5 caracteres.";
-        if (strlen($_POST['description']) < 10)
-            $errors[] = "La descripción debe tener al menos 10 caracteres.";
+        $titleLength = strlen(trim($_POST['title'] ?? ''));
+        if ($titleLength < 1 || $titleLength > 50)
+            $errors[] = "El título es obligatorio y debe tener entre 1 y 50 caracteres.";
 
         $fileLabel = ($type === 'Anime') ? 'un vídeo (MP4, WEBM, MOV o MKV)' : 'un archivo ZIP';
         if (empty($_FILES['video']['name']) || $_FILES['video']['error'] === UPLOAD_ERR_NO_FILE) {
@@ -463,7 +459,7 @@ class Catalog
         $nextQuery = $this->connection->query(
             "SELECT COALESCE(MAX(Chapter_Number), 0) + 1 AS next_num FROM Chapters WHERE ID_Work = $idWork"
         );
-        $nextNumber = intval($nextQuery->fetch_assoc()['next_num']);
+        $nextNumber = intval($nextQuery->fetch()['next_num']);
 
         if ($chapterNumber <= 0) {
             $chapterNumber = $nextNumber;
@@ -471,7 +467,8 @@ class Catalog
             $duplicateQuery = $this->connection->query(
                 "SELECT 1 FROM Chapters WHERE ID_Work = $idWork AND Chapter_Number = $chapterNumber LIMIT 1"
             );
-            if ($duplicateQuery && $duplicateQuery->num_rows > 0) {
+            $duplicateRow = $duplicateQuery ? $duplicateQuery->fetch() : false;
+            if ($duplicateRow) {
                 setError([
                     "El número de capítulo $chapterNumber ya está asignado a otro capítulo. Elige otro número o deja el campo vacío para usar el siguiente número disponible."
                 ], $location);
@@ -479,12 +476,12 @@ class Catalog
             }
         }
 
-        $title = $this->connection->real_escape_string($_POST['title']);
-        $description = $this->connection->real_escape_string($_POST['description']);
+        $title = $this->connection->quote($_POST['title']);
+        $description = $this->connection->quote($_POST['description']);
 
         $inserted = $this->connection->query(
             "INSERT INTO Chapters (Title, Description, Chapter_Number, ID_Work)
-             VALUES ('$title', '$description', $chapterNumber, $idWork)"
+             VALUES ($title, $description, $chapterNumber, $idWork)"
         );
 
         if (!$inserted) {
@@ -492,7 +489,7 @@ class Catalog
             return;
         }
 
-        $idChapter = $this->connection->insert_id;
+        $idChapter = intval($this->connection->lastInsertId());
         $readLocation = VIEW_URL . '/catalogs/' . $redirectType . '/' . $redirectType . '-read.php?type=' . urlencode($type) . '&id=' . $idWork . '&idChapter=' . $idChapter . '&numberChapter=' . $chapterNumber;
 
         $uploadResult = (new UploadController())->uploadChapter($idWork, $idChapter, $type, $_FILES['video']);
@@ -517,7 +514,7 @@ class Catalog
         $location = VIEW_URL . '/catalogs/work-detail.php?type=' . urlencode($type) . '&id=' . $idWork;
 
         $result = $this->connection->query("SELECT Chapter_Number FROM Chapters WHERE ID_Chapter = $idChapter AND ID_Work = $idWork");
-        $chapterRow = $result ? $result->fetch_assoc() : null;
+        $chapterRow = $result ? $result->fetch() : null;
 
         if (!$chapterRow) {
             setError(["No se encontró el capítulo solicitado."], $location);
@@ -540,9 +537,9 @@ class Catalog
         $id = intval($id);
         $eventQuery = $this->connection->query("SELECT * FROM Events WHERE ID_Event = $id");
 
-        if ($eventRow = $eventQuery->fetch_assoc()) {
+        if ($eventRow = $eventQuery->fetch()) {
             $mediaQuery = $this->connection->query("SELECT * FROM Event_Media WHERE ID_Event = $id LIMIT 1");
-            $mediaRow = $mediaQuery->fetch_assoc();
+            $mediaRow = $mediaQuery->fetch();
 
             return [
                 'title' => $eventRow['Title'],
@@ -595,20 +592,20 @@ class Catalog
             return;
         }
 
-        $title = $this->connection->real_escape_string($_POST['title']);
-        $subtitle = $this->connection->real_escape_string($_POST['subtitle']);
-        $description = $this->connection->real_escape_string($_POST['description']);
-        $dateEvent = $this->connection->real_escape_string($_POST['date_event']);
-        $locationVal = $this->connection->real_escape_string($_POST['location']);
+        $title = $this->connection->quote($_POST['title']);
+        $subtitle = $this->connection->quote($_POST['subtitle']);
+        $description = $this->connection->quote($_POST['description']);
+        $dateEvent = $this->connection->quote($_POST['date_event']);
+        $locationVal = $this->connection->quote($_POST['location']);
         $capacity = intval($_POST['capacity']);
-        $image = $hasImageUrl ? $this->connection->real_escape_string($_POST['image_url']) : '';
+        $image = $hasImageUrl ? $this->connection->quote($_POST['image_url']) : '';
 
         $this->connection->query("
-            CALL sp_add_Event('$title','$subtitle','$description','$image','$dateEvent','$locationVal',$capacity)
+            CALL sp_add_Event($title,$subtitle,$description,$image,$dateEvent,$locationVal,$capacity)
         ");
 
         $idResult = $this->connection->query("SELECT LAST_INSERT_ID() AS ID_Event");
-        $idEvent = intval($idResult->fetch_assoc()['ID_Event']);
+        $idEvent = intval($idResult->fetch()['ID_Event']);
 
         $uploadErrors = [];
         $uploadSuccesses = [];
@@ -664,18 +661,18 @@ class Catalog
             return;
         }
 
-        $title = $this->connection->real_escape_string($_POST['title']);
-        $subtitle = $this->connection->real_escape_string($_POST['subtitle']);
-        $description = $this->connection->real_escape_string($_POST['description']);
-        $dateEvent = $this->connection->real_escape_string($_POST['date_event']);
-        $locationVal = $this->connection->real_escape_string($_POST['location']);
+        $title = $this->connection->quote($_POST['title']);
+        $subtitle = $this->connection->quote($_POST['subtitle']);
+        $description = $this->connection->quote($_POST['description']);
+        $dateEvent = $this->connection->quote($_POST['date_event']);
+        $locationVal = $this->connection->quote($_POST['location']);
         $capacity = intval($_POST['capacity']);
         $active = isset($_POST['active']) ? 1 : 0;
 
         $this->connection->query("
             UPDATE Events
-            SET Title = '$title', Subtitle = '$subtitle', Description = '$description',
-                Date_event = '$dateEvent', Location = '$locationVal', Capacity = $capacity, Active = $active
+            SET Title = $title, Subtitle = $subtitle, Description = $description,
+                Date_event = $dateEvent, Location = $locationVal, Capacity = $capacity, Active = $active
             WHERE ID_Event = $id
         ");
 
@@ -683,8 +680,8 @@ class Catalog
         $uploadSuccesses = [];
 
         if ($hasImageUrl) {
-            $imageUrl = $this->connection->real_escape_string($_POST['image_url']);
-            $this->connection->query("UPDATE Events SET Image = '$imageUrl' WHERE ID_Event = $id");
+            $imageUrl = $this->connection->quote($_POST['image_url']);
+            $this->connection->query("UPDATE Events SET Image = $imageUrl WHERE ID_Event = $id");
         }
         if ($hasImageFile) {
             $result = (new UploadController())->uploadEventImage($id, $_FILES['image_file']);
@@ -692,26 +689,26 @@ class Catalog
         }
 
         $mediaQuery = $this->connection->query("SELECT ID_Media FROM Event_Media WHERE ID_Event = $id LIMIT 1");
-        $mediaRow = $mediaQuery->fetch_assoc();
+        $mediaRow = $mediaQuery->fetch();
 
-        $videoValue = $hasVideoUrl ? $this->connection->real_escape_string($_POST['video_url']) : '';
-        $audioValue = $hasAudioUrl ? $this->connection->real_escape_string($_POST['audio_url']) : '';
-        $tVideo = $this->connection->real_escape_string($_POST['t_video'] ?? '');
-        $tAudio = $this->connection->real_escape_string($_POST['t_audio'] ?? '');
+        $videoValue = $hasVideoUrl ? $this->connection->quote($_POST['video_url']) : '';
+        $audioValue = $hasAudioUrl ? $this->connection->quote($_POST['audio_url']) : '';
+        $tVideo = $this->connection->quote($_POST['t_video'] ?? '');
+        $tAudio = $this->connection->quote($_POST['t_audio'] ?? '');
 
         if ($mediaRow) {
             $idMedia = $mediaRow['ID_Media'];
             $this->connection->query("
                 UPDATE Event_Media
-                SET Transcription_Video = '$tVideo', Transcription_Audio = '$tAudio'
+                SET Transcription_Video = $tVideo, Transcription_Audio = $tAudio
                 WHERE ID_Media = $idMedia
             ");
         } else {
             $this->connection->query("
                 INSERT INTO Event_Media (ID_Event, Video, Audio, Transcription_Video, Transcription_Audio)
-                VALUES ($id, '$videoValue', '$audioValue', '$tVideo', '$tAudio')
+                VALUES ($id, $videoValue, $audioValue, $tVideo, $tAudio)
             ");
-            $idMedia = $this->connection->insert_id;
+            $idMedia = intval($this->connection->lastInsertId());
         }
 
         if ($hasVideoFile) {

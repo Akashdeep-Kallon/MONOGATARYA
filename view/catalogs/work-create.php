@@ -34,7 +34,7 @@ requireRole('promoter');
                     </div>
                     <div class="field-group">
                         <label for="title">Título de la obra</label>
-                        <input id="title" type="text" name="title" required minlength="5" maxlength="50">
+                        <input id="title" type="text" name="title" required minlength="1" maxlength="50">
                     </div>
                     <div class="field-group">
                         <label for="subtitle">Subtítulo</label>
@@ -67,8 +67,7 @@ requireRole('promoter');
                     </div>
                     <div class="field-group">
                         <label for="description">Descripción</label>
-                        <textarea id="description" name="description" required minlength="10"
-                            maxlength="500"></textarea>
+                        <textarea id="description" name="description" maxlength="500"></textarea>
                     </div>
 
                     <div class="inline-actions">

@@ -3,7 +3,8 @@
     <?php $readPage = strtolower($type) . '-read.php'; ?>
 
     <?php if ($prevId) { ?>
-        <a href="<?php echo $readPage; ?>?type=<?php echo $type; ?>&id=<?php echo $id; ?>&idChapter=<?php echo $prevId; ?>&numberChapter=<?php echo $prevChapter; ?>">
+        <a
+            href="<?php echo $readPage; ?>?type=<?php echo $type; ?>&id=<?php echo $id; ?>&idChapter=<?php echo $prevId; ?>&numberChapter=<?php echo $prevChapter; ?>">
             &laquo;
         </a>
     <?php } else { ?>
@@ -17,7 +18,8 @@
     </a>
 
     <?php if ($nextId) { ?>
-        <a href="<?php echo $readPage; ?>?type=<?php echo $type; ?>&id=<?php echo $id; ?>&idChapter=<?php echo $nextId; ?>&numberChapter=<?php echo $nextChapter; ?>">
+        <a
+            href="<?php echo $readPage; ?>?type=<?php echo $type; ?>&id=<?php echo $id; ?>&idChapter=<?php echo $nextId; ?>&numberChapter=<?php echo $nextChapter; ?>">
             &raquo;
         </a>
     <?php } else { ?>

@@ -38,7 +38,7 @@ class UserController
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             $errors[] = "Introduce un correo electrónico válido.";
         }
-        if (strlen($password) < 6) {
+        if (!empty($password) && strlen($password) < 6) {
             $errors[] = "La contraseña debe tener al menos 6 caracteres.";
         }
         if ($password !== $password_confirm) {
@@ -60,6 +60,8 @@ class UserController
         }
 
         if ($exist === 0) {
+            $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+            
             $stmt = $this->connection->prepare(
                 "INSERT INTO Users (email, status, name, surname, password)
                  VALUES (:email, :status, :name, :surname, :password)"

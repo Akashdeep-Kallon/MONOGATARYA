@@ -234,7 +234,6 @@ class UserController
         );
         $stmt->execute([
             ':email'    => $email,
-            ':password' => $password,
         ]);
         $userRow = $stmt->fetch();
 

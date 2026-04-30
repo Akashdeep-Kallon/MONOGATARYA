@@ -38,7 +38,7 @@ class UserController
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             $errors[] = "Introduce un correo electrónico válido.";
         }
-        if (strlen($password) < 6) {
+        if (!empty($password) && strlen($password) < 6) {
             $errors[] = "La contraseña debe tener al menos 6 caracteres.";
         }
         if ($password !== $password_confirm) {
@@ -60,20 +60,22 @@ class UserController
         }
 
         if ($exist === 0) {
+            $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+
             $stmt = $this->connection->prepare(
                 "INSERT INTO Users (email, status, name, surname, password)
                  VALUES (:email, :status, :name, :surname, :password)"
             );
             $stmt->execute([
-                ':email' => $email,
-                ':status' => $status ? 1 : 0,
-                ':name' => $name,
-                ':surname' => $surname,
-                ':password' => $password,
+                ':email'    => $email,
+                ':status'   => $status ? 1 : 0,
+                ':name'     => $name,
+                ':surname'  => $surname,
+                ':password' => $hashedPassword,
             ]);
 
             session_unset();
-            $user = new User($email, $status, $name, $surname, $password);
+            $user = new User($email, $status, $name, $surname, $hashedPassword);
             $user->setSessionUser();
             setSuccess('Registro completado correctamente.');
             header('Location: ' . VIEW_URL . '/index.php');
@@ -109,14 +111,14 @@ class UserController
     {
         $location = "/DAM-Transversal/view/profile.php";
         $errors = [];
-        if (empty($_POST['name']) || empty($_POST['surname']) || empty($_POST['email']) || empty($_POST['password'])) {
+        if (empty($_POST['name']) || empty($_POST['surname']) || empty($_POST['email'])) {
             setError("Por favor, completa todos los campos.", $location);
         }
         // Recoger datos
         $name = $_POST['name'];
         $surname = $_POST['surname'];
         $email = $_POST['email'];
-        $password = $_POST['password'];
+        $password = $_POST['password'] ?? '';
         $bio = $_POST['bio'];
         // VALIDACIONES
         if (strlen($name) < 2) {
@@ -132,10 +134,28 @@ class UserController
             setError($errors, $location);
         }
 
-        if ($user = $this->getUser($email, $_SESSION['password'])) {
+        $stmt = $this->connection->prepare("SELECT * FROM Users WHERE email = :email");
+        $stmt->execute([':email' => $email]);
+        $userRow = $stmt->fetch();
 
+
+        if ($userRow) {
+            if (!empty($password)) {
+                $finalPasswordHash = password_hash($password, PASSWORD_DEFAULT);
+            } else {
+                $finalPasswordHash = $userRow['password'];
+            }
+
+
+            $user = new User(
+                $userRow['email'],
+                $userRow['status'],
+                $userRow['name'],
+                $userRow['surname'],
+                $finalPasswordHash
+            );
             $mensages = [];
-            $user->updateUser($email, $name, $surname, $password, $bio);
+            $user->updateUser($email, $name, $surname, $finalPasswordHash, $bio);
 
             if ($user->isPromoter() && isset($_FILES['avatar']) && $_FILES['avatar']['error'] !== UPLOAD_ERR_NO_FILE) {
                 $avatarResult = (new UploadController())->uploadAvatar($user, $_FILES['avatar']);
@@ -210,15 +230,14 @@ class UserController
     public function getUser($email, $password)
     {
         $stmt = $this->connection->prepare(
-            "SELECT * FROM Users WHERE email = :email AND password = :password"
+            "SELECT * FROM Users WHERE email = :email"
         );
         $stmt->execute([
-            ':email' => $email,
-            ':password' => $password,
+            ':email'    => $email,
         ]);
         $userRow = $stmt->fetch();
 
-        if ($userRow) {
+        if ($userRow && password_verify($password, $userRow['password'])) {
             return new User(
                 $userRow['email'],
                 $userRow['status'],

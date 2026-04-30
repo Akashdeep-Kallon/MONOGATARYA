@@ -30,7 +30,7 @@ class User
         $stmt = $this->connection->prepare("SELECT avatar, bio FROM Users WHERE email = :email");
         $stmt->execute([':email' => $this->email]);
         $userRow = $stmt->fetch();
-        
+
         $_SESSION['avatar'] = $userRow['avatar'];
         $_SESSION['bio'] = $userRow['bio'];
     }
@@ -42,9 +42,7 @@ class User
         $this->surname = $surname;
         $this->password = $password;
 
-        $stmt = $this->connection->prepare(
-            "CALL sp_update_user(:name, :surname, :email, :password, :bio)"
-        );
+        $stmt = $this->connection->prepare("CALL sp_update_user(:name, :surname, :email, :password, :bio)");
         $stmt->execute([
             ':name'     => $this->name,
             ':surname'  => $this->surname,
@@ -73,8 +71,40 @@ class User
 
     public function getUserID()
     {
-        $userQuery = $this->connection->query("SELECT * FROM Users WHERE email = '$this->email'");
-        $userRow = $userQuery->fetch_assoc();
+        $stmt = $this->connection->prepare("SELECT ID_User FROM Users WHERE email = :email");
+        $stmt->execute([':email' => $this->email]);
+        $userRow = $stmt->fetch();
         return $userRow['ID_User'];
     }
+
+    /*     public function getLoggedUserProfile()
+        {
+            $stmt = $this->connection->prepare("SELECT name, surname, email, status FROM Users WHERE email = ?");
+            $stmt->bind_param('s', $_SESSION['email']);
+            $stmt->execute();
+            $result = $stmt->get_result();
+
+            return $result->fetch_assoc() ?: null;
+        }    
+             public function getLoggedUserProfileData()
+        {
+            $data = [
+                'name' => '',
+                'surname' => '',
+                'email' => '',
+                'status' => 'invitado',
+            ];
+
+            $profile = $this->getLoggedUserProfile();
+            if (empty($profile)) {
+                return $data;
+            }
+
+            return [
+                'name' => $profile['name'],
+                'surname' => $profile['surname'],
+                'email' => $profile['email'],
+                'status' => $profile['status'] ? 'promotor' : 'lector',
+            ];
+        } */
 }

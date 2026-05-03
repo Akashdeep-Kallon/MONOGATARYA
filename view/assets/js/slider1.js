@@ -2,22 +2,25 @@ $(document).ready(iniciarSlider1);
 
 function iniciarSlider1() {
     $('#heroGallery .cards').slick({
+        centerMode: true,
+        centerPadding: '80px',
+        slidesToShow: 1,
         dots: true,
-        infinite: true,
-        speed: 300,
-        slidesToShow: 2,
-        slidesToScroll: 1,
+        autoplay: true,
+        autoplaySpeed: 4000,
+        pauseOnHover: true,
         responsive: [
             {
                 breakpoint: 1024,
                 settings: {
-                    slidesToShow: 2
+                    centerPadding: '40px'
                 }
             },
             {
                 breakpoint: 600,
                 settings: {
-                    slidesToShow: 1
+                    centerMode: false,
+                    centerPadding: '0'
                 }
             }
         ]

@@ -12,6 +12,9 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/DAM-Transversal/core/config.php';
     <link rel="stylesheet" href="<?php echo ASSETS_URL; ?>/styles/index.css" />
     <link rel="stylesheet" href="<?php echo ASSETS_URL; ?>/styles/catalog.css" />
     <link rel="icon" type="image/png" href="<?php echo ASSETS_URL; ?>/img/logo.webp" />
+    <script src="<?php echo ASSETS_URL; ?>/js/jquery.js" defer></script>
+    <script src="<?php echo ASSETS_URL; ?>/js/hover.js" defer></script>
+    <script src="<?php echo ASSETS_URL; ?>/js/action.js" defer></script>
     <title>Monogatarya - Página principal</title>
 </head>
 

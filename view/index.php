@@ -3,7 +3,6 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/DAM-Transversal/core/config.php';
 require_once $_SERVER['DOCUMENT_ROOT'] . '/DAM-Transversal/core/database.php';
 
 $db = (new Database())->getConnection();
-$worksQuery   = $db->query("SELECT Title, Image, Type FROM Works WHERE Active = 1");
 $promotorsQuery = $db->query("SELECT name, surname, bio, avatar FROM Users WHERE status = 1");
 ?>
 
@@ -25,8 +24,8 @@ $promotorsQuery = $db->query("SELECT name, surname, bio, avatar FROM Users WHERE
     <script src="<?php echo ASSETS_URL; ?>/js/jquery.js?v=<?php echo filemtime("$assets/js/jquery.js"); ?>" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js" defer></script>
     <script src="<?php echo ASSETS_URL; ?>/js/hover.js?v=<?php echo filemtime("$assets/js/hover.js"); ?>" defer></script>
-    <script src="<?php echo ASSETS_URL; ?>/js/carrusel1.js?v=<?php echo filemtime("$assets/js/carrusel1.js"); ?>" defer></script>
-    <script src="<?php echo ASSETS_URL; ?>/js/sliders.js?v=<?php echo filemtime("$assets/js/sliders.js"); ?>" defer></script>
+    <script src="<?php echo ASSETS_URL; ?>/js/slider1.js?v=<?php echo filemtime("$assets/js/slider1.js"); ?>" defer></script>
+    <script src="<?php echo ASSETS_URL; ?>/js/slider2.js?v=<?php echo filemtime("$assets/js/slider2.js"); ?>" defer></script>
     <title>Monogatarya - Página principal</title>
 </head>
 
@@ -45,21 +44,21 @@ $promotorsQuery = $db->query("SELECT name, surname, bio, avatar FROM Users WHERE
                         <a class="btn-link" href="catalogs/anime/anime-catalog.php">Explorar catálogo</a>
                     </div>
                 </div>
-                <div class="gallery" id="heroGallery" aria-label="Galería destacada" aria-roledescription="carrusel">
+                <div class="gallery" id="heroGallery">
                     <div class="cards">
-                        <div class="card" data-index="0" aria-label="Portada de One Piece">
+                        <div class="card">
                             <img src="<?php echo ASSETS_URL; ?>/gallery/card-onePiece.webp" alt="Portada de One Piece">
+                            <p>One Piece</p>
                         </div>
-                        <div class="card" data-index="1" aria-label="Portada de Dragon Ball Z">
-                            <img src="<?php echo ASSETS_URL; ?>/gallery/card-dragonBall.webp"
-                                alt="Portada de Dragon Ball Z">
+                        <div class="card">
+                            <img src="<?php echo ASSETS_URL; ?>/gallery/card-dragonBall.webp" alt="Portada de Dragon Ball Z">
+                            <p>Dragon Ball Z</p>
                         </div>
-                        <div class="card" data-index="2" aria-label="Portada de Attack on Titan">
-                            <img src="<?php echo ASSETS_URL; ?>/gallery/card-shingekyNoKyojin.webp"
-                                alt="Portada de Attack on Titan">
+                        <div class="card">
+                            <img src="<?php echo ASSETS_URL; ?>/gallery/card-shingekyNoKyojin.webp" alt="Portada de Attack on Titan">
+                            <p>Attack on Titan</p>
                         </div>
                     </div>
-                    <div class="gallery-dots" aria-label="Navegación del carrusel"></div>
                 </div>
 
             </section>
@@ -82,21 +81,7 @@ $promotorsQuery = $db->query("SELECT name, surname, bio, avatar FROM Users WHERE
                 </div>
             </section>
 
-            <!-- Slider 1: Obres (Manga i Anime) -->
-            <section class="card-panel">
-                <h2 class="section-title">Obres destacades</h2>
-                <div class="sliderObres">
-                    <?php while ($obra = $worksQuery->fetch()) { ?>
-                        <div class="slider-item">
-                            <img src="<?php echo getCoverImageUrl($obra['Image'], $obra['Type']); ?>"
-                                alt="<?php echo htmlspecialchars($obra['Title']); ?>">
-                            <p><?php echo htmlspecialchars($obra['Title']); ?></p>
-                        </div>
-                    <?php } ?>
-                </div>
-            </section>
-
-            <!-- Slider 2: Promotors -->
+            <!-- Slider Promotors (Slick) -->
             <section class="card-panel">
                 <h2 class="section-title">Els nostres Promotors</h2>
                 <div class="sliderPromotors">

@@ -44,18 +44,21 @@ $promotorsQuery = $db->query("SELECT name, surname, bio, avatar FROM Users WHERE
                         <a class="btn-link" href="catalogs/anime/anime-catalog.php">Explorar catálogo</a>
                     </div>
                 </div>
-                <div class="gallery" id="heroGallery">
+                <div class="gallery" id="heroGallery" aria-label="Galería destacada" aria-roledescription="carrusel">
                     <div class="cards">
-                        <div class="card" aria-label="Portada de One Piece">
+                        <div class="card" data-index="0" aria-label="Portada de One Piece">
                             <img src="<?php echo ASSETS_URL; ?>/gallery/card-onePiece.webp" alt="Portada de One Piece">
                         </div>
-                        <div class="card" aria-label="Portada de Dragon Ball Z">
-                            <img src="<?php echo ASSETS_URL; ?>/gallery/card-dragonBall.webp" alt="Portada de Dragon Ball Z">
+                        <div class="card" data-index="1" aria-label="Portada de Dragon Ball Z">
+                            <img src="<?php echo ASSETS_URL; ?>/gallery/card-dragonBall.webp"
+                                alt="Portada de Dragon Ball Z">
                         </div>
-                        <div class="card" aria-label="Portada de Attack on Titan">
-                            <img src="<?php echo ASSETS_URL; ?>/gallery/card-shingekyNoKyojin.webp" alt="Portada de Attack on Titan">
+                        <div class="card" data-index="2" aria-label="Portada de Attack on Titan">
+                            <img src="<?php echo ASSETS_URL; ?>/gallery/card-shingekyNoKyojin.webp"
+                                alt="Portada de Attack on Titan">
                         </div>
                     </div>
+                    <div class="gallery-dots" aria-label="Navegación del carrusel"></div>
                 </div>
 
             </section>

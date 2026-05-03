@@ -1,16 +1,28 @@
-$('#flash-backdrop').on('click', function (e) {
-    if ($(e.target).is('#flash-backdrop')) {
-        $(this).fadeOut(150, function () { $(this).remove(); });
+$(function () {
+    function closeFlashModal() {
+        $('#flash-backdrop').fadeOut(150, function () {
+            $(this).remove();
+        });
     }
-});
 
-$('#flash-close').on('click', function (e) {
-    e.preventDefault();
-    $('#flash-backdrop').fadeOut(150, function () { $(this).remove(); });
-});
+    $('#flash-backdrop').on('click', function (e) {
+        if ($(e.target).is('#flash-backdrop')) {
+            closeFlashModal();
+        }
+    });
 
-$(document).one('keydown.flash', function (e) {
-    if (e.key === 'Escape') {
-        $('#flash-backdrop').fadeOut(150, function () { $(this).remove(); });
-    }
+    $('#flash-modal').on('click', function (e) {
+        e.stopPropagation();
+    });
+
+    $('#flash-close').on('click', function (e) {
+        e.preventDefault();
+        closeFlashModal();
+    });
+
+    $(document).one('keydown.flash', function (e) {
+        if (e.key === 'Escape') {
+            closeFlashModal();
+        }
+    });
 });

@@ -3,7 +3,8 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/DAM-Transversal/core/config.php';
 require_once $_SERVER['DOCUMENT_ROOT'] . '/DAM-Transversal/core/database.php';
 
 $db = (new Database())->getConnection();
-$promotorsQuery = $db->query("SELECT name, surname, bio, avatar FROM Users WHERE status = 1");
+$promotorsQuery = $db->query("SELECT name, surname, bio, avatar FROM Users WHERE status = 1 ORDER BY name, surname");
+$promotors = $promotorsQuery->fetchAll();
 ?>
 
 <!DOCTYPE html>
@@ -18,11 +19,11 @@ $promotorsQuery = $db->query("SELECT name, surname, bio, avatar FROM Users WHERE
     <link rel="stylesheet" href="<?php echo ASSETS_URL; ?>/styles/main.css?v=<?php echo filemtime("$assets/styles/main.css"); ?>" />
     <link rel="stylesheet" href="<?php echo ASSETS_URL; ?>/styles/index.css?v=<?php echo filemtime("$assets/styles/index.css"); ?>" />
     <link rel="stylesheet" href="<?php echo ASSETS_URL; ?>/styles/catalog.css?v=<?php echo filemtime("$assets/styles/catalog.css"); ?>" />
-    <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css" />
-    <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick-theme.css" />
+    <link rel="stylesheet" href="<?php echo ASSETS_URL; ?>/slick/slick.css?v=<?php echo filemtime("$assets/slick/slick.css"); ?>" />
+    <link rel="stylesheet" href="<?php echo ASSETS_URL; ?>/slick/slick-theme.css?v=<?php echo filemtime("$assets/slick/slick-theme.css"); ?>" />
     <link rel="icon" type="image/png" href="<?php echo ASSETS_URL; ?>/img/logo.webp" />
     <script src="<?php echo ASSETS_URL; ?>/js/jquery.js?v=<?php echo filemtime("$assets/js/jquery.js"); ?>" defer></script>
-    <script type="text/javascript" src="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js" defer></script>
+    <script src="<?php echo ASSETS_URL; ?>/slick/slick.min.js?v=<?php echo filemtime("$assets/slick/slick.min.js"); ?>" defer></script>
     <script src="<?php echo ASSETS_URL; ?>/js/hover.js?v=<?php echo filemtime("$assets/js/hover.js"); ?>" defer></script>
     <script src="<?php echo ASSETS_URL; ?>/js/slider1.js?v=<?php echo filemtime("$assets/js/slider1.js"); ?>" defer></script>
     <script src="<?php echo ASSETS_URL; ?>/js/slider2.js?v=<?php echo filemtime("$assets/js/slider2.js"); ?>" defer></script>
@@ -82,25 +83,51 @@ $promotorsQuery = $db->query("SELECT name, surname, bio, avatar FROM Users WHERE
             </section>
 
             <!-- Slider Promotors (Slick) -->
-            <section class="card-panel">
-                <h2 class="section-title">Nuestros Promotores</h2>
-                <div class="sliderPromotors">
-                    <?php while ($promotor = $promotorsQuery->fetch()) { ?>
-                        <div class="slider-item slider-item-promotor">
-                            <?php if (!empty($promotor['avatar'])) { ?>
-                                <img src="<?php echo USER_URL . htmlspecialchars($promotor['avatar']); ?>"
-                                    alt="Foto de <?php echo htmlspecialchars($promotor['name']); ?>"
-                                    class="slider-avatar">
-                            <?php } else { ?>
-                                <div class="slider-avatar-placeholder">
-                                    <?php echo strtoupper(substr($promotor['name'], 0, 1)); ?>
-                                </div>
-                            <?php } ?>
-                            <h3><?php echo htmlspecialchars($promotor['name']) . ' ' . htmlspecialchars($promotor['surname']); ?></h3>
-                            <p><?php echo htmlspecialchars($promotor['bio'] ?? 'Promotor de Monogatarya'); ?></p>
+            <section class="card-panel promotors-panel" aria-labelledby="promotors-title">
+                <h2 id="promotors-title" class="section-title">Nuestros promotores</h2>
+                <?php if (!empty($promotors)) { ?>
+                    <div class="sliderPromotors" aria-label="Carrusel de promotores">
+                        <?php foreach ($promotors as $promotor) {
+                            $name = trim($promotor['name'] ?? '');
+                            $surname = trim($promotor['surname'] ?? '');
+                            $fullName = trim($name . ' ' . $surname);
+                            $bio = trim($promotor['bio'] ?? '');
+                            ?>
+                            <div class="promotor-slide">
+                                <article class="slider-item-promotor">
+                                    <div class="promotor-logo" aria-hidden="true">
+                                        <?php if (!empty($promotor['avatar'])) { ?>
+                                            <img src="<?php echo USER_URL . htmlspecialchars($promotor['avatar']); ?>"
+                                                alt="">
+                                        <?php } else { ?>
+                                            <svg class="promotor-logo-fallback" viewBox="0 0 478 522" aria-label="Logo de <?php echo htmlspecialchars($fullName ?: 'promotor'); ?>">
+                                                <use href="<?php echo ASSETS_URL; ?>/img/icon-sprites.svg#usuario"></use>
+                                            </svg>
+                                        <?php } ?>
+                                    </div>
+                                    <div class="promotor-content">
+                                        <span class="promotor-kicker">Promotor</span>
+                                        <h3><?php echo htmlspecialchars($fullName ?: 'Promotor de Monogatarya'); ?></h3>
+                                        <p><?php echo htmlspecialchars($bio ?: 'Promotor de Monogatarya. Pronto compartira su biografia.'); ?></p>
+                                    </div>
+                                </article>
+                            </div>
+                        <?php } ?>
+                    </div>
+                <?php } else { ?>
+                    <article class="promotors-empty">
+                        <div class="promotor-logo" aria-hidden="true">
+                            <svg class="promotor-logo-fallback" viewBox="0 0 478 522" aria-label="Logo de Monogatarya">
+                                <use href="<?php echo ASSETS_URL; ?>/img/icon-sprites.svg#usuario"></use>
+                            </svg>
                         </div>
-                    <?php } ?>
-                </div>
+                        <div class="promotor-content">
+                            <span class="promotor-kicker">Promotores</span>
+                            <h3>Equipo Monogatarya</h3>
+                            <p>Pronto se mostraran aqui los promotores con sus logos y biografias.</p>
+                        </div>
+                    </article>
+                <?php } ?>
             </section>
 
             <?php require __DIR__ . '/catalogs/events/event-global-catalog.php'; ?>

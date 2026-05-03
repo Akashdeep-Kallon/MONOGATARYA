@@ -46,17 +46,14 @@ $promotorsQuery = $db->query("SELECT name, surname, bio, avatar FROM Users WHERE
                 </div>
                 <div class="gallery" id="heroGallery">
                     <div class="cards">
-                        <div class="card">
+                        <div class="card" aria-label="Portada de One Piece">
                             <img src="<?php echo ASSETS_URL; ?>/gallery/card-onePiece.webp" alt="Portada de One Piece">
-                            <p>One Piece</p>
                         </div>
-                        <div class="card">
+                        <div class="card" aria-label="Portada de Dragon Ball Z">
                             <img src="<?php echo ASSETS_URL; ?>/gallery/card-dragonBall.webp" alt="Portada de Dragon Ball Z">
-                            <p>Dragon Ball Z</p>
                         </div>
-                        <div class="card">
+                        <div class="card" aria-label="Portada de Attack on Titan">
                             <img src="<?php echo ASSETS_URL; ?>/gallery/card-shingekyNoKyojin.webp" alt="Portada de Attack on Titan">
-                            <p>Attack on Titan</p>
                         </div>
                     </div>
                 </div>

@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(del \"c:\\\\Users\\\\Sergi\\\\Documents\\\\DAM-Transversal\\\\view\\\\assets\\\\js\\\\sliders.js\")"
+    ]
+  }
+}

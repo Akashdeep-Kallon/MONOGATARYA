@@ -11,7 +11,8 @@
 }
 
 .card {
-    padding: 0 6px;
+    position: relative;
+    padding: 0 8px;
     cursor: pointer;
 }
 
@@ -21,12 +22,6 @@
     border-radius: 12px;
     object-fit: cover;
     box-shadow: 0 8px 20px rgba(0, 0, 0, .35);
-}
-
-.card p {
-    text-align: center;
-    margin-top: 8px;
-    font-size: 0.9rem;
 }
 
 .hover-msg {

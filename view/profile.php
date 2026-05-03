@@ -68,10 +68,10 @@ requireLogin();
 
                         <div class="field">
                             <label for="password">Contraseña</label>
-                            <input id="password" name="password" type="password" required minlength="6" maxlength="20"
+                            <input id="password" name="password" type="password" minlength="6" maxlength="20"
                                 pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{6,}$"
                                 title="La contraseña debe tener al menos 6 caracteres, una mayúscula, una minúscula y un número."
-                                value="<?php echo htmlspecialchars($_SESSION['password']); ?>">
+                                placeholder="Deja vacío para mantener la misma contraseña">
                         </div>
 
                         <div class="field full">

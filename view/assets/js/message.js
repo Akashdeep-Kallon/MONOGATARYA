@@ -4,7 +4,8 @@ $('#flash-backdrop').on('click', function (e) {
     }
 });
 
-$('#flash-close').on('click', function () {
+$('#flash-close').on('click', function (e) {
+    e.preventDefault();
     $('#flash-backdrop').fadeOut(150, function () { $(this).remove(); });
 });
 

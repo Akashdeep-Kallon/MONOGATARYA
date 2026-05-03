@@ -1,64 +1,68 @@
 $(document).ready(function () {
-
-    /* ══════════════════════════════════════════
-       Gestió de cookies amb localStorage (jQuery)
-    ══════════════════════════════════════════ */
-
     var COOKIE_KEY = 'cookiesAccepted';
     var $banner = $('#cookieBanner');
     var $loginBtn = $('#loginBtn');
-    var $showAgainBtn = $('#showCookieBannerBtn');
+    var $showCookieBannerBtn = $('#showCookieBannerBtn');
+    var $loginAllowedArea = $('#loginAllowedArea');
+    var $loginCookieBlocked = $('#loginCookieBlocked');
+    var $cookiesAcceptedInput = $('#cookiesAcceptedInput');
 
-    /**
-     * Aplica l'estat visual segons si l'usuari ha acceptat
-     * o rebutjat les cookies.
-     * @param {string} status  'accepted' | 'rejected' | null
-     */
-    function applyCookieState(status) {
-        if (status === 'accepted') {
-            // Amaga el banner i mostra el botó de login
-            $banner.removeClass('cookie-banner--visible').attr('aria-hidden', 'true');
-            $loginBtn.show();
-            $showAgainBtn.hide();
-        } else if (status === 'rejected') {
-            // Amaga el banner i mostra el botó "torna a veure l'avís"
-            $banner.removeClass('cookie-banner--visible').attr('aria-hidden', 'true');
-            $loginBtn.hide();
-            $showAgainBtn.show();
-        } else {
-            // Estat inicial: mostra el banner i amaga tots dos botons de login
-            $banner.addClass('cookie-banner--visible').attr('aria-hidden', 'false');
-            $loginBtn.hide();
-            $showAgainBtn.hide();
+    function getCookieStatus() {
+        try {
+            return localStorage.getItem(COOKIE_KEY);
+        } catch (e) {
+            return null;
         }
     }
 
-    // ── Comprova l'estat guardat a localStorage en carregar la pàgina ──
-    var savedStatus = localStorage.getItem(COOKIE_KEY);
-    applyCookieState(savedStatus);
+    function saveCookieStatus(status) {
+        try {
+            localStorage.setItem(COOKIE_KEY, status);
+            return true;
+        } catch (e) {
+            return false;
+        }
+    }
 
-    // ── L'usuari ACCEPTA les cookies ──
+    function applyCookieState(status) {
+        var accepted = status === 'accepted';
+        var hasDecision = status === 'accepted' || status === 'rejected';
+
+        $banner.toggleClass('cookie-banner--visible', !hasDecision)
+            .attr('aria-hidden', hasDecision ? 'true' : 'false');
+
+        $loginBtn.css('display', accepted ? 'flex' : 'none');
+        $showCookieBannerBtn.css('display', accepted ? 'none' : 'flex');
+        $loginAllowedArea.toggle(accepted);
+        $loginCookieBlocked.toggle(!accepted);
+        $cookiesAcceptedInput.val(accepted ? '1' : '0');
+    }
+
+    function showCookieBanner() {
+        if ($banner.length) {
+            $banner.addClass('cookie-banner--visible').attr('aria-hidden', 'false');
+        }
+    }
+
+    applyCookieState(getCookieStatus());
+
     $('#cookieAccept').on('click', function () {
-        localStorage.setItem(COOKIE_KEY, 'accepted');
-        applyCookieState('accepted');
+        if (saveCookieStatus('accepted')) {
+            applyCookieState('accepted');
+        } else {
+            showCookieBanner();
+        }
     });
 
-    // ── L'usuari REBUTJA les cookies ──
     $('#cookieReject').on('click', function () {
-        localStorage.setItem(COOKIE_KEY, 'rejected');
+        saveCookieStatus('rejected');
         applyCookieState('rejected');
     });
 
-    // ── El botó "!" torna a mostrar el banner ──
-    $showAgainBtn.on('click', function () {
-        $banner.addClass('cookie-banner--visible').attr('aria-hidden', 'false');
-        $loginBtn.hide();
-        $showAgainBtn.hide();
+    $('.cookie-show-banner').on('click', function () {
+        showCookieBanner();
     });
 
-    /* ══════════════════════════════════════════
-       Menú lateral desplegable (jQuery)
-    ══════════════════════════════════════════ */
     var $menuBtn = $('#menuBtn');
     var $menuSidebar = $('#menuSidebar');
     var $menuOverlay = $('#menuOverlay');
@@ -90,5 +94,4 @@ $(document).ready(function () {
     $(document).on('keydown', function (e) {
         if (e.key === 'Escape') closeMenu();
     });
-
 });

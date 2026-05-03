@@ -89,6 +89,10 @@ class UserController
     {
         $location = AUTH_URL . "/login.php";
 
+        if (($_POST['cookies_accepted'] ?? '') !== '1') {
+            setError("Debes aceptar el uso de cookies para poder iniciar sesion.", $location);
+        }
+
         if (empty($_POST['email']) || empty($_POST['password'])) {
             setError("Por favor, completa todos los campos para poder iniciar sesión.", $location);
         }

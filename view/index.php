@@ -83,7 +83,7 @@ $promotorsQuery = $db->query("SELECT name, surname, bio, avatar FROM Users WHERE
 
             <!-- Slider Promotors (Slick) -->
             <section class="card-panel">
-                <h2 class="section-title">Els nostres Promotors</h2>
+                <h2 class="section-title">Nuestros Promotores</h2>
                 <div class="sliderPromotors">
                     <?php while ($promotor = $promotorsQuery->fetch()) { ?>
                         <div class="slider-item slider-item-promotor">

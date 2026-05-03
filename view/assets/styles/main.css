@@ -813,6 +813,10 @@ textarea {
 }
 
 /* Botó "!" quan les cookies han estat rebutjades */
+.cookie-login-link {
+    display: none;
+}
+
 .cookie-blocked-btn {
     position: relative;
 }

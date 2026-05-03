@@ -56,7 +56,7 @@ if (!empty($errors) || !empty($successes)):
 
         <div id="flash-modal" class="<?php echo !empty($errors) ? 'flash-error' : 'flash-success'; ?>">
 
-            <button id="flash-close" aria-label="Cerrar">✕</button>
+            <button id="flash-close" type="button" aria-label="Cerrar">✕</button>
 
             <?php if (!empty($errors)) { ?>
                 <p id="flash-title" class="flash-heading">

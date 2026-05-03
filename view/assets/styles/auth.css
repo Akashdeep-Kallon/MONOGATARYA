@@ -170,6 +170,110 @@ body {
     margin: 8px 0 16px;
 }
 
+.login-allowed-area {
+    display: none;
+}
+
+.login-cookie-blocked {
+    display: grid;
+    gap: 16px;
+    width: 100%;
+    max-width: 373px;
+    margin: 0 auto;
+}
+
+.login-cookie-blocked p {
+    margin-bottom: 0;
+}
+
+.cookie-banner {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 9999;
+    padding: 1.25rem 1.5rem;
+    border-top: 2px solid var(--accent);
+    background: rgba(20, 20, 26, 0.96);
+    box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.55);
+    transform: translateY(100%);
+    opacity: 0;
+    pointer-events: none;
+    transition: transform 0.35s ease, opacity 0.35s ease;
+}
+
+.cookie-banner--visible {
+    transform: translateY(0);
+    opacity: 1;
+    pointer-events: all;
+}
+
+.cookie-banner__inner {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    max-width: 900px;
+    margin: 0 auto;
+    text-align: left;
+}
+
+.cookie-banner__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: #fff;
+    font-weight: 700;
+    flex: 0 0 auto;
+}
+
+.cookie-banner__text {
+    flex: 1;
+    min-width: 180px;
+}
+
+.cookie-banner__text strong {
+    display: block;
+    margin-bottom: 0.35rem;
+    color: #fff;
+}
+
+.cookie-banner__text p {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.78);
+    font-size: 0.9rem;
+    line-height: 1.45;
+}
+
+.cookie-banner__actions {
+    display: flex;
+    gap: 0.75rem;
+    flex: 0 0 auto;
+}
+
+.btn-cookie-accept,
+.btn-cookie-reject {
+    width: auto;
+    min-height: 44px;
+    padding: 0.55rem 1rem;
+    border-radius: 6px;
+    font-size: 0.95rem;
+}
+
+.btn-cookie-accept {
+    background: var(--accent);
+    color: #fff;
+}
+
+.btn-cookie-reject {
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    background: transparent;
+    color: #fff;
+}
+
 :where(button, input):focus-visible {
     outline: 3px solid var(--focus);
     outline-offset: 2px;
@@ -183,6 +287,15 @@ body {
 
     .btn,
     .btn-input { min-height: 60px; font-size: 18px; }
+
+    .cookie-banner__inner {
+        flex-direction: column;
+    }
+
+    .cookie-banner__actions {
+        width: 100%;
+        justify-content: flex-end;
+    }
 }
 
 @media (max-width: 480px) {

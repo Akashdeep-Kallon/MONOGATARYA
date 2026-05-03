@@ -27,7 +27,7 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/DAM-Transversal/core/config.php';
         <button class="btn-back" type="button"
             onclick="window.location.href='/DAM-Transversal/view/home.php'"
             aria-label="Volver al inicio">
-            &lt;
+            ❮
         </button>
 
         <h1 id="login-title">Iniciar sesion</h1>

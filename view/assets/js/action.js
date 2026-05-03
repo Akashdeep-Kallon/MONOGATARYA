@@ -1,9 +1,66 @@
 $(document).ready(function () {
 
     /* ══════════════════════════════════════════
+       Gestió de cookies amb localStorage (jQuery)
+    ══════════════════════════════════════════ */
+
+    var COOKIE_KEY = 'cookiesAccepted';
+    var $banner       = $('#cookieBanner');
+    var $loginBtn     = $('#loginBtn');
+    var $showAgainBtn = $('#showCookieBannerBtn');
+
+    /**
+     * Aplica l'estat visual segons si l'usuari ha acceptat
+     * o rebutjat les cookies.
+     * @param {string} status  'accepted' | 'rejected' | null
+     */
+    function applyCookieState(status) {
+        if (status === 'accepted') {
+            // Amaga el banner i mostra el botó de login
+            $banner.removeClass('cookie-banner--visible').attr('aria-hidden', 'true');
+            $loginBtn.show();
+            $showAgainBtn.hide();
+        } else if (status === 'rejected') {
+            // Amaga el banner i mostra el botó "torna a veure l'avís"
+            $banner.removeClass('cookie-banner--visible').attr('aria-hidden', 'true');
+            $loginBtn.hide();
+            $showAgainBtn.show();
+        } else {
+            // Estat inicial: mostra el banner i amaga tots dos botons de login
+            $banner.addClass('cookie-banner--visible').attr('aria-hidden', 'false');
+            $loginBtn.hide();
+            $showAgainBtn.hide();
+        }
+    }
+
+    // ── Comprova l'estat guardat a localStorage en carregar la pàgina ──
+    var savedStatus = localStorage.getItem(COOKIE_KEY);
+    applyCookieState(savedStatus);
+
+    // ── L'usuari ACCEPTA les cookies ──
+    $('#cookieAccept').on('click', function () {
+        localStorage.setItem(COOKIE_KEY, 'accepted');
+        applyCookieState('accepted');
+    });
+
+    // ── L'usuari REBUTJA les cookies ──
+    $('#cookieReject').on('click', function () {
+        localStorage.setItem(COOKIE_KEY, 'rejected');
+        applyCookieState('rejected');
+    });
+
+    // ── El botó "!" torna a mostrar el banner ──
+    $showAgainBtn.on('click', function () {
+        $banner.addClass('cookie-banner--visible').attr('aria-hidden', 'false');
+        $loginBtn.hide();
+        $showAgainBtn.hide();
+    });
+
+
+    /* ══════════════════════════════════════════
        Menú lateral desplegable (jQuery)
     ══════════════════════════════════════════ */
-    var $menuBtn = $('#menuBtn');
+    var $menuBtn     = $('#menuBtn');
     var $menuSidebar = $('#menuSidebar');
     var $menuOverlay = $('#menuOverlay');
 
@@ -37,21 +94,19 @@ $(document).ready(function () {
 
 
     /* ══════════════════════════════════════════
-       Carrusel / Galería hero (jQuery)
+       Carrusel / Galeria hero (jQuery)
     ══════════════════════════════════════════ */
     var $gallery = $('#heroGallery');
     if (!$gallery.length) return;
 
-    var $cards = $gallery.find('.card');
+    var $cards    = $gallery.find('.card');
     var $dotsWrap = $gallery.find('.gallery-dots');
-    var TOTAL = $cards.length;
-    var current = 0;
+    var TOTAL     = $cards.length;
+    var current   = 0;
     var autoTimer = null;
 
-    // Limpiar dots previos para evitar duplicados
     $dotsWrap.empty();
 
-    // Crear dots de navegación
     var $dots = $cards.map(function (i) {
         var $btn = $('<button>', {
             class: 'gallery-dot',
@@ -91,7 +146,6 @@ $(document).ready(function () {
         clearInterval(autoTimer);
     }
 
-    // Clic en carta lateral → avanza al slide
     $cards.each(function (i) {
         $(this).on('click', function () {
             stopAutoplay();
@@ -100,7 +154,6 @@ $(document).ready(function () {
         });
     });
 
-    // Soporte swipe táctil
     var touchStartX = 0;
 
     $gallery[0].addEventListener('touchstart', function (e) {
@@ -116,7 +169,6 @@ $(document).ready(function () {
         startAutoplay();
     }, { passive: true });
 
-    // Pausar autoplay con hover
     $gallery.on('mouseenter', stopAutoplay).on('mouseleave', startAutoplay);
 
     goTo(0);

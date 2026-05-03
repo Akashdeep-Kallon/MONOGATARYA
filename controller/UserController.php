@@ -127,7 +127,7 @@ class UserController
         if (strlen($surname) < 2) {
             $errors[] = "Introduce un apellido válido (mínimo 2 caracteres).";
         }
-        if (strlen($password) < 6) {
+        if (!empty($password) && strlen($password) < 6) {
             $errors[] = "La contraseña debe tener al menos 6 caracteres.";
         }
         if (!empty($errors)) {
@@ -138,14 +138,12 @@ class UserController
         $stmt->execute([':email' => $email]);
         $userRow = $stmt->fetch();
 
-
         if ($userRow) {
             if (!empty($password)) {
                 $finalPasswordHash = password_hash($password, PASSWORD_DEFAULT);
             } else {
                 $finalPasswordHash = $userRow['password'];
             }
-
 
             $user = new User(
                 $userRow['email'],

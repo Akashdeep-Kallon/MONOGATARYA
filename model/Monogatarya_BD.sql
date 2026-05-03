@@ -45,7 +45,7 @@ CREATE TABLE IF NOT EXISTS Users (
     status BOOLEAN DEFAULT FALSE,
     name VARCHAR(50) NOT NULL,
     surname VARCHAR(50) NOT NULL,
-    password VARCHAR(100) NOT NULL,
+    password VARCHAR(255) NOT NULL,
     avatar VARCHAR(255) DEFAULT NULL,
     bio TEXT DEFAULT NULL,
 
@@ -122,11 +122,10 @@ CREATE PROCEDURE sp_update_user(
     IN nameP VARCHAR(50),
     IN surnameP VARCHAR(50),    
     IN emailP VARCHAR(50),
-    IN passwordP VARCHAR(100),
+    IN passwordP VARCHAR(255),
     IN bioP TEXT
 
 ) BEGIN
-SELECT
 UPDATE Users
     SET
     name = nameP,

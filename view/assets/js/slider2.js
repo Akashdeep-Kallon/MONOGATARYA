@@ -25,8 +25,29 @@
         }
 
         var slideCount = slider.children('.promotor-slide').length;
-        var desktopSlides = Math.min(3, Math.max(1, slideCount - 1));
-        var tabletSlides = Math.min(2, Math.max(1, slideCount - 1));
+        var desktopSlides = Math.min(3, Math.max(1, slideCount));
+        var tabletSlides = Math.min(2, Math.max(1, slideCount));
+
+        if (slideCount > 1 && slideCount <= desktopSlides) {
+            slider.children('.promotor-slide').clone().addClass('promotor-slide-loop-copy').attr('aria-hidden', 'true').appendTo(slider);
+        }
+
+        function sincronizarDots(_, slick, currentSlide) {
+            var activeSlide = typeof currentSlide === 'number' ? currentSlide : slick.currentSlide;
+            var activeDot = ((activeSlide % slideCount) + slideCount) % slideCount;
+
+            slider.find('.slick-dots li').each(function (index) {
+                var dot = window.jQuery(this);
+                var isRealDot = index < slideCount;
+                var isActiveDot = index === activeDot;
+
+                dot.toggle(isRealDot);
+                dot.toggleClass('slick-active', isRealDot && isActiveDot);
+                dot.find('button').attr('aria-selected', isRealDot && isActiveDot ? 'true' : 'false');
+            });
+        }
+
+        slider.on('init reInit afterChange breakpoint', sincronizarDots);
 
         slider.slick({
             dots: true,

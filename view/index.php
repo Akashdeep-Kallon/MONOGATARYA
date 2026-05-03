@@ -17,6 +17,7 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/DAM-Transversal/core/config.php';
     <link rel="icon" type="image/png" href="<?php echo ASSETS_URL; ?>/img/logo.webp" />
     <script src="<?php echo ASSETS_URL; ?>/js/jquery.js?v=<?php echo filemtime("$assets/js/jquery.js"); ?>" defer></script>
     <script src="<?php echo ASSETS_URL; ?>/js/hover.js?v=<?php echo filemtime("$assets/js/hover.js"); ?>" defer></script>
+    <script src="<?php echo ASSETS_URL; ?>/js/carrusel1.js?v=<?php echo filemtime("$assets/js/carrusel1.js"); ?>" defer></script>
     <title>Monogatarya - Página principal</title>
 </head>
 

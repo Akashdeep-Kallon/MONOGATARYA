@@ -1,10 +1,14 @@
 <?php
 require_once $_SERVER['DOCUMENT_ROOT'] . '/DAM-Transversal/core/config.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/DAM-Transversal/core/auth.php';
 require_once $_SERVER['DOCUMENT_ROOT'] . '/DAM-Transversal/core/database.php';
 
 $db = (new Database())->getConnection();
 $promotorsQuery = $db->query("SELECT name, surname, bio, avatar FROM Users WHERE status = 1 ORDER BY name, surname");
 $promotors = $promotorsQuery->fetchAll();
+
+$latestWorksQuery = $db->query("SELECT * FROM Works ORDER BY ID_Work DESC LIMIT 3");
+$latestWorks = $latestWorksQuery->fetchAll();
 ?>
 
 <!DOCTYPE html>
@@ -65,22 +69,38 @@ $promotors = $promotorsQuery->fetchAll();
 
             </section>
 
-            <section class="card-panel" aria-labelledby="ultimos-title">
+            <!-- Slider Últimos Lanzamientos (Slick) -->
+            <section class="card-panel ultimos-panel" aria-labelledby="ultimos-title">
                 <h2 id="ultimos-title" class="section-title">Últimos lanzamientos</h2>
-                <div class="card-grid card-grid-3">
-                    <article class="content-card">
-                        <h3>One Piece 112</h3>
-                        <p>Nuevo arco argumental con edición especial y análisis editorial.</p>
-                    </article>
-                    <article class="content-card">
-                        <h3>Dragon Ball Daima</h3>
-                        <p>Nueva temporada disponible con calendario completo de emisión.</p>
-                    </article>
-                    <article class="content-card">
-                        <h3>Shingeki Final</h3>
-                        <p>Reedición coleccionista y debate de comunidad en el próximo evento.</p>
-                    </article>
-                </div>
+                <?php if (!empty($latestWorks)) { ?>
+                    <div class="sliderUltimos" aria-label="Carrusel de últimos lanzamientos">
+                        <?php foreach ($latestWorks as $work) {
+                            $img      = getCoverImageUrl($work['Image'], $work['Type']);
+                            $title    = htmlspecialchars($work['Title']);
+                            $subtitle = htmlspecialchars($work['Subtitle']);
+                            $id       = $work['ID_Work'];
+                            $type     = $work['Type'];
+                            $active   = $work['Active'];
+                            $url      = VIEW_URL . '/catalogs/work-detail.php?type=' . urlencode($type) . '&id=' . $id;
+                        ?>
+                            <div class="ultimo-slide">
+                                <article class="content-card">
+                                    <img class="card-image" src="<?php echo htmlspecialchars($img); ?>"
+                                        alt="Portada de <?php echo $title; ?>">
+                                    <h3><?php echo $title; ?></h3>
+                                    <p><?php echo $subtitle; ?></p>
+                                    <?php if ($active || isPromoter()) { ?>
+                                        <a class="btn-link" href="<?php echo $url; ?>">Ver <?php echo htmlspecialchars($type); ?></a>
+                                    <?php } else { ?>
+                                        <button class="btn-link btn-muted" type="button" disabled>Próximamente</button>
+                                    <?php } ?>
+                                </article>
+                            </div>
+                        <?php } ?>
+                    </div>
+                <?php } else { ?>
+                    <p class="empty-msg">No hay lanzamientos recientes disponibles.</p>
+                <?php } ?>
             </section>
 
             <!-- Slider Promotors (Slick) -->

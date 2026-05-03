@@ -93,7 +93,7 @@ if (is_dir($subtitleDir)) {
         @media (max-width: 639px) {
             video:fullscreen::cue,
             video:-webkit-full-screen::cue {
-                font-size: 1.23rem;
+                font-size: 0.6rem;
             }
         }
 

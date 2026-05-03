@@ -9,15 +9,19 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/DAM-Transversal/core/config.php';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <?php $assets = $_SERVER['DOCUMENT_ROOT'] . '/DAM-Transversal/view/assets'; ?>
-    <link rel="stylesheet" href="<?php echo ASSETS_URL; ?>/styles/auth.css?v=<?php echo filemtime("$assets/styles/auth.css"); ?>">
+    <link rel="stylesheet"
+        href="<?php echo ASSETS_URL; ?>/styles/auth.css?v=<?php echo filemtime("$assets/styles/auth.css"); ?>">
     <link rel="icon" type="image/png" href="<?php echo ASSETS_URL; ?>/img/logo.webp" />
     <title>Monogatarya - Iniciar sesión</title>
 </head>
 
 <body>
     <main class="auth-container" aria-labelledby="login-title">
-        <button class="btn-back" type="button" onclick="history.back()"
-            aria-label="Volver a la página anterior">❮</button>
+        <button class="btn-back" type="button"
+            onclick="window.location.href='/DAM-Transversal/view/home.php'"
+            aria-label="Volver al inicio">
+            ❮
+        </button>
 
         <h1 id="login-title">Iniciar sesión</h1>
 

@@ -4,36 +4,40 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
 }
 
 // Mensajes de éxito
-function setSuccess($msg, $location = null)
-{
-    if (!isset($_SESSION['flash_success']) || !is_array($_SESSION['flash_success'])) {
-        $_SESSION['flash_success'] = [];
-    }
-    if (is_array($msg)) {
-        $_SESSION['flash_success'] = array_merge($_SESSION['flash_success'], $msg);
-    } else {
-        $_SESSION['flash_success'][] = $msg;
-    }
-    if ($location) {
-        header("Location: " . $location);
-        exit();
+if (!function_exists('setSuccess')) {
+    function setSuccess($msg, $location = null)
+    {
+        if (!isset($_SESSION['flash_success']) || !is_array($_SESSION['flash_success'])) {
+            $_SESSION['flash_success'] = [];
+        }
+        if (is_array($msg)) {
+            $_SESSION['flash_success'] = array_merge($_SESSION['flash_success'], $msg);
+        } else {
+            $_SESSION['flash_success'][] = $msg;
+        }
+        if ($location) {
+            header("Location: " . $location);
+            exit();
+        }
     }
 }
 
 // Mensajes de error
-function setError($msg, $location = null)
-{
-    if (!isset($_SESSION['flash_error']) || !is_array($_SESSION['flash_error'])) {
-        $_SESSION['flash_error'] = [];
-    }
-    if (is_array($msg)) {
-        $_SESSION['flash_error'] = array_merge($_SESSION['flash_error'], $msg);
-    } else {
-        $_SESSION['flash_error'][] = $msg;
-    }
-    if ($location) {
-        header("Location: " . $location);
-        exit();
+if (!function_exists('setError')) {
+    function setError($msg, $location = null)
+    {
+        if (!isset($_SESSION['flash_error']) || !is_array($_SESSION['flash_error'])) {
+            $_SESSION['flash_error'] = [];
+        }
+        if (is_array($msg)) {
+            $_SESSION['flash_error'] = array_merge($_SESSION['flash_error'], $msg);
+        } else {
+            $_SESSION['flash_error'][] = $msg;
+        }
+        if ($location) {
+            header("Location: " . $location);
+            exit();
+        }
     }
 }
 

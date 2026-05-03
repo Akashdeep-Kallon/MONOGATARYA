@@ -8,7 +8,8 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/DAM-Transversal/core/config.php';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="<?php echo ASSETS_URL; ?>/styles/auth.css">
+    <?php $assets = $_SERVER['DOCUMENT_ROOT'] . '/DAM-Transversal/view/assets'; ?>
+    <link rel="stylesheet" href="<?php echo ASSETS_URL; ?>/styles/auth.css?v=<?php echo filemtime("$assets/styles/auth.css"); ?>">
     <link rel="icon" type="image/png" href="<?php echo ASSETS_URL; ?>/img/logo.webp" />
     <title>Monogatarya - Registro promotor</title>
 </head>

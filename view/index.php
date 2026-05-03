@@ -8,12 +8,15 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/DAM-Transversal/core/config.php';
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="<?php echo ASSETS_URL; ?>/styles/main.css" />
-    <link rel="stylesheet" href="<?php echo ASSETS_URL; ?>/styles/index.css" />
-    <link rel="stylesheet" href="<?php echo ASSETS_URL; ?>/styles/catalog.css" />
+    <?php
+    $assets = $_SERVER['DOCUMENT_ROOT'] . '/DAM-Transversal/view/assets';
+    ?>
+    <link rel="stylesheet" href="<?php echo ASSETS_URL; ?>/styles/main.css?v=<?php echo filemtime("$assets/styles/main.css"); ?>" />
+    <link rel="stylesheet" href="<?php echo ASSETS_URL; ?>/styles/index.css?v=<?php echo filemtime("$assets/styles/index.css"); ?>" />
+    <link rel="stylesheet" href="<?php echo ASSETS_URL; ?>/styles/catalog.css?v=<?php echo filemtime("$assets/styles/catalog.css"); ?>" />
     <link rel="icon" type="image/png" href="<?php echo ASSETS_URL; ?>/img/logo.webp" />
-    <script src="<?php echo ASSETS_URL; ?>/js/jquery.js" defer></script>
-    <script src="<?php echo ASSETS_URL; ?>/js/hover.js" defer></script>
+    <script src="<?php echo ASSETS_URL; ?>/js/jquery.js?v=<?php echo filemtime("$assets/js/jquery.js"); ?>" defer></script>
+    <script src="<?php echo ASSETS_URL; ?>/js/hover.js?v=<?php echo filemtime("$assets/js/hover.js"); ?>" defer></script>
     <title>Monogatarya - Página principal</title>
 </head>
 

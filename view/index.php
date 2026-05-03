@@ -18,11 +18,11 @@ $promotorsQuery = $db->query("SELECT name, surname, bio, avatar FROM Users WHERE
     <link rel="stylesheet" href="<?php echo ASSETS_URL; ?>/styles/main.css?v=<?php echo filemtime("$assets/styles/main.css"); ?>" />
     <link rel="stylesheet" href="<?php echo ASSETS_URL; ?>/styles/index.css?v=<?php echo filemtime("$assets/styles/index.css"); ?>" />
     <link rel="stylesheet" href="<?php echo ASSETS_URL; ?>/styles/catalog.css?v=<?php echo filemtime("$assets/styles/catalog.css"); ?>" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick-theme.css" />
+    <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css" />
+    <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick-theme.css" />
     <link rel="icon" type="image/png" href="<?php echo ASSETS_URL; ?>/img/logo.webp" />
     <script src="<?php echo ASSETS_URL; ?>/js/jquery.js?v=<?php echo filemtime("$assets/js/jquery.js"); ?>" defer></script>
-    <script src="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js" defer></script>
+    <script type="text/javascript" src="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js" defer></script>
     <script src="<?php echo ASSETS_URL; ?>/js/hover.js?v=<?php echo filemtime("$assets/js/hover.js"); ?>" defer></script>
     <script src="<?php echo ASSETS_URL; ?>/js/slider1.js?v=<?php echo filemtime("$assets/js/slider1.js"); ?>" defer></script>
     <script src="<?php echo ASSETS_URL; ?>/js/slider2.js?v=<?php echo filemtime("$assets/js/slider2.js"); ?>" defer></script>

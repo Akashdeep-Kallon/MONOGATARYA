@@ -1,5 +1,10 @@
 <?php
 require_once $_SERVER['DOCUMENT_ROOT'] . '/DAM-Transversal/core/config.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/DAM-Transversal/core/database.php';
+
+$db = (new Database())->getConnection();
+$worksQuery   = $db->query("SELECT Title, Image, Type FROM Works WHERE Active = 1");
+$promotorsQuery = $db->query("SELECT name, surname, bio, avatar FROM Users WHERE status = 1");
 ?>
 
 <!DOCTYPE html>
@@ -14,10 +19,14 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/DAM-Transversal/core/config.php';
     <link rel="stylesheet" href="<?php echo ASSETS_URL; ?>/styles/main.css?v=<?php echo filemtime("$assets/styles/main.css"); ?>" />
     <link rel="stylesheet" href="<?php echo ASSETS_URL; ?>/styles/index.css?v=<?php echo filemtime("$assets/styles/index.css"); ?>" />
     <link rel="stylesheet" href="<?php echo ASSETS_URL; ?>/styles/catalog.css?v=<?php echo filemtime("$assets/styles/catalog.css"); ?>" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick-theme.css" />
     <link rel="icon" type="image/png" href="<?php echo ASSETS_URL; ?>/img/logo.webp" />
     <script src="<?php echo ASSETS_URL; ?>/js/jquery.js?v=<?php echo filemtime("$assets/js/jquery.js"); ?>" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js" defer></script>
     <script src="<?php echo ASSETS_URL; ?>/js/hover.js?v=<?php echo filemtime("$assets/js/hover.js"); ?>" defer></script>
     <script src="<?php echo ASSETS_URL; ?>/js/carrusel1.js?v=<?php echo filemtime("$assets/js/carrusel1.js"); ?>" defer></script>
+    <script src="<?php echo ASSETS_URL; ?>/js/sliders.js?v=<?php echo filemtime("$assets/js/sliders.js"); ?>" defer></script>
     <title>Monogatarya - Página principal</title>
 </head>
 
@@ -70,6 +79,42 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/DAM-Transversal/core/config.php';
                         <h3>Shingeki Final</h3>
                         <p>Reedición coleccionista y debate de comunidad en el próximo evento.</p>
                     </article>
+                </div>
+            </section>
+
+            <!-- Slider 1: Obres (Manga i Anime) -->
+            <section class="card-panel">
+                <h2 class="section-title">Obres destacades</h2>
+                <div class="sliderObres">
+                    <?php while ($obra = $worksQuery->fetch()) { ?>
+                        <div class="slider-item">
+                            <img src="<?php echo getCoverImageUrl($obra['Image'], $obra['Type']); ?>"
+                                alt="<?php echo htmlspecialchars($obra['Title']); ?>">
+                            <p><?php echo htmlspecialchars($obra['Title']); ?></p>
+                        </div>
+                    <?php } ?>
+                </div>
+            </section>
+
+            <!-- Slider 2: Promotors -->
+            <section class="card-panel">
+                <h2 class="section-title">Els nostres Promotors</h2>
+                <div class="sliderPromotors">
+                    <?php while ($promotor = $promotorsQuery->fetch()) { ?>
+                        <div class="slider-item slider-item-promotor">
+                            <?php if (!empty($promotor['avatar'])) { ?>
+                                <img src="<?php echo USER_URL . htmlspecialchars($promotor['avatar']); ?>"
+                                    alt="Foto de <?php echo htmlspecialchars($promotor['name']); ?>"
+                                    class="slider-avatar">
+                            <?php } else { ?>
+                                <div class="slider-avatar-placeholder">
+                                    <?php echo strtoupper(substr($promotor['name'], 0, 1)); ?>
+                                </div>
+                            <?php } ?>
+                            <h3><?php echo htmlspecialchars($promotor['name']) . ' ' . htmlspecialchars($promotor['surname']); ?></h3>
+                            <p><?php echo htmlspecialchars($promotor['bio'] ?? 'Promotor de Monogatarya'); ?></p>
+                        </div>
+                    <?php } ?>
                 </div>
             </section>
 

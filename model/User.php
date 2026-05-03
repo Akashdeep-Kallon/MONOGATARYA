@@ -44,11 +44,11 @@ class User
 
         $stmt = $this->connection->prepare("CALL sp_update_user(:name, :surname, :email, :password, :bio)");
         $stmt->execute([
-            ':name'     => $this->name,
-            ':surname'  => $this->surname,
-            ':email'    => $this->email,
+            ':name' => $this->name,
+            ':surname' => $this->surname,
+            ':email' => $this->email,
             ':password' => $this->password,
-            ':bio'      => $bio,
+            ':bio' => $bio,
         ]);
         $stmt->closeCursor();
     }
@@ -60,7 +60,7 @@ class User
         );
         $stmt->execute([
             ':avatar' => $avatar,
-            ':email'  => $this->email,
+            ':email' => $this->email,
         ]);
     }
 
@@ -76,35 +76,4 @@ class User
         $userRow = $stmt->fetch();
         return $userRow['ID_User'];
     }
-
-    /*     public function getLoggedUserProfile()
-        {
-            $stmt = $this->connection->prepare("SELECT name, surname, email, status FROM Users WHERE email = ?");
-            $stmt->bind_param('s', $_SESSION['email']);
-            $stmt->execute();
-            $result = $stmt->get_result();
-
-            return $result->fetch_assoc() ?: null;
-        }    
-             public function getLoggedUserProfileData()
-        {
-            $data = [
-                'name' => '',
-                'surname' => '',
-                'email' => '',
-                'status' => 'invitado',
-            ];
-
-            $profile = $this->getLoggedUserProfile();
-            if (empty($profile)) {
-                return $data;
-            }
-
-            return [
-                'name' => $profile['name'],
-                'surname' => $profile['surname'],
-                'email' => $profile['email'],
-                'status' => $profile['status'] ? 'promotor' : 'lector',
-            ];
-        } */
 }

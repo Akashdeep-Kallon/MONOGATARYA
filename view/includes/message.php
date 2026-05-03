@@ -56,8 +56,7 @@ if (!empty($errors) || !empty($successes)):
 
         <div id="flash-modal" class="<?php echo !empty($errors) ? 'flash-error' : 'flash-success'; ?>">
 
-            <button id="flash-close" aria-label="Cerrar"
-                onclick="document.getElementById('flash-backdrop').remove()">✕</button>
+            <button id="flash-close" aria-label="Cerrar">✕</button>
 
             <?php if (!empty($errors)) { ?>
                 <p id="flash-title" class="flash-heading">
@@ -204,17 +203,28 @@ if (!empty($errors) || !empty($successes)):
         }
     </style>
 
+    <!-- Carrega jQuery si encara no està disponible -->
     <script>
-        // Cierra al hacer clic en el fondo oscuro
-        document.getElementById('flash-backdrop').addEventListener('click', function (e) {
-            if (e.target === this) this.remove();
-        });
-        // Cierra con la tecla Escape
-        document.addEventListener('keydown', function (e) {
-            if (e.key === 'Escape') {
-                var b = document.getElementById('flash-backdrop');
-                if (b) b.remove();
+        if (typeof jQuery === 'undefined') {
+            document.write('<script src="<?php echo ASSETS_URL; ?>/js/jquery.js"><\/script>');
+        }
+    </script>
+
+    <script>
+        $('#flash-backdrop').on('click', function (e) {
+            if ($(e.target).is('#flash-backdrop')) {
+                $(this).fadeOut(150, function () { $(this).remove(); });
             }
-        }, { once: true });
+        });
+
+        $('#flash-close').on('click', function () {
+            $('#flash-backdrop').fadeOut(150, function () { $(this).remove(); });
+        });
+
+        $(document).one('keydown.flash', function (e) {
+            if (e.key === 'Escape') {
+                $('#flash-backdrop').fadeOut(150, function () { $(this).remove(); });
+            }
+        });
     </script>
 <?php endif; ?>

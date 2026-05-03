@@ -67,10 +67,10 @@ class UserController
                  VALUES (:email, :status, :name, :surname, :password)"
             );
             $stmt->execute([
-                ':email'    => $email,
-                ':status'   => $status ? 1 : 0,
-                ':name'     => $name,
-                ':surname'  => $surname,
+                ':email' => $email,
+                ':status' => $status ? 1 : 0,
+                ':name' => $name,
+                ':surname' => $surname,
                 ':password' => $hashedPassword,
             ]);
 
@@ -233,10 +233,10 @@ class UserController
             "SELECT * FROM Users WHERE email = :email"
         );
         $stmt->execute([
-            ':email'    => $email,
+            ':email' => $email,
         ]);
         $userRow = $stmt->fetch();
-        
+
         if ($userRow && password_verify($password, $userRow['password'])) {
             return new User(
                 $userRow['email'],

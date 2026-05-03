@@ -89,9 +89,20 @@ if (is_dir($subtitleDir)) {
                 0 5px 7px rgba(0, 0, 0, .85);
         }
 
-        video:fullscreen::cue,
-        video:-webkit-full-screen::cue {
-            font-size: 1.85rem;
+        /* Fullscreen móvil: 1.5× más pequeño que 1.85rem */
+        @media (max-width: 639px) {
+            video:fullscreen::cue,
+            video:-webkit-full-screen::cue {
+                font-size: 1.23rem;
+            }
+        }
+
+        /* Fullscreen escritorio: 1.5× más grande que 1.85rem */
+        @media (min-width: 640px) {
+            video:fullscreen::cue,
+            video:-webkit-full-screen::cue {
+                font-size: 2.78rem;
+            }
         }
     </style>
 </head>
@@ -135,23 +146,63 @@ if (is_dir($subtitleDir)) {
 
     <script>
         (function () {
-            var root = document.documentElement;
-            var sizes = { small: '0.85rem', medium: '1.1rem', large: '1.4rem', fullscreen: '1.85rem' };
+            var root  = document.documentElement;
+            var video = document.querySelector('.video-container video');
+
+            var SIZE = {
+                small:            '0.85rem',
+                medium:           '1.1rem',
+                large:            '1.4rem',
+                fullscreen_desk:  '2.78rem',   /* 1.85 × 1.5 */
+                fullscreen_mob:   '1.23rem'    /* 1.85 / 1.5 */
+            };
+
+            function isMobile()     { return window.innerWidth < 640; }
+            function isFullscreen() { return !!(document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement); }
 
             function getResponsiveSize() {
-                if (window.innerWidth >= 1024) return sizes.large;
-                if (window.innerWidth >= 640)  return sizes.medium;
-                return sizes.small;
+                if (window.innerWidth >= 1024) return SIZE.large;
+                if (window.innerWidth >= 640)  return SIZE.medium;
+                return SIZE.small;
             }
 
             function updateCueSize() {
-                var isFs = !!(document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement);
-                root.style.setProperty('--cue-size', isFs ? sizes.fullscreen : getResponsiveSize());
+                var fs   = isFullscreen();
+                var size = fs ? (isMobile() ? SIZE.fullscreen_mob : SIZE.fullscreen_desk)
+                              : getResponsiveSize();
+                root.style.setProperty('--cue-size', size);
             }
 
-            document.addEventListener('fullscreenchange', updateCueSize);
+            /* Mueve cada cue a la línea más baja posible en móvil */
+            function applyCueLine(cue) {
+                cue.snapToLines = true;
+                cue.line = isMobile() ? -1 : 'auto';
+            }
+
+            function applyToTrack(track) {
+                if (track.cues) {
+                    for (var i = 0; i < track.cues.length; i++) applyCueLine(track.cues[i]);
+                }
+                track.addEventListener('cuechange', function () {
+                    var active = track.activeCues;
+                    if (!active) return;
+                    for (var i = 0; i < active.length; i++) applyCueLine(active[i]);
+                });
+            }
+
+            if (video) {
+                video.addEventListener('loadeddata', function () {
+                    for (var t = 0; t < video.textTracks.length; t++) {
+                        var track = video.textTracks[t];
+                        if (track.mode === 'disabled') track.mode = 'hidden';
+                        applyToTrack(track);
+                    }
+                });
+            }
+
+            document.addEventListener('fullscreenchange',       updateCueSize);
             document.addEventListener('webkitfullscreenchange', updateCueSize);
-            document.addEventListener('mozfullscreenchange', updateCueSize);
+            document.addEventListener('mozfullscreenchange',    updateCueSize);
             window.addEventListener('resize', updateCueSize);
         })();
     </script>

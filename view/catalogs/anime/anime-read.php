@@ -49,11 +49,23 @@ if (is_dir($subtitleDir)) {
     <link rel="icon" type="image/png" href="<?php echo ASSETS_URL; ?>/img/logo.webp" />
     <title>Monogatarya - Capítulo <?php echo $number; ?></title>
     <style>
+        :root {
+            --cue-size: 0.85rem;
+        }
+
+        @media (min-width: 640px) {
+            :root { --cue-size: 1.1rem; }
+        }
+
+        @media (min-width: 1024px) {
+            :root { --cue-size: 1.4rem; }
+        }
+
         video::cue {
             background: transparent;
             color: white;
             font-family: 'Inter', Arial, sans-serif;
-            font-size: 1.85rem;
+            font-size: var(--cue-size);
             font-style: normal;
             font-weight: 800;
             line-height: 1.2;
@@ -75,6 +87,11 @@ if (is_dir($subtitleDir)) {
                 2px 3px 0 #000,
                 3px 3px 0 #000,
                 0 5px 7px rgba(0, 0, 0, .85);
+        }
+
+        video:fullscreen::cue,
+        video:-webkit-full-screen::cue {
+            font-size: 1.85rem;
         }
     </style>
 </head>
@@ -115,6 +132,29 @@ if (is_dir($subtitleDir)) {
 
     <?php include $_SERVER['DOCUMENT_ROOT'] . '/DAM-Transversal/view/includes/menu.php'; ?>
     <?php include $_SERVER['DOCUMENT_ROOT'] . '/DAM-Transversal/view/includes/footer.php'; ?>
+
+    <script>
+        (function () {
+            var root = document.documentElement;
+            var sizes = { small: '0.85rem', medium: '1.1rem', large: '1.4rem', fullscreen: '1.85rem' };
+
+            function getResponsiveSize() {
+                if (window.innerWidth >= 1024) return sizes.large;
+                if (window.innerWidth >= 640)  return sizes.medium;
+                return sizes.small;
+            }
+
+            function updateCueSize() {
+                var isFs = !!(document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement);
+                root.style.setProperty('--cue-size', isFs ? sizes.fullscreen : getResponsiveSize());
+            }
+
+            document.addEventListener('fullscreenchange', updateCueSize);
+            document.addEventListener('webkitfullscreenchange', updateCueSize);
+            document.addEventListener('mozfullscreenchange', updateCueSize);
+            window.addEventListener('resize', updateCueSize);
+        })();
+    </script>
 </body>
 
 </html>

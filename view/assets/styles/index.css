@@ -3,6 +3,7 @@
     grid-template-columns: 1.1fr 1fr;
     gap: 2rem;
     align-items: center;
+    padding-bottom: calc(1.5rem + 5px);
 }
 
 .gallery {

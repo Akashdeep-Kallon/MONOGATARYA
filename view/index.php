@@ -7,7 +7,7 @@ $db = (new Database())->getConnection();
 $promotorsQuery = $db->query("SELECT name, surname, bio, avatar FROM Users WHERE status = 1 ORDER BY name, surname");
 $promotors = $promotorsQuery->fetchAll();
 
-$latestWorksQuery = $db->query("SELECT * FROM Works ORDER BY ID_Work DESC LIMIT 3");
+$latestWorksQuery = $db->query("SELECT * FROM Works ORDER BY ID_Work DESC LIMIT 6");
 $latestWorks = $latestWorksQuery->fetchAll();
 ?>
 

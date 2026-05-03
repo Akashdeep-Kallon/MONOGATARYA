@@ -50,7 +50,7 @@ if (is_dir($subtitleDir)) {
     <title>Monogatarya - Capítulo <?php echo $number; ?></title>
     <style>
         :root {
-            --cue-size: 0.85rem;
+            --cue-size: 0.43rem;  /* móvil: 0.85 / 2 */
         }
 
         @media (min-width: 640px) {
@@ -89,11 +89,11 @@ if (is_dir($subtitleDir)) {
                 0 5px 7px rgba(0, 0, 0, .85);
         }
 
-        /* Fullscreen móvil: 1.5× más pequeño que 1.85rem */
+        /* Fullscreen móvil: mitad del tamaño anterior */
         @media (max-width: 639px) {
             video:fullscreen::cue,
             video:-webkit-full-screen::cue {
-                font-size: 0.6rem;
+                font-size: 0.3rem;
             }
         }
 
@@ -150,11 +150,11 @@ if (is_dir($subtitleDir)) {
             var video = document.querySelector('.video-container video');
 
             var SIZE = {
-                small:            '0.85rem',
+                small:            '0.43rem',   /* móvil: 0.85 / 2 */
                 medium:           '1.1rem',
                 large:            '1.4rem',
-                fullscreen_desk:  '2.78rem',   /* 1.85 × 1.5 */
-                fullscreen_mob:   '1.23rem'    /* 1.85 / 1.5 */
+                fullscreen_desk:  '2.78rem',
+                fullscreen_mob:   '0.3rem'     /* móvil fullscreen: 0.6 / 2 */
             };
 
             function isMobile()     { return window.innerWidth < 640; }
@@ -173,10 +173,15 @@ if (is_dir($subtitleDir)) {
                 root.style.setProperty('--cue-size', size);
             }
 
-            /* Mueve cada cue a la línea más baja posible en móvil */
+            /* En móvil: posición al 92 % desde arriba (más bajo que el default) */
             function applyCueLine(cue) {
-                cue.snapToLines = true;
-                cue.line = isMobile() ? -1 : 'auto';
+                if (isMobile()) {
+                    cue.snapToLines = false;
+                    cue.line = 92;
+                } else {
+                    cue.snapToLines = true;
+                    cue.line = 'auto';
+                }
             }
 
             function applyToTrack(track) {

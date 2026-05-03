@@ -24,33 +24,37 @@
             return true;
         }
 
-        var slideCount   = slider.children('.ultimo-slide').length;
+        var slideCount    = slider.children('.ultimo-slide').length;
         var desktopSlides = Math.min(3, Math.max(1, slideCount));
         var tabletSlides  = Math.min(2, Math.max(1, slideCount));
 
         slider.slick({
             dots: true,
-            infinite: slideCount > 1,
-            speed: 300,
-            autoplay: false,
+            infinite: true,
+            speed: 600,
+            autoplay: true,
+            autoplaySpeed: 3000,
             arrows: true,
             accessibility: true,
             draggable: true,
             focusOnSelect: false,
             pauseOnDotsHover: true,
+            pauseOnFocus: true,
             swipe: true,
-            swipeToSlide: true,
+            swipeToSlide: false,
             touchMove: true,
             respondTo: 'window',
             slidesToShow: desktopSlides,
-            slidesToScroll: 1,
+            slidesToScroll: desktopSlides,
             responsive: [
                 {
                     breakpoint: 1200,
                     settings: {
                         slidesToShow: tabletSlides,
-                        slidesToScroll: 1,
-                        infinite: slideCount > 1,
+                        slidesToScroll: tabletSlides,
+                        infinite: true,
+                        autoplay: true,
+                        autoplaySpeed: 3000,
                         dots: true,
                         arrows: true
                     }
@@ -60,7 +64,9 @@
                     settings: {
                         slidesToShow: 1,
                         slidesToScroll: 1,
-                        infinite: slideCount > 1,
+                        infinite: true,
+                        autoplay: true,
+                        autoplaySpeed: 3000,
                         arrows: true,
                         dots: true
                     }

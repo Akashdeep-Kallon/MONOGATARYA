@@ -46,6 +46,11 @@ $(document).ready(function () {
 
     applyCookieState(getCookieStatus());
 
+    $('#loginForm').on('submit', function() {
+        var status = getCookieStatus();
+        $cookiesAcceptedInput.val(status === 'accepted' ? '1' : '0');
+    });
+
     $('#cookieAccept').on('click', function () {
         if (saveCookieStatus('accepted')) {
             applyCookieState('accepted');

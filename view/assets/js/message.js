@@ -5,8 +5,8 @@ $(function () {
         });
     }
 
-    $('#flash-backdrop').on('click', function (e) {
-        if ($(e.target).is('#flash-backdrop')) {
+    $(document).on('click', function (e) {
+        if ($('#flash-backdrop').length && $(e.target).closest('#flash-modal').length === 0) {
             closeFlashModal();
         }
     });
@@ -20,9 +20,4 @@ $(function () {
         closeFlashModal();
     });
 
-    $(document).one('keydown.flash', function (e) {
-        if (e.key === 'Escape') {
-            closeFlashModal();
-        }
-    });
 });

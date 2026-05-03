@@ -25,6 +25,7 @@ $promotors = $promotorsQuery->fetchAll();
     <script src="<?php echo ASSETS_URL; ?>/js/jquery.js?v=<?php echo filemtime("$assets/js/jquery.js"); ?>" defer></script>
     <script src="<?php echo ASSETS_URL; ?>/slick/slick.min.js?v=<?php echo filemtime("$assets/slick/slick.min.js"); ?>" defer></script>
     <script src="<?php echo ASSETS_URL; ?>/js/hover.js?v=<?php echo filemtime("$assets/js/hover.js"); ?>" defer></script>
+    <script src="<?php echo ASSETS_URL; ?>/js/slider_noSlick.js?v=<?php echo filemtime("$assets/js/slider1.js"); ?>" defer></script>
     <script src="<?php echo ASSETS_URL; ?>/js/slider1.js?v=<?php echo filemtime("$assets/js/slider1.js"); ?>" defer></script>
     <script src="<?php echo ASSETS_URL; ?>/js/slider2.js?v=<?php echo filemtime("$assets/js/slider2.js"); ?>" defer></script>
     <title>Monogatarya - Página principal</title>

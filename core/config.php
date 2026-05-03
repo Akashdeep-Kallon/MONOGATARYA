@@ -27,6 +27,25 @@ define('MANGA_URL', '/uploads/Manga/');
 define('USER_URL', '/uploads/User/');
 
 
+function getAssetVersion()
+{
+    if (!isset($_SESSION['asset_version'])) {
+        $gitFile = $_SERVER['DOCUMENT_ROOT'] . '/DAM-Transversal/.git/HEAD';
+        if (file_exists($gitFile)) {
+            $head = trim(file_get_contents($gitFile));
+            $refPath = $_SERVER['DOCUMENT_ROOT'] . '/DAM-Transversal/.git/' . str_replace('ref: ', '', $head);
+            if (file_exists($refPath)) {
+                $_SESSION['asset_version'] = substr(trim(file_get_contents($refPath)), 0, 8);
+            } else {
+                $_SESSION['asset_version'] = substr($head, 0, 8);
+            }
+        } else {
+            $_SESSION['asset_version'] = '1';
+        }
+    }
+    return $_SESSION['asset_version'];
+}
+
 function getCoverImageUrl($image, $type)
 {
     if (empty($image)) {

@@ -11,8 +11,8 @@ requireLogin();
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <?php $assets = $_SERVER['DOCUMENT_ROOT'] . '/DAM-Transversal/view/assets'; ?>
-    <link rel="stylesheet" href="<?php echo ASSETS_URL; ?>/styles/main.css?v=<?php echo filemtime("$assets/styles/main.css"); ?>" />
-    <link rel="stylesheet" href="<?php echo ASSETS_URL; ?>/styles/user.css?v=<?php echo filemtime("$assets/styles/user.css"); ?>" />
+    <link rel="stylesheet" href="<?php echo ASSETS_URL; ?>/styles/main.css?v=<?php echo getAssetVersion(); ?>" />
+    <link rel="stylesheet" href="<?php echo ASSETS_URL; ?>/styles/user.css?v=<?php echo getAssetVersion(); ?>" />
     <link rel="icon" type="image/png" href="<?php echo ASSETS_URL; ?>/img/logo.webp" />
     <title>Monogatarya - Perfil de Usuario</title>
 </head>

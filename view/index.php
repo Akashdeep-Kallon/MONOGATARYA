@@ -16,11 +16,11 @@ $promotors = $promotorsQuery->fetchAll();
     <?php
     $assets = $_SERVER['DOCUMENT_ROOT'] . '/DAM-Transversal/view/assets';
     ?>
-    <link rel="stylesheet" href="<?php echo ASSETS_URL; ?>/styles/main.css?v=<?php echo filemtime("$assets/styles/main.css"); ?>" />
-    <link rel="stylesheet" href="<?php echo ASSETS_URL; ?>/styles/index.css?v=<?php echo filemtime("$assets/styles/index.css"); ?>" />
-    <link rel="stylesheet" href="<?php echo ASSETS_URL; ?>/styles/catalog.css?v=<?php echo filemtime("$assets/styles/catalog.css"); ?>" />
-    <link rel="stylesheet" href="<?php echo ASSETS_URL; ?>/slick/slick.css?v=<?php echo filemtime("$assets/slick/slick.css"); ?>" />
-    <link rel="stylesheet" href="<?php echo ASSETS_URL; ?>/slick/slick-theme.css?v=<?php echo filemtime("$assets/slick/slick-theme.css"); ?>" />
+    <link rel="stylesheet" href="<?php echo ASSETS_URL; ?>/styles/main.css?v=<?php echo getAssetVersion(); ?>" />
+    <link rel="stylesheet" href="<?php echo ASSETS_URL; ?>/styles/index.css?v=<?php echo getAssetVersion(); ?>" />
+    <link rel="stylesheet" href="<?php echo ASSETS_URL; ?>/styles/catalog.css?v=<?php echo getAssetVersion(); ?>" />
+    <link rel="stylesheet" href="<?php echo ASSETS_URL; ?>/slick/slick.css?v=<?php echo getAssetVersion(); ?>" />
+    <link rel="stylesheet" href="<?php echo ASSETS_URL; ?>/slick/slick-theme.css?v=<?php echo getAssetVersion(); ?>" />
     <link rel="icon" type="image/png" href="<?php echo ASSETS_URL; ?>/img/logo.webp" />
     <script src="<?php echo ASSETS_URL; ?>/js/jquery.js?v=<?php echo filemtime("$assets/js/jquery.js"); ?>" defer></script>
     <script src="<?php echo ASSETS_URL; ?>/slick/slick.min.js?v=<?php echo filemtime("$assets/slick/slick.min.js"); ?>" defer></script>

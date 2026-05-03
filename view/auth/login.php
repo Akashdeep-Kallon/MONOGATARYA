@@ -10,7 +10,7 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/DAM-Transversal/core/config.php';
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <?php $assets = $_SERVER['DOCUMENT_ROOT'] . '/DAM-Transversal/view/assets'; ?>
     <link rel="stylesheet"
-        href="<?php echo ASSETS_URL; ?>/styles/auth.css?v=<?php echo filemtime("$assets/styles/auth.css"); ?>">
+        href="<?php echo ASSETS_URL; ?>/styles/auth.css?v=<?php echo getAssetVersion(); ?>">
     <link rel="icon" type="image/png" href="<?php echo ASSETS_URL; ?>/img/logo.webp" />
     <script src="<?php echo ASSETS_URL; ?>/js/jquery.js?v=<?php echo filemtime("$assets/js/jquery.js"); ?>" defer></script>
     <script src="<?php echo ASSETS_URL; ?>/js/action.js?v=<?php echo filemtime("$assets/js/action.js"); ?>" defer></script>

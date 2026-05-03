@@ -8,8 +8,8 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/DAM-Transversal/core/config.php';
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="<?php echo ASSETS_URL; ?>/styles/main.css" />
-    <link rel="stylesheet" href="<?php echo ASSETS_URL; ?>/styles/catalog.css" />
+    <link rel="stylesheet" href="<?php echo ASSETS_URL; ?>/styles/main.css?v=<?php echo getAssetVersion(); ?>" />
+    <link rel="stylesheet" href="<?php echo ASSETS_URL; ?>/styles/catalog.css?v=<?php echo getAssetVersion(); ?>" />
     <link rel="icon" type="image/png" href="<?php echo ASSETS_URL; ?>/img/logo.webp" />
     <title>Monogatarya - Eventos</title>
 </head>

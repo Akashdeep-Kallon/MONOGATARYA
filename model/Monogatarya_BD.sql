@@ -86,6 +86,7 @@ CREATE TABLE IF NOT EXISTS Events (
     Title VARCHAR(100) NOT NULL,
     Subtitle VARCHAR(150),
     Description TEXT,
+    Image VARCHAR(500),
     Date_event DATE NOT NULL,
     Location VARCHAR(150),
     Capacity INT,
@@ -101,8 +102,8 @@ CREATE TABLE IF NOT EXISTS Event_Media (
     Video VARCHAR(500),
     Audio VARCHAR(500),
     Transcription_Video TEXT,
-    Transcription_Audio TEXT
-    
+    Transcription_Audio TEXT,
+
     CONSTRAINT PK_Event_Media PRIMARY KEY (ID_Media),
     FOREIGN KEY (ID_Event) REFERENCES Events(ID_Event) ON DELETE CASCADE
 );

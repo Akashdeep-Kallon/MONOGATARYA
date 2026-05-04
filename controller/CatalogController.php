@@ -550,10 +550,10 @@ class Catalog
                 'location' => $eventRow['Location'],
                 'capacity' => $eventRow['Capacity'],
                 'active' => $eventRow['Active'],
-                'video' => $mediaRow['Video'],
-                'audio' => $mediaRow['Audio'],
-                't_Video' => $mediaRow['Transcription_Video'],
-                't_Audio' => $mediaRow['Transcription_Audio']
+                'video' => $mediaRow['Video'] ?? null,
+                'audio' => $mediaRow['Audio'] ?? null,
+                't_Video' => $mediaRow['Transcription_Video'] ?? null,
+                't_Audio' => $mediaRow['Transcription_Audio'] ?? null
             ];
         }
 
@@ -598,7 +598,7 @@ class Catalog
         $dateEvent = $this->connection->quote($_POST['date_event']);
         $locationVal = $this->connection->quote($_POST['location']);
         $capacity = intval($_POST['capacity']);
-        $image = $hasImageUrl ? $this->connection->quote($_POST['image_url']) : '';
+        $image = $hasImageUrl ? $this->connection->quote($_POST['image_url']) : 'NULL';
 
         $this->connection->query("
             CALL sp_add_Event($title,$subtitle,$description,$image,$dateEvent,$locationVal,$capacity)
@@ -691,8 +691,8 @@ class Catalog
         $mediaQuery = $this->connection->query("SELECT ID_Media FROM Event_Media WHERE ID_Event = $id LIMIT 1");
         $mediaRow = $mediaQuery->fetch();
 
-        $videoValue = $hasVideoUrl ? $this->connection->quote($_POST['video_url']) : '';
-        $audioValue = $hasAudioUrl ? $this->connection->quote($_POST['audio_url']) : '';
+        $videoValue = $hasVideoUrl ? $this->connection->quote($_POST['video_url']) : 'NULL';
+        $audioValue = $hasAudioUrl ? $this->connection->quote($_POST['audio_url']) : 'NULL';
         $tVideo = $this->connection->quote($_POST['t_video'] ?? '');
         $tAudio = $this->connection->quote($_POST['t_audio'] ?? '');
 
@@ -703,6 +703,12 @@ class Catalog
                 SET Transcription_Video = $tVideo, Transcription_Audio = $tAudio
                 WHERE ID_Media = $idMedia
             ");
+            if ($hasVideoUrl) {
+                $this->connection->query("UPDATE Event_Media SET Video = $videoValue WHERE ID_Media = $idMedia");
+            }
+            if ($hasAudioUrl) {
+                $this->connection->query("UPDATE Event_Media SET Audio = $audioValue WHERE ID_Media = $idMedia");
+            }
         } else {
             $this->connection->query("
                 INSERT INTO Event_Media (ID_Event, Video, Audio, Transcription_Video, Transcription_Audio)

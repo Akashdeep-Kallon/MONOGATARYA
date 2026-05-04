@@ -88,7 +88,59 @@ requireLogin();
                     </section>
                 </form>
             </section>
-        </div>
+            <?php if (isPromoter()) { ?>
+        <section class="card-panel promoter-tools" aria-labelledby="promoter-tools-title">
+            <h2 id="promoter-tools-title" class="section-title">Herramientas Promotor</h2>
+
+            <div class="promoter-status">
+                <span class="promoter-active-badge">MODO PROMOTOR ACTIVO</span>
+                <p>Puedes añadir y gestionar contenido de la plataforma.</p>
+            </div>
+
+            <div class="promoter-grid">
+                <a href="<?php echo VIEW_URL; ?>/catalogs/work-create.php?type=anime" class="promoter-card">
+                    <div class="promoter-card-icon">
+                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 3a3 3 0 0 1 3 3v12a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3V6a3 3 0 0 1 3-3h12zm-8 4v10l7-5-7-5z"/></svg>
+                    </div>
+                    <div class="promoter-card-text">
+                        <strong>Añadir Anime</strong>
+                        <p>Crea una nueva entrada en el catálogo de anime.</p>
+                    </div>
+                </a>
+
+                <a href="<?php echo VIEW_URL; ?>/catalogs/work-create.php?type=manga" class="promoter-card">
+                    <div class="promoter-card-icon">
+                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 2h14a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2zm0 2v16h14V4H4zm2 3h10v2H6V7zm0 4h10v2H6v-2zm0 4h7v2H6v-2z"/></svg>
+                    </div>
+                    <div class="promoter-card-text">
+                        <strong>Añadir Manga</strong>
+                        <p>Publica un manga en la plataforma.</p>
+                    </div>
+                </a>
+
+                <a href="<?php echo VIEW_URL; ?>/catalogs/events/event-create.php" class="promoter-card">
+                    <div class="promoter-card-icon">
+                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 2v2H5a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1h-3V2h-2v2H10V2H8zm-3 5h14v10H5V7zm2 2v2h2V9H7zm4 0v2h2V9h-2zm4 0v2h2V9h-2zM7 13v2h2v-2H7zm4 0v2h2v-2h-2z"/></svg>
+                    </div>
+                    <div class="promoter-card-text">
+                        <strong>Crear Evento</strong>
+                        <p>Organiza eventos para la comunidad.</p>
+                    </div>
+                </a>
+
+                <a href="<?php echo VIEW_URL; ?>/catalogs/add-chapter.php" class="promoter-card">
+                    <div class="promoter-card-icon">
+                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm-1 7V3.5L18.5 9H13zm-5 4h8v2H8v-2zm0 4h5v2H8v-2z"/></svg>
+                    </div>
+                    <div class="promoter-card-text">
+                        <strong>Subir Capítulo</strong>
+                        <p>Añade capítulos a una obra existente.</p>
+                    </div>
+                </a>
+            </div>
+        </section>
+        <?php } ?>
+    </div>
     </main>
     <?php include $_SERVER['DOCUMENT_ROOT'] . '/DAM-Transversal/view/includes/menu.php'; ?>
     <?php include $_SERVER['DOCUMENT_ROOT'] . '/DAM-Transversal/view/includes/footer.php'; ?>

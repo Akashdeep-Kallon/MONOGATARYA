@@ -7,6 +7,10 @@
             <p id="confirm-message" class="confirm-text">
                 ¿Seguro que quieres eliminar este elemento? Esta acción no se puede deshacer.
             </p>
+            <div class="confirm-actions">
+                <button id="confirm-cancel" type="button" class="btn-confirm btn-confirm-cancel">Cancelar</button>
+                <button id="confirm-accept" type="button" class="btn-confirm btn-confirm-accept">Aceptar</button>
+            </div>
         </div>
     </div>
 <?php endif; ?>

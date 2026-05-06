@@ -21,9 +21,9 @@
     border-radius: 8px;
     font-size: 14px;
     font-family: 'Inter', Arial, sans-serif;
-    background: #fff3cd;
-    color: #664d03;
-    border: 1px solid #ffe69c;
+    background: #2c2c2c;
+    color: #f1f1f1;
+    border: 1px solid #3a3a3a;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
     animation: slideIn .22s ease;
 }

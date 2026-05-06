@@ -142,11 +142,12 @@ class UserController
         $stmt->execute([':email' => $email]);
         $userRow = $stmt->fetch();
 
+        // Si el usuario existe y la contraseña es correcta (o no se ha proporcionado una nueva contraseña) 
         if ($userRow) {
             if (!empty($password)) {
-                $finalPasswordHash = password_hash($password, PASSWORD_DEFAULT);
+                $finalPasswordHash = password_hash($password, PASSWORD_DEFAULT); // Si se ha proporcionado una nueva contraseña, se hashea y se actualiza
             } else {
-                $finalPasswordHash = $userRow['password'];
+                $finalPasswordHash = $userRow['password']; // Si no se ha proporcionado una nueva contraseña, se mantiene la actual para que no se pierda al actualizar otros datos
             }
 
             $user = new User(
@@ -154,7 +155,7 @@ class UserController
                 $userRow['status'],
                 $userRow['name'],
                 $userRow['surname'],
-                $finalPasswordHash
+                $finalPasswordHash // Se pasa la contraseña actual si no se ha proporcionado una nueva, para que no se pierda al actualizar otros datos
             );
             $mensages = [];
             $user->updateUser($email, $name, $surname, $finalPasswordHash, $bio);

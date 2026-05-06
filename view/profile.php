@@ -66,6 +66,8 @@ requireLogin();
                                 value="<?php echo htmlspecialchars($_SESSION['email']); ?>" readonly>
                         </div>
 
+                        <!-- Se ha quitado value, para que no se muestre la contraseña actual aunque este encritpada = mas seguridad,
+                        Con value se bugeaba-->
                         <div class="field">
                             <label for="password">Contraseña</label>
                             <input id="password" name="password" type="password" minlength="6" maxlength="20"

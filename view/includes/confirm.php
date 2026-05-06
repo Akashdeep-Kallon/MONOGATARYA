@@ -13,4 +13,6 @@
             </div>
         </div>
     </div>
+
+    <link rel="stylesheet" href="<?php echo ASSETS_URL; ?>/css/confirm.css?v=<?php echo getAssetVersion(); ?>">
 <?php endif; ?>

@@ -14,5 +14,7 @@
         </div>
     </div>
 
-    <link rel="stylesheet" href="<?php echo ASSETS_URL; ?>/css/confirm.css?v=<?php echo getAssetVersion(); ?>">
+    <link rel="stylesheet" href="<?php echo ASSETS_URL; ?>/styles/confirm.css?v=<?php echo getAssetVersion(); ?>">
+
+    <script src="<?php echo ASSETS_URL; ?>/js/confirm.js?v=<?php echo getAssetVersion(); ?>"></script>
 <?php endif; ?>

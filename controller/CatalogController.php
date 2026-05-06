@@ -113,6 +113,8 @@ class Catalog
         $gender = $this->connection->quote($_POST['gender']);
         $description = $this->connection->quote($_POST['description']);
 
+        $type = $this->connection->quote($_POST['type']);
+
         $this->connection->query("
             CALL sp_add_Work($type,$title,$subtitle,$studio,$premiereDate,$gender,$description,@p_ID_Work)
         ");

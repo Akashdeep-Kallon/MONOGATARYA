@@ -148,6 +148,29 @@ $active      = $result['active'];
     <?php include $_SERVER['DOCUMENT_ROOT'] . '/DAM-Transversal/view/includes/menu.php'; ?>
     <?php include $_SERVER['DOCUMENT_ROOT'] . '/DAM-Transversal/view/includes/footer.php'; ?>
 
+    <script>
+        // Al seleccionar un archivo, limpia el campo URL correspondiente y viceversa
+        const pairs = [
+            ['image-file', 'image-url'],
+            ['video-file', 'video-url'],
+            ['audio-file', 'audio-url'],
+        ];
+
+        pairs.forEach(([fileId, urlId]) => {
+            const fileInput = document.getElementById(fileId);
+            const urlInput  = document.getElementById(urlId);
+            if (!fileInput || !urlInput) return;
+
+            fileInput.addEventListener('change', () => {
+                if (fileInput.files.length > 0) urlInput.value = '';
+            });
+
+            urlInput.addEventListener('input', () => {
+                if (urlInput.value.trim() !== '') fileInput.value = '';
+            });
+        });
+    </script>
+
 </body>
 
 </html>

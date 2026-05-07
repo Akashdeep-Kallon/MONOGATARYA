@@ -101,7 +101,7 @@ $capacity = $result['capacity'];
                         <button type="button" class="btn btn-add">Reservar plaza</button>
                         <button type="button" class="btn btn-add">Anular reserva</button>
                         <?php if (isPromoter()) { ?>
-                            <a href="<?php echo VIEW_URL; ?>/event/event-edit.php?id=<?php echo $id; ?>"
+                            <a href="event-edit.php?id=<?php echo $id; ?>"
                                 class="btn btn-add">
                                 Editar evento
                             </a>

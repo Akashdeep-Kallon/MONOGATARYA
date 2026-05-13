@@ -248,7 +248,7 @@ class UploadController
         }
 
         // Manga: ZIP 
-        $isZip = ($mime === 'application/zip' || $mime === 'application/x-zip-compressed');
+        $isZip = in_array($mime, ['application/zip', 'application/x-zip-compressed', 'application/x-zip', 'application/octet-stream', 'multipart/x-zip']);
         if (!$isZip) {
             return ["El archivo debe ser un ZIP válido."];
         }

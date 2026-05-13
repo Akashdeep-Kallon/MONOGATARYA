@@ -105,10 +105,13 @@ $capacity = $result['capacity'];
                                 class="btn btn-add">
                                 Editar evento
                             </a>
-                            <a href="<?php echo CONTROLLER_URL; ?>/CatalogController.php?delete_event=<?php echo $id; ?>"
-                                class="btn btn-delete">
-                                Eliminar evento
-                            </a>
+                            <form method="post" action="<?php echo CONTROLLER_URL; ?>/CatalogController.php"
+                                onsubmit="return confirm('\u00bfSeguro que quieres eliminar este evento? Esta acci\u00f3n no se puede deshacer.');">
+                                <input type="hidden" name="id" value="<?php echo $id; ?>">
+                                <button type="submit" name="delete_event" class="btn btn-delete">
+                                    Eliminar evento
+                                </button>
+                            </form>
                         <?php } ?>
                     </div>
                 </aside>

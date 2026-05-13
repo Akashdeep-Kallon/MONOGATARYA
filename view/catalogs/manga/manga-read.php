@@ -19,10 +19,12 @@ $prevChapter = $result['prev_chapter'];
 $nextChapter = $result['next_chapter'];
 // Ruta absoluta al index.txt
 $chapterPath = MANGA_URL . $file;
-$indexFile = $_SERVER['DOCUMENT_ROOT'] . '/DAM-Transversal/media/' . $file . 'index.txt';
+$indexFile = '/var/www/uploads/Manga/' . $file . 'index.txt';
 
 // Leer páginas
-$pages = file($indexFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+$pages = file_exists($indexFile)
+    ? file($indexFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES)
+    : [];
 ?>
 <!DOCTYPE html>
 <html lang="es">

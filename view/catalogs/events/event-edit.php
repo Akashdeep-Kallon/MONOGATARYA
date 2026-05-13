@@ -149,20 +149,30 @@ $active      = $result['active'];
     <?php include $_SERVER['DOCUMENT_ROOT'] . '/DAM-Transversal/view/includes/footer.php'; ?>
 
     <script>
-        // Al seleccionar un archivo, limpia el campo URL correspondiente y viceversa
+        const VALID_IMAGE = ['jpg', 'jpeg', 'png', 'webp'];
+        const VALID_VIDEO = ['mp4', 'webm', 'mov', 'mkv'];
+        const VALID_AUDIO = ['mp3', 'ogg', 'wav', 'm4a'];
+
         const pairs = [
-            ['image-file', 'image-url'],
-            ['video-file', 'video-url'],
-            ['audio-file', 'audio-url'],
+            ['image-file', 'image-url', VALID_IMAGE, 'imagen (JPG, PNG, WEBP)'],
+            ['video-file', 'video-url', VALID_VIDEO, 'vídeo (MP4, WEBM, MOV)'],
+            ['audio-file', 'audio-url', VALID_AUDIO, 'audio (MP3, OGG, WAV)'],
         ];
 
-        pairs.forEach(([fileId, urlId]) => {
+        pairs.forEach(([fileId, urlId, validExts, label]) => {
             const fileInput = document.getElementById(fileId);
             const urlInput  = document.getElementById(urlId);
             if (!fileInput || !urlInput) return;
 
             fileInput.addEventListener('change', () => {
-                if (fileInput.files.length > 0) urlInput.value = '';
+                if (!fileInput.files.length) return;
+                const ext = fileInput.files[0].name.split('.').pop().toLowerCase();
+                if (!validExts.includes(ext)) {
+                    alert('El archivo seleccionado no es válido. Selecciona un archivo de ' + label + '.');
+                    fileInput.value = '';
+                    return;
+                }
+                urlInput.value = '';
             });
 
             urlInput.addEventListener('input', () => {

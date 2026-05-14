@@ -8,20 +8,18 @@ $id = $_GET['id'];
 
 $result = (new Catalog())->eventDetail($id);
 
-$title = $result['title'];
-$subtitle = $result['subtitle'];
-
-$image = $result['image'];
-$video = $result['video'];
-$audio = $result['audio'];
-$t_Video = $result['t_Video'];
-$t_Audio = $result['t_Audio'];
-
+$title       = $result['title'];
+$subtitle    = $result['subtitle'];
+$image       = $result['image'];
+$video       = $result['video'];
+$audio       = $result['audio'];
+$t_Video     = $result['t_Video'];
+$t_Audio     = $result['t_Audio'];
 $description = $result['description'];
-$premiere = $result['premiere'];
-$location = $result['location'];
-$capacity = $result['capacity'];
-$active = $result['active'];
+$premiere    = $result['premiere'];
+$location    = $result['location'];
+$capacity    = $result['capacity'];
+$active      = $result['active'];
 ?>
 
 <!DOCTYPE html>
@@ -30,7 +28,7 @@ $active = $result['active'];
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="../assets/styles/main.css?v=<?php echo getAssetVersion(); ?>" />
+    <link rel="stylesheet" href="<?php echo ASSETS_URL; ?>/styles/main.css?v=<?php echo getAssetVersion(); ?>" />
     <link rel="stylesheet" href="<?php echo ASSETS_URL; ?>/styles/catalog.css?v=<?php echo getAssetVersion(); ?>" />
     <link rel="icon" type="image/png" href="<?php echo ASSETS_URL; ?>/img/logo.webp" />
     <title>Monogatarya - Editar Evento</title>
@@ -43,10 +41,11 @@ $active = $result['active'];
     <main class="page-main">
         <div class="layout-container">
             <section class="card-panel" aria-labelledby="editar-evento-title">
+
                 <h2 id="editar-evento-title" class="section-title">Editar evento</h2>
 
-                <form class="form-vertical" action="<?php echo CONTROLLER_URL; ?>/CatalogController.php" method="post"
-                    enctype="multipart/form-data">
+                <form class="form-vertical" action="<?php echo CONTROLLER_URL; ?>/CatalogController.php"
+                    method="post" enctype="multipart/form-data">
 
                     <input type="hidden" name="id" value="<?php echo htmlspecialchars($id); ?>">
 
@@ -81,69 +80,65 @@ $active = $result['active'];
                     </div>
 
                     <div class="field-group">
-                        <label for="image-file" class="file-label">Subir nueva imagen de portada</label>
+                        <label for="image-file">Subir imagen de portada</label>
                         <input id="image-file" type="file" accept="image/*" name="image_file">
                     </div>
 
                     <div class="field-group">
-                        <label for="image-url">URL de la imagen actual</label>
+                        <label for="image-url">URL de la imagen de portada</label>
                         <input id="image-url" type="text" name="image_url"
                             value="<?php echo htmlspecialchars($image); ?>">
                     </div>
 
                     <div class="field-group">
-                        <label for="video-file" class="file-label">Subir nuevo vídeo</label>
+                        <label for="video-file">Subir vídeo</label>
                         <input id="video-file" type="file" accept="video/*" name="video_file">
                     </div>
 
                     <div class="field-group">
-                        <label for="video-url">URL del vídeo actual</label>
+                        <label for="video-url">URL del vídeo</label>
                         <input id="video-url" type="text" name="video_url"
                             value="<?php echo htmlspecialchars($video); ?>">
                     </div>
 
                     <div class="field-group">
                         <label for="t-video">Transcripción del vídeo</label>
-                        <textarea id="t-video" name="t_video" minlength="5" maxlength="5000"><?php
-                        echo htmlspecialchars($t_Video);
-                        ?></textarea>
+                        <textarea id="t-video" name="t_video" minlength="5" maxlength="5000"><?php echo htmlspecialchars($t_Video); ?></textarea>
                     </div>
 
                     <div class="field-group">
-                        <label for="audio-file" class="file-label">Subir nuevo audio</label>
+                        <label for="audio-file">Subir audio</label>
                         <input id="audio-file" type="file" accept="audio/*" name="audio_file">
                     </div>
 
                     <div class="field-group">
-                        <label for="audio-url">URL del audio actual</label>
+                        <label for="audio-url">URL del audio</label>
                         <input id="audio-url" type="text" name="audio_url"
                             value="<?php echo htmlspecialchars($audio); ?>">
                     </div>
 
                     <div class="field-group">
                         <label for="t-audio">Transcripción del audio</label>
-                        <textarea id="t-audio" name="t_audio" minlength="5" maxlength="5000"><?php
-                        echo htmlspecialchars($t_Audio);
-                        ?></textarea>
+                        <textarea id="t-audio" name="t_audio" minlength="5" maxlength="5000"><?php echo htmlspecialchars($t_Audio); ?></textarea>
                     </div>
 
                     <div class="field-group">
                         <label for="descripcion-evento">Descripción</label>
-                        <textarea id="descripcion-evento" name="description" required minlength="10" maxlength="500"><?php
-                        echo htmlspecialchars($description);
-                        ?></textarea>
+                        <textarea id="descripcion-evento" name="description" required minlength="10"
+                            maxlength="500"><?php echo htmlspecialchars($description); ?></textarea>
                     </div>
 
                     <div class="field-group">
                         <label>Activar evento</label>
-                        <input id="remember" name="active" type="checkbox" <?php echo ($active == 1 ? 'checked' : ''); ?>>
+                        <input id="active" name="active" type="checkbox" <?php echo ($active == 1 ? 'checked' : ''); ?>>
                     </div>
 
                     <div class="inline-actions">
                         <button type="submit" class="btn btn-add" name="edit_event">Guardar cambios</button>
-                        <button type="submit" class="btn btn-delete" name="delete_event">Eliminar Evento</button>
+                        <button type="submit" class="btn btn-delete" name="delete_event">Eliminar evento</button>
                         <button type="reset" class="btn btn-delete">Reiniciar</button>
                     </div>
+
                 </form>
                 <?php include $_SERVER['DOCUMENT_ROOT'] . '/DAM-Transversal/view/includes/message.php'; ?>
             </section>
@@ -152,6 +147,39 @@ $active = $result['active'];
 
     <?php include $_SERVER['DOCUMENT_ROOT'] . '/DAM-Transversal/view/includes/menu.php'; ?>
     <?php include $_SERVER['DOCUMENT_ROOT'] . '/DAM-Transversal/view/includes/footer.php'; ?>
+
+    <script>
+        const VALID_IMAGE = ['jpg', 'jpeg', 'png', 'webp'];
+        const VALID_VIDEO = ['mp4', 'webm', 'mov', 'mkv'];
+        const VALID_AUDIO = ['mp3', 'ogg', 'wav', 'm4a'];
+
+        const pairs = [
+            ['image-file', 'image-url', VALID_IMAGE, 'imagen (JPG, PNG, WEBP)'],
+            ['video-file', 'video-url', VALID_VIDEO, 'vídeo (MP4, WEBM, MOV)'],
+            ['audio-file', 'audio-url', VALID_AUDIO, 'audio (MP3, OGG, WAV)'],
+        ];
+
+        pairs.forEach(([fileId, urlId, validExts, label]) => {
+            const fileInput = document.getElementById(fileId);
+            const urlInput  = document.getElementById(urlId);
+            if (!fileInput || !urlInput) return;
+
+            fileInput.addEventListener('change', () => {
+                if (!fileInput.files.length) return;
+                const ext = fileInput.files[0].name.split('.').pop().toLowerCase();
+                if (!validExts.includes(ext)) {
+                    alert('El archivo seleccionado no es válido. Selecciona un archivo de ' + label + '.');
+                    fileInput.value = '';
+                    return;
+                }
+                urlInput.value = '';
+            });
+
+            urlInput.addEventListener('input', () => {
+                if (urlInput.value.trim() !== '') fileInput.value = '';
+            });
+        });
+    </script>
 
 </body>
 

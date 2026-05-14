@@ -23,3 +23,4 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/DAM-Transversal/core/auth.php';
 
     <p class="footer-legal">© 2026 Monogatarya. Todos los derechos reservados.</p>
 </footer>
+<?php require_once $_SERVER['DOCUMENT_ROOT'] . '/DAM-Transversal/view/includes/confirm.php'; ?>

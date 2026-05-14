@@ -1,0 +1,325 @@
+:root {
+    --accent: #ff4141;
+    --text: #ffffff;
+    --surface: rgba(31, 31, 31, 0.95);
+    --header-height-desktop: 100px;
+    --header-height-tablet: 80px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html,
+body {
+    overflow-x: hidden;
+    overflow-y: hidden;
+    min-height: 100%;
+    color: var(--text);
+    font-family: Inter, Arial, sans-serif;
+    background:
+        linear-gradient(rgba(0, 0, 0, .55), rgba(0, 0, 0, .6)),
+        url("../img/background-image.webp") center / cover no-repeat fixed;
+}
+
+/* ── Header ── */
+.header-group {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    min-height: var(--header-height-desktop);
+    padding: 10px 40px;
+    background-color: var(--surface);
+}
+
+.header-group img {
+    width: 75px;
+    flex-shrink: 0;
+}
+
+.header-group h1 {
+    font-size: clamp(28px, 3.5vw, 48px);
+    font-weight: 700;
+    letter-spacing: 1px;
+    white-space: nowrap;
+}
+
+.right-group {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-left: auto;
+    flex-shrink: 0;
+}
+
+/* ── Buttons ── */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 148px;
+    min-height: 52px;
+    border: 2px solid rgba(255, 255, 255, 0.18);
+    border-radius: 10px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+    font-size: 17px;
+    font-weight: 600;
+    text-decoration: none;
+    user-select: none;
+    cursor: pointer;
+    transition: transform 0.12s ease, box-shadow 0.12s ease, background-color .2s ease;
+}
+
+.btn-session {
+    color: rgba(0, 0, 0, 0.85);
+    background-color: rgba(255, 255, 255, 0.92);
+}
+
+.btn-register {
+    color: rgba(255, 255, 255, 0.9);
+    background-color: var(--surface);
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+}
+
+.btn:active { transform: scale(0.96); box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25); }
+
+/* ── Main ── */
+main {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 2rem;
+    width: min(1200px, 92vw);
+    min-height: calc(100vh - var(--header-height-desktop));
+    margin: 0 auto;
+    padding: 3rem 0;
+}
+
+/* ── Two-column layout ── */
+.main-layout {
+    display: flex;
+    align-items: center;
+    gap: 4rem;
+    flex: 1;
+}
+
+.main-left {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    flex: 1;
+    min-width: 0;
+}
+
+/* ── Hero ── */
+.hero {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+}
+
+.hero h2 {
+    max-width: 14ch;
+    font-size: clamp(2rem, 5.5vw, 4rem);
+    line-height: 1.15;
+}
+
+.hero p {
+    max-width: 55ch;
+    color: rgba(255, 255, 255, 0.88);
+    font-size: clamp(1rem, 1.6vw, 1.2rem);
+    line-height: 1.6;
+}
+
+/* ── CTA button ── */
+.btn-ver-pagina {
+    display: inline-block;
+    padding: 12px 28px;
+    border-radius: 8px;
+    background-color: #ff4d4d;
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    align-self: flex-start;
+    transition: background-color .2s ease, transform .12s ease;
+}
+
+.btn-ver-pagina:hover {
+    background-color: #e63b3b;
+    transform: translateY(-2px);
+}
+
+/* ── QR panel ── */
+.qr-panel {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.qr-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    padding: 2rem 2rem 1.6rem;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    box-shadow:
+        0 8px 32px rgba(0, 0, 0, 0.45),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    transition: transform .25s ease, box-shadow .25s ease;
+}
+
+.qr-card:hover {
+    transform: translateY(-4px);
+    box-shadow:
+        0 16px 40px rgba(0, 0, 0, 0.55),
+        inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+.qr-label {
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent);
+}
+
+.qr-img {
+    width: 200px;
+    height: 200px;
+    object-fit: contain;
+    border-radius: 12px;
+    border: 3px solid rgba(255, 255, 255, 0.12);
+    background: #fff;
+    padding: 6px;
+}
+
+.qr-sub {
+    font-size: 0.82rem;
+    color: rgba(255, 255, 255, 0.55);
+    text-align: center;
+}
+
+/* ── Footer ── */
+footer {
+    padding: 1.5rem 0 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.85rem;
+    text-align: center;
+}
+
+:where(a, button):focus-visible {
+    outline: 3px solid #ff9f9f;
+    outline-offset: 3px;
+}
+
+/* ── Tablet ── */
+@media (max-width: 1024px) {
+    .header-group {
+        gap: 12px;
+        min-height: var(--header-height-tablet);
+        padding: 10px 24px;
+    }
+
+    .header-group img { width: 60px; }
+    .header-group h1 { font-size: clamp(20px, 3vw, 34px); }
+
+    .btn {
+        width: 136px;
+        min-height: 48px;
+        font-size: 15px;
+    }
+
+    main {
+        width: min(900px, 92vw);
+        min-height: calc(100vh - var(--header-height-tablet));
+        padding: 2.5rem 0;
+    }
+
+    .main-layout { gap: 2.5rem; }
+
+    .hero h2 { font-size: clamp(1.8rem, 4.5vw, 3rem); }
+    .hero p   { font-size: 1rem; }
+
+    .qr-img {
+        width: 170px;
+        height: 170px;
+    }
+}
+
+/* ── Mobile ── */
+@media (max-width: 700px) {
+    html, body { overflow-y: auto; }
+
+    .header-group {
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        min-height: unset;
+        padding: 16px 16px 12px;
+        text-align: center;
+    }
+
+    .header-group img  { width: 52px; }
+    .header-group h1   { font-size: 20px; letter-spacing: 0.5px; }
+
+    .right-group {
+        width: 100%;
+        justify-content: center;
+        gap: 10px;
+        margin-left: 0;
+    }
+
+    .right-group .btn {
+        flex: 1;
+        max-width: 160px;
+        min-height: 44px;
+        font-size: 14px;
+    }
+
+    main {
+        width: 100%;
+        min-height: unset;
+        justify-content: flex-start;
+        gap: 2rem;
+        padding: 2rem 20px;
+    }
+
+    .main-layout {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 2.5rem;
+    }
+
+    .hero h2 {
+        max-width: 100%;
+        font-size: clamp(1.6rem, 8vw, 2.2rem);
+    }
+
+    .hero p {
+        max-width: 100%;
+        color: rgba(255, 255, 255, 0.82);
+        font-size: 0.95rem;
+    }
+
+    .qr-panel { align-self: center; }
+
+    .qr-img {
+        width: 160px;
+        height: 160px;
+    }
+
+    footer {
+        padding: 1rem 0 0.8rem;
+        font-size: 0.78rem;
+    }
+}

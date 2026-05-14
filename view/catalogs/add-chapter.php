@@ -335,13 +335,23 @@ requireRole('promoter');
                 });
 
                 xhr.addEventListener('load', function () {
-                    /* Subida completa: seguir la redirección del servidor */
                     updateUI(fileInput.files[0].size, fileInput.files[0].size, 0);
                     document.querySelector('.upload-heading').textContent = '✓ Archivo subido. Procesando…';
-                    document.getElementById('upload-hint') && (document.querySelector('.upload-hint').textContent = 'Redirigiendo…');
+                    document.querySelector('.upload-hint') && (document.querySelector('.upload-hint').textContent = 'Redirigiendo…');
 
                     setTimeout(function () {
-                        window.location.href = xhr.responseURL || window.location.href;
+                        // El controller siempre redirige con header() a una URL con ?msg=
+                        // responseURL recoge la URL final tras la redirección del XHR
+                        const dest = xhr.responseURL;
+                        if (dest && dest !== window.location.href) {
+                            window.location.href = dest;
+                        } else {
+                            // Fallback: volver al detalle de la obra
+                            const params = new URLSearchParams(window.location.search);
+                            const id = params.get('id');
+                            const type = params.get('type');
+                            window.location.href = '<?php echo VIEW_URL; ?>/catalogs/work-detail.php?type=' + encodeURIComponent(type) + '&id=' + id;
+                        }
                     }, 600);
                 });
 

@@ -27,13 +27,14 @@ class Database
         $this->database = "Monogatarya";
     }
 
+    // Conexión a la base de datos con PDO
     public function getConnection()
     {
         try {
             $dsn = "mysql:host={$this->host};port={$this->port};dbname={$this->database};charset=utf8mb4";
             $this->connection = new PDO($dsn, $this->user, $this->password);
 
-            // Configuración importante
+            // Configuración bd PDO
             $this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             $this->connection->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
 

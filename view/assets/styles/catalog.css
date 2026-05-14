@@ -120,15 +120,33 @@
     gap: 1.5rem;
 }
 
+/* ── Layout principal del detalle de evento ── */
+.event-layout {
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    gap: 2rem;
+    align-items: start;
+}
+
+.event-layout > section {
+    min-width: 0;
+}
+
 .event-hero-image {
-    margin: 0;
+    margin: 0 0 1.5rem;
 }
 
 .event-hero-image img {
     width: 100%;
-    max-height: 420px;
+    max-height: 460px;
     object-fit: cover;
     border-radius: 12px;
+    display: block;
+}
+
+.event-layout h3 {
+    margin-top: 1.5rem;
+    margin-bottom: .5rem;
 }
 
 .event-aside {
@@ -136,25 +154,48 @@
     background: #111;
     border: 1px solid #2f2f2f;
     border-radius: 12px;
-    padding: 1rem;
+    padding: 1.25rem;
     align-self: start;
+    position: sticky;
+    top: 104px;
+}
+
+.event-aside h3 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
 }
 
 .event-aside dl {
     display: grid;
     grid-template-columns: auto 1fr;
-    gap: .5rem .75rem;
-    margin: 0;
+    gap: .6rem .9rem;
+    margin: 0 0 1rem;
+    align-items: baseline;
 }
 
 .event-aside dt {
     font-weight: 700;
+    color: var(--muted);
+    font-size: .9rem;
+    white-space: nowrap;
+}
+
+.event-aside dd {
+    margin: 0;
+    font-size: .95rem;
 }
 
 .stack-actions {
     display: grid;
-    gap: .75rem;
-    margin-top: 1rem;
+    gap: .6rem;
+    margin-top: 1.25rem;
+}
+
+.stack-actions .btn {
+    width: 100%;
+    justify-content: center;
+    font-size: .95rem;
 }
 
 video,
@@ -406,15 +447,23 @@ details summary {
 }
 
 @media (max-width: 1024px) {
-
     .event-editorial,
     .event-layout {
         grid-template-columns: 1fr;
     }
+
+    .event-aside {
+        position: static;
+        margin-top: 0;
+    }
 }
 
 @media (max-width: 768px) {
+    .event-layout {
+        gap: 1.25rem;
+    }
+
     .event-aside {
-        margin-top: 1rem;
+        margin-top: 0;
     }
 }
